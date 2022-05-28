@@ -20,7 +20,7 @@ namespace Library
             services.AddRefitClient<IArticleApi>()
                 .ConfigureHttpClient(httpClient =>
                 {
-                    httpClient.BaseAddress = new Uri("https://api.spaceflightnewsapi.net/v3");
+                    httpClient.BaseAddress = new Uri(configuration["Api:Article:BaseAddress"]);
                 });
         }
     }
