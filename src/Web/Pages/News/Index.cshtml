@@ -1,0 +1,8 @@
+﻿@page
+@model Web.Pages.News.IndexModel
+
+@foreach(var article in Model.Articles)
+{
+    <h3>@article.Title</h3>
+    <a href="@article.Url">@article.Url</a>
+}
