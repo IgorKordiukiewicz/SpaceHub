@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Api
+namespace Library.Services
 {
-    public interface IApiClient
+    public interface IArticleService
     {
         Task<List<ArticleResponse>> GetArticlesAsync();
     }

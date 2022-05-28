@@ -29,5 +29,8 @@ namespace Library.Api.Responses
 
         [JsonProperty("publishedAt")]
         public DateTime PublishDate { get; init; }
+
+        [JsonProperty("updatedAt")]
+        public DateTime UpdateDate { get; init; }
     }
 }

@@ -1,11 +1,11 @@
-using Library.Api;
+using Library;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<IApiClient, ApiClient>();
+Configuration.ConfigureServices(builder.Configuration, builder.Services);
 
 var app = builder.Build();
 
