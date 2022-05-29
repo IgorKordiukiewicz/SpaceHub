@@ -14,7 +14,7 @@ namespace Library.Services
     {
         private readonly IArticleApi _articleApi;
 
-        private const int _articlesPerPage = 10;
+        private const int ArticlesPerPage = 10;
 
         public ArticleService(IArticleApi articleApi)
         {
@@ -23,14 +23,14 @@ namespace Library.Services
 
         public async Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1)
         {
-            int start = (pageNumber - 1) * 10;
+            int start = (pageNumber - 1) * ArticlesPerPage;
             return await _articleApi.GetArticlesAsync(searchValue, start);
         }
 
-        public async Task<int> GetPagesCount(string? searchValue)
+        public async Task<int> GetPagesCountAsync(string? searchValue)
         {
             var articlesCount = await _articleApi.GetArticlesCountAsync(searchValue);
-            return (articlesCount - 1) / _articlesPerPage + 1;
+            return (articlesCount - 1) / ArticlesPerPage + 1;
         }
     }
 }

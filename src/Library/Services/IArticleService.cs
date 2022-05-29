@@ -12,6 +12,6 @@ namespace Library.Services
     {
         Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1);
 
-        Task<int> GetPagesCount(string? searchValue);
+        Task<int> GetPagesCountAsync(string? searchValue);
     }
 }
