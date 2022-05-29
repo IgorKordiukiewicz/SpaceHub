@@ -10,6 +10,6 @@ namespace Library.Services
 {
     public interface IArticleService
     {
-        Task<List<ArticleResponse>> GetArticlesAsync();
+        Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue);
     }
 }

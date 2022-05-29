@@ -1,7 +1,14 @@
 ﻿@page
 @model Web.Pages.News.IndexModel
 
-<ul class="list-group mt-3">
+<form class="d-flex" method="post">
+    <input asp-for="SearchValue" class="form-control me-sm-2" placeholder="Search" />
+    <button class="btn btn-primary my-2 my-sm-0" asp-page="/News/Index" type="submit">Search</button>
+</form>
+
+@if(Model.Articles != null)
+{
+    <ul class="list-group mt-3">
     @foreach(var article in Model.Articles)
     {
         <li class="list-group-item">
@@ -19,6 +26,8 @@
                 </div>
             </div>
         </li>
-     }
-</ul>
+    }
+    </ul>
+}
+
 

@@ -10,7 +10,7 @@ namespace Library.Api
 {
     public interface IArticleApi
     {
-        [Get("/articles")]
-        Task<List<ArticleResponse>> GetArticlesAsync();
+        [Get("/articles/?_title_contains={searchValue}")]
+        Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue);
     }
 }

@@ -19,9 +19,9 @@ namespace Library.Services
             _articleApi = articleApi;
         }
 
-        public async Task<List<ArticleResponse>> GetArticlesAsync()
+        public async Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue)
         {
-            return await _articleApi.GetArticlesAsync();
+            return await _articleApi.GetArticlesAsync(searchValue);
         }
     }
 }
