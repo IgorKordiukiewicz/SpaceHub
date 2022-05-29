@@ -1,36 +1,36 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Library.Api.Responses
 {
     public record ArticleResponse
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int ArticleId { get; init; }
         
-        [JsonProperty("title")]
+        [JsonPropertyName("title")]
         public string Title { get; init; }
 
-        [JsonProperty("summary")]
+        [JsonPropertyName("summary")]
         public string Summary { get; init; }
 
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; init; }
 
-        [JsonProperty("imageUrl")]
+        [JsonPropertyName("imageUrl")]
         public string ImageUrl { get; init; }
 
-        [JsonProperty("newsSite")]
+        [JsonPropertyName("newsSite")]
         public string NewsSite { get; init; }
 
-        [JsonProperty("publishedAt")]
+        [JsonPropertyName("publishedAt")]
         public DateTime PublishDate { get; init; }
 
-        [JsonProperty("updatedAt")]
+        [JsonPropertyName("updatedAt")]
         public DateTime UpdateDate { get; init; }
     }
 }
