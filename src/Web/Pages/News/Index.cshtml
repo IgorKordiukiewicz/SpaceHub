@@ -39,8 +39,8 @@
         {
             for(int i = 1; i <= Model.PagesCount; ++i)
             {
-                <!-- TODO: active doesn't inside a loop for some reason. -->
-                <li class="page-item @if(Model.PageNumber == i){<text>active</text>}">
+                var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                <li class="@pageClassText">
                     <a class="page-link" asp-page="/News/Index" asp-route-searchValue="@Model.SearchValue" asp-route-pageNumber="@i">@i</a>
                 </li>
             }
@@ -72,8 +72,8 @@
             {
                 for(int i = 2; i <= 5; ++i)
                 {
-                    <!-- TODO: active doesn't inside a loop for some reason. -->
-                    <li class="page-item @if(Model.PageNumber == i){<text>active</text>}">
+                    var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                    <li class="@pageClassText">
                         <a class="page-link" asp-page="/News/Index" asp-route-searchValue="@Model.SearchValue" asp-route-pageNumber="@i">@i</a>
                     </li>
                 }
@@ -88,8 +88,8 @@
                 </li>
                 for(int i = Model.PagesCount - 4; i <= Model.PagesCount - 1; ++i)
                 {
-                    <!-- TODO: active doesn't inside a loop for some reason. -->
-                    <li class="page-item @if(Model.PageNumber == i){<text>active</text>}">
+                    var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                    <li class="@pageClassText">
                         <a class="page-link" asp-page="/News/Index" asp-route-searchValue="@Model.SearchValue" asp-route-pageNumber="@i">@i</a>
                     </li>
                 }
