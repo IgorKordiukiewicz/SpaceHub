@@ -1,0 +1,9 @@
+﻿@page
+@model Web.Pages.Launches.IndexModel
+
+@foreach(var launch in Model.Launches)
+{
+    <h4>
+        @launch.Name
+    </h4>
+}

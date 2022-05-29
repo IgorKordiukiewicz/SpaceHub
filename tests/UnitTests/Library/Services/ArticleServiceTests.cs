@@ -39,7 +39,7 @@ namespace UnitTests.Library.Services
         [Theory]
         [InlineData(1, 0)]
         [InlineData(2, 10)]
-        public async Task GetArticlesAsync_ShouldReturnDifferentArticlesDependingOnPageNumber(int pageNumber, int start)
+        public async Task GetArticlesAsync_ShouldReturnDifferentArticles_DependingOnPageNumber(int pageNumber, int start)
         {
             List<ArticleResponse> expected = new()
             {

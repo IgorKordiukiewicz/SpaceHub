@@ -19,6 +19,7 @@ namespace Library
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             services.AddSingleton<IArticleService, ArticleService>();
+            services.AddSingleton<ILaunchService, LaunchService>();
 
             services.AddTransient<IValidator<ArticleRequest>, ArticleRequestValidator>();
 
@@ -26,6 +27,12 @@ namespace Library
                 .ConfigureHttpClient(httpClient =>
                 {
                     httpClient.BaseAddress = new Uri(configuration["Api:Article:BaseAddress"]);
+                });
+
+            services.AddRefitClient<ILaunchApi>()
+                .ConfigureHttpClient(httpClient =>
+                {
+                    httpClient.BaseAddress = new Uri(configuration["Api:Launch:BaseAddress"]);
                 });
         }
     }
