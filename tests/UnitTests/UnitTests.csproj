@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Library\Library.csproj" />
+    <ProjectReference Include="..\..\src\Web\Web.csproj" />
   </ItemGroup>
 
 </Project>
