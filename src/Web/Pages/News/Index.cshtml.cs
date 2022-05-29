@@ -2,6 +2,7 @@ using Library.Api.Responses;
 using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Web.ViewModels;
 
 namespace Web.Pages.News
 {
@@ -9,7 +10,7 @@ namespace Web.Pages.News
     {
         private readonly IArticleService _articleService;
 
-        public List<ArticleResponse> Articles { get; set; }
+        public List<ArticleViewModel> Articles { get; set; }
 
         public IndexModel(IArticleService articleService)
         {
@@ -18,7 +19,8 @@ namespace Web.Pages.News
         
         public async Task OnGet()
         {
-            Articles = await _articleService.GetArticlesAsync();
+            var result = await _articleService.GetArticlesAsync();
+            Articles = result.Select(a => new ArticleViewModel(a)).ToList();
         }
     }
 }

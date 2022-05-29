@@ -1,8 +1,22 @@
 ﻿@page
 @model Web.Pages.News.IndexModel
 
-@foreach(var article in Model.Articles)
-{
-    <h3>@article.Title</h3>
-    <a href="@article.Url">@article.Url</a>
-}
+<ul class="list-group mt-3">
+    @foreach(var article in Model.Articles)
+    {
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-3">
+                    <img src="@article.ImageUrl" width="100%"/>
+                </div>
+                <div class="col-9">
+                    <h4>
+                        <a href="@article.Url" target="_blank">@article.Title</a>
+                    </h4>
+                    <p>@article.Summary</p>
+                </div>
+            </div>
+        </li>
+     }
+</ul>
+
