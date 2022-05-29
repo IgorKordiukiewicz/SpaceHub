@@ -14,14 +14,23 @@ namespace Library.Services
     {
         private readonly IArticleApi _articleApi;
 
+        private const int _articlesPerPage = 10;
+
         public ArticleService(IArticleApi articleApi)
         {
             _articleApi = articleApi;
         }
 
-        public async Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue)
+        public async Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1)
         {
-            return await _articleApi.GetArticlesAsync(searchValue);
+            int start = (pageNumber - 1) * 10;
+            return await _articleApi.GetArticlesAsync(searchValue, start);
+        }
+
+        public async Task<int> GetPagesCount(string? searchValue)
+        {
+            var articlesCount = await _articleApi.GetArticlesCountAsync(searchValue);
+            return (articlesCount - 1) / _articlesPerPage + 1;
         }
     }
 }

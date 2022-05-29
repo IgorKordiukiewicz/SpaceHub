@@ -15,22 +15,30 @@ namespace Web.Pages.News
         [BindProperty]
         public string? SearchValue { get; set; }
 
+        [BindProperty]
+        public int PageNumber { get; set; }
+
+        public int PagesCount { get; set; } = 1;
+
         public IndexModel(IArticleService articleService)
         {
             _articleService = articleService;
         }
         
-        public async Task OnGet(string? searchValue)
+        public async Task OnGet(string? searchValue, int pageNumber = 1)
         {
             SearchValue = searchValue;
+            PageNumber = pageNumber;
 
-            var result = await _articleService.GetArticlesAsync(SearchValue);
+            PagesCount = await _articleService.GetPagesCount(SearchValue);
+
+            var result = await _articleService.GetArticlesAsync(SearchValue, PageNumber);
             Articles = result.Select(a => new ArticleViewModel(a)).ToList();
         }
 
         public IActionResult OnPost()
         {
-            return RedirectToPage("Index", new { searchValue = SearchValue });
+            return RedirectToPage("Index", new { searchValue = SearchValue, pageNumber = 1 });
         }
     }
 }

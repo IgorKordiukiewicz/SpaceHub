@@ -10,6 +10,8 @@ namespace Library.Services
 {
     public interface IArticleService
     {
-        Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue);
+        Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1);
+
+        Task<int> GetPagesCount(string? searchValue);
     }
 }
