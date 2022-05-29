@@ -10,6 +10,9 @@ using Library.Services;
 using FluentAssertions;
 using Library.Api.Responses;
 using AutoFixture;
+using Library.Api.Requests;
+using FluentValidation;
+using Library.Validators;
 
 namespace UnitTests.Library.Services
 {
@@ -18,10 +21,19 @@ namespace UnitTests.Library.Services
         private readonly ArticleService _articleService;
         private readonly Mock<IArticleApi> _articleApi = new();
         private readonly Fixture _fixture = new();
+        private readonly IValidator<ArticleRequest> _validator = new ArticleRequestValidator();
 
         public ArticleServiceTests()
         {
-            _articleService = new ArticleService(_articleApi.Object);
+            _articleService = new ArticleService(_articleApi.Object, _validator);
+        }
+
+        [Fact]
+        public async Task GetArticlesAsync_ShouldReturnEmptyList_WhenRequestIsInvalid()
+        {
+            var result = await _articleService.GetArticlesAsync(new ArticleRequest { PageNumber = -1 });
+
+            result.Should().BeEmpty();
         }
 
         [Theory]
@@ -36,7 +48,7 @@ namespace UnitTests.Library.Services
             
             _articleApi.Setup(a => a.GetArticlesAsync("search", start)).Returns(Task.FromResult(expected));
 
-            var result = await _articleService.GetArticlesAsync("search", pageNumber);
+            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = "search", PageNumber = pageNumber});
 
             result.Should().Equal(expected);
         }

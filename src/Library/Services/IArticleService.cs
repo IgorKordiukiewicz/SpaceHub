@@ -1,4 +1,5 @@
-﻿using Library.Api.Responses;
+﻿using Library.Api.Requests;
+using Library.Api.Responses;
 using OneOf;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Library.Services
 {
     public interface IArticleService
     {
-        Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1);
+        Task<List<ArticleResponse>> GetArticlesAsync(ArticleRequest articleRequest);
 
         Task<int> GetPagesCountAsync(string? searchValue);
     }

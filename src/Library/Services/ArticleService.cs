@@ -1,4 +1,6 @@
-﻿using Library.Api;
+﻿using FluentValidation;
+using Library.Api;
+using Library.Api.Requests;
 using Library.Api.Responses;
 using OneOf;
 using Refit;
@@ -13,18 +15,26 @@ namespace Library.Services
     public class ArticleService : IArticleService
     {
         private readonly IArticleApi _articleApi;
+        private readonly IValidator<ArticleRequest> _validator;
 
         private const int ArticlesPerPage = 10;
 
-        public ArticleService(IArticleApi articleApi)
+        public ArticleService(IArticleApi articleApi, IValidator<ArticleRequest> validator)
         {
             _articleApi = articleApi;
+            _validator = validator;
         }
 
-        public async Task<List<ArticleResponse>> GetArticlesAsync(string? searchValue, int pageNumber = 1)
+        public async Task<List<ArticleResponse>> GetArticlesAsync(ArticleRequest articleRequest)
         {
-            int start = (pageNumber - 1) * ArticlesPerPage;
-            return await _articleApi.GetArticlesAsync(searchValue, start);
+            var validationResult = _validator.Validate(articleRequest);
+            if(!validationResult.IsValid)
+            {
+                return new List<ArticleResponse>();
+            }
+            
+            int start = (articleRequest.PageNumber - 1) * ArticlesPerPage;
+            return await _articleApi.GetArticlesAsync(articleRequest.SearchValue, start);
         }
 
         public async Task<int> GetPagesCountAsync(string? searchValue)
