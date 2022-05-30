@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchProgramAgencyResponse
+    public record AgencyResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }

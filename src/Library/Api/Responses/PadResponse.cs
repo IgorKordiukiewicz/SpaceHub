@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchPadResponse
+    public record PadResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }
@@ -32,7 +32,7 @@ namespace Library.Api.Responses
         public string Longitude { get; init; }
 
         [JsonPropertyName("location")]
-        public LaunchPadLocationResponse Location { get; init; }
+        public PadLocationResponse Location { get; init; }
 
         [JsonPropertyName("map_image")]
         public string MapImageUrl { get; init; }

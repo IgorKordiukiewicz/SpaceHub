@@ -3,8 +3,9 @@ using System.Globalization;
 
 namespace Web.ViewModels
 {
-    public record LaunchViewModel
+    public record LaunchIndexViewModel
     {
+        public string Id { get; init; }
         public string Name { get; init; }
         public string ImageUrl { get; init; }
         public string ServiceProviderName { get; init; }
@@ -12,8 +13,9 @@ namespace Web.ViewModels
         public string Status { get; init; }
         public string Date { get; init; }
 
-        public LaunchViewModel(LaunchResponse launchResponse)
+        public LaunchIndexViewModel(LaunchResponse launchResponse)
         {
+            Id = launchResponse.Id;
             Name = launchResponse.Name;
             ImageUrl = launchResponse.ImageUrl;
             ServiceProviderName = launchResponse.ServiceProvider.Name;

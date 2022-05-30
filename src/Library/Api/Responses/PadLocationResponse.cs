@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchPadLocationResponse
+    public record PadLocationResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }

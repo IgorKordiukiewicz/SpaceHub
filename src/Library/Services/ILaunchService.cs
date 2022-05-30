@@ -10,5 +10,7 @@ namespace Library.Services
     public interface ILaunchService
     {
         Task<List<LaunchResponse>> GetUpcomingLaunchesAsync();
+
+        Task<LaunchDetailResponse> GetUpcomingLaunchAsync(string id);
     }
 }

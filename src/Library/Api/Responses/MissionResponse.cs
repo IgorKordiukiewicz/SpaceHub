@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchMissionResponse
+    public record MissionResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }
@@ -20,6 +20,6 @@ namespace Library.Api.Responses
         public string Type { get; init; }
 
         [JsonPropertyName("orbit")]
-        public LaunchMissionOrbitResponse Orbit { get; init; }
+        public OrbitResponse Orbit { get; init; }
     }
 }

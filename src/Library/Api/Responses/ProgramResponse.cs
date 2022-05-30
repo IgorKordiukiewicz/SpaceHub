@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchProgramResponse
+    public record ProgramResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }
@@ -17,7 +17,7 @@ namespace Library.Api.Responses
         public string Description { get; init; }
 
         [JsonPropertyName("agencies")]
-        public List<LaunchProgramAgencyResponse> Agencies { get; init; }
+        public List<AgencyResponse> Agencies { get; init; }
 
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; init; }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Library.Api.Responses
 {
-    public record LaunchServiceProviderResponse
+    public record RocketConfigResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }
@@ -18,7 +14,13 @@ namespace Library.Api.Responses
         [JsonPropertyName("name")]
         public string Name { get; init; }
 
-        [JsonPropertyName("type")]
-        public string Type { get; init; }
+        [JsonPropertyName("family")]
+        public string Family { get; init; }
+
+        [JsonPropertyName("full_name")]
+        public string FullName { get; init; }
+
+        [JsonPropertyName("variant")]
+        public string Variant { get; init; }
     }
 }

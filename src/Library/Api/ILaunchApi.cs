@@ -12,5 +12,8 @@ namespace Library.Api
     {
         [Get("/launch/upcoming/")]
         Task<LaunchesResponse> GetUpcomingLaunches();
+
+        [Get("/launch/upcoming/{id}")]
+        Task<LaunchDetailResponse> GetUpcomingLaunch(string id);
     }
 }

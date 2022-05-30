@@ -10,7 +10,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public List<LaunchViewModel> Launches { get; set; }
+        public List<LaunchIndexViewModel> Launches { get; set; }
 
         public IndexModel(ILaunchService launchService)
         {
@@ -20,7 +20,7 @@ namespace Web.Pages.Launches
         public async Task OnGet()
         {
             var result = await _launchService.GetUpcomingLaunchesAsync();
-            Launches = result.Select(l => new LaunchViewModel(l)).ToList();
+            Launches = result.Select(l => new LaunchIndexViewModel(l)).ToList();
         }
     }
 }

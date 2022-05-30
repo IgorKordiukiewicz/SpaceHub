@@ -2,7 +2,7 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchMissionOrbitResponse
+    public record OrbitResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }

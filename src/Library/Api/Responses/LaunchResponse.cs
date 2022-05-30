@@ -9,6 +9,9 @@ namespace Library.Api.Responses
 {
     public record LaunchResponse
     {
+        [JsonPropertyName("id")]
+        public string Id { get; init; }
+        
         [JsonPropertyName("name")]
         public string Name { get; init; }
 
@@ -25,19 +28,19 @@ namespace Library.Api.Responses
         public DateTime? WindowEnd { get; init; }
 
         [JsonPropertyName("launch_service_provider")]
-        public LaunchServiceProviderResponse ServiceProvider { get; init; }
+        public AgencyResponse ServiceProvider { get; init; }
 
         [JsonPropertyName("rocket")]
-        public LaunchRocketResponse Rocket { get; init; }
+        public RocketResponse Rocket { get; init; }
 
         [JsonPropertyName("mission")]
-        public LaunchMissionResponse Mission { get; init; }
+        public MissionResponse Mission { get; init; }
 
         [JsonPropertyName("pad")]
-        public LaunchPadResponse Pad { get; init; }
+        public PadResponse Pad { get; init; }
 
         [JsonPropertyName("program")]
-        public List<LaunchProgramResponse> Programs { get; init; }
+        public List<ProgramResponse> Programs { get; init; }
 
         [JsonPropertyName("image")]
         public string ImageUrl { get; init; }

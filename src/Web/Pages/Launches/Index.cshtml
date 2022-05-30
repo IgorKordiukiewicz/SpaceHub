@@ -9,7 +9,7 @@
         <div class="col-4 d-flex align-items-stretch pb-5">
             <div class="card" style="width: 100%">
                 <img class="card-img-top" src="@launch.ImageUrl"/>
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
                     <h4 class="card-title text-center">
                         @launch.Name
                     </h4>
@@ -18,14 +18,15 @@
                         <br/>
                         <i class="bi bi-geo-alt"></i>&nbsp; @launch.PadName
                     </h5>
-                    <hr/>
-                    @if(launch.Date != null)
-                    {
-                        <h4 class="card-text text-center">
-                            @launch.Date
-                        </h4>  
-                    }
-                    <h4 class="card-text text-center @if(launch.Status == "Go")
+                    <div class="mt-auto">
+                        <hr/>
+                        @if(launch.Date != null)
+                        {
+                            <h4 class="card-text text-center">
+                                @launch.Date
+                            </h4>  
+                        }
+                        <h4 class="card-text text-center mt-auto @if(launch.Status == "Go")
                         {
                             <text>text-success</text>
                         }
@@ -34,7 +35,10 @@
                             <text>text-warning</text>
                         }">
                         (@launch.Status)
-                    </h4>
+                        </h4>
+                        <a asp-page="Details" asp-route-id="@launch.Id" class="btn btn-secondary" style="width:100%">Details</a>
+                    </div>
+                    
                 </div>
             </div>
         </div>

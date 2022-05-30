@@ -12,7 +12,7 @@ using AutoFixture;
 
 namespace UnitTests.Web.ViewModels
 {
-    public class LaunchViewModelTests
+    public class LaunchIndexViewModelTests
     {
         private readonly Fixture _fixture = new();
         
@@ -21,7 +21,7 @@ namespace UnitTests.Web.ViewModels
         {
             var launchResponse = _fixture.Build<LaunchResponse>().With(l => l.Date, new DateTime(2022, 1, 1)).Create();
 
-            LaunchViewModel result = new(launchResponse);
+            LaunchIndexViewModel result = new(launchResponse);
 
             result.Date.Should().Be("01/01/2022");
         }
@@ -31,7 +31,7 @@ namespace UnitTests.Web.ViewModels
         {
             var launchResponse = _fixture.Build<LaunchResponse>().With(l => l.Date, new DateTime(2022, 1, 1, 1, 1, 1)).Create();
 
-            LaunchViewModel result = new(launchResponse);
+            LaunchIndexViewModel result = new(launchResponse);
 
             result.Date.Should().Be("01/01/2022 01:01");
         }
@@ -41,7 +41,7 @@ namespace UnitTests.Web.ViewModels
         {
             var launchResponse = _fixture.Build<LaunchResponse>().Without(l => l.Date).Create();
 
-            LaunchViewModel result = new(launchResponse);
+            LaunchIndexViewModel result = new(launchResponse);
 
             result.Date.Should().BeEmpty();
         }

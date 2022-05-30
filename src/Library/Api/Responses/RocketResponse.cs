@@ -2,12 +2,12 @@
 
 namespace Library.Api.Responses
 {
-    public record LaunchRocketResponse
+    public record RocketResponse
     {
         [JsonPropertyName("id")]
         public int Id { get; init; }
 
         [JsonPropertyName("configuration")]
-        public LaunchRocketConfigurationResponse Configuration { get; init; }
+        public RocketConfigResponse Configuration { get; init; }
     }
 }
