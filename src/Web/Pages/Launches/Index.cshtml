@@ -14,15 +14,18 @@
                         @launch.Name
                     </h4>
                     <h5 class="card-subtitle text-muted text-center">
-                        <i class="bi bi-building"></i>&nbsp; @launch.ServiceProvider.Name
+                        <i class="bi bi-building"></i>&nbsp; @launch.ServiceProviderName
                         <br/>
-                        <i class="bi bi-geo-alt"></i>&nbsp; @launch.Pad.Name
+                        <i class="bi bi-geo-alt"></i>&nbsp; @launch.PadName
                     </h5>
                     <hr/>
-                    <h4 class="card-text text-center">
-                        @launch.Date
-                    </h4>
-                    <h4 class="card-text text-center @if(launch.Status.Abbrevation == "Go")
+                    @if(launch.Date != null)
+                    {
+                        <h4 class="card-text text-center">
+                            @launch.Date
+                        </h4>  
+                    }
+                    <h4 class="card-text text-center @if(launch.Status == "Go")
                         {
                             <text>text-success</text>
                         }
@@ -30,7 +33,7 @@
                         {
                             <text>text-warning</text>
                         }">
-                        (@launch.Status.Abbrevation)
+                        (@launch.Status)
                     </h4>
                 </div>
             </div>

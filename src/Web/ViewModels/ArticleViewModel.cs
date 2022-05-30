@@ -1,4 +1,5 @@
 ﻿using Library.Api.Responses;
+using System.Globalization;
 
 namespace Web.ViewModels
 {
@@ -18,7 +19,7 @@ namespace Web.ViewModels
             Url = articleResponse.Url;
             ImageUrl = articleResponse.ImageUrl;
             NewsSite = articleResponse.NewsSite;
-            PublishDate = articleResponse.PublishDate.ToString("dd/MM/yyyy");
+            PublishDate = articleResponse.PublishDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
     }
 }

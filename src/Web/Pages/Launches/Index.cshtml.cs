@@ -2,6 +2,7 @@ using Library.Api.Responses;
 using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Web.ViewModels;
 
 namespace Web.Pages.Launches
 {
@@ -9,7 +10,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public List<LaunchResponse> Launches { get; set; }
+        public List<LaunchViewModel> Launches { get; set; }
 
         public IndexModel(ILaunchService launchService)
         {
@@ -18,7 +19,8 @@ namespace Web.Pages.Launches
 
         public async Task OnGet()
         {
-            Launches = await _launchService.GetUpcomingLaunchesAsync();
+            var result = await _launchService.GetUpcomingLaunchesAsync();
+            Launches = result.Select(l => new LaunchViewModel(l)).ToList();
         }
     }
 }

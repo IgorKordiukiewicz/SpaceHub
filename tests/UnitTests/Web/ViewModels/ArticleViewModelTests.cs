@@ -8,35 +8,22 @@ using Web.ViewModels;
 using Xunit;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using AutoFixture;
 
 namespace UnitTests.Web.ViewModels
 {
     public class ArticleViewModelTests
     {
+        private readonly Fixture _fixture = new();
+
         [Fact]
-        public void PropertiesAssignedProperly()
+        public void Date_ShouldBeOnlyDate()
         {
-            ArticleResponse articleResponse = new()
-            {
-                Title = "Title",
-                Summary = "Summary",
-                Url = "https://testUrl",
-                ImageUrl = "https://testImgUrl",
-                NewsSite = "NewsSite",
-                PublishDate = new DateTime(2022, 1, 1, 1, 1, 1)
-            };
+            var articleResponse = _fixture.Build<ArticleResponse>().With(a => a.PublishDate, new DateTime(2022, 1, 1, 1, 1, 1)).Create();
 
             ArticleViewModel result = new(articleResponse);
 
-            using (new AssertionScope())
-            {
-                result.Title.Should().Be("Title");
-                result.Summary.Should().Be("Summary");
-                result.Url.Should().Be("https://testUrl");
-                result.ImageUrl.Should().Be("https://testImgUrl");
-                result.NewsSite.Should().Be("NewsSite");
-                result.PublishDate.Should().Be("01.01.2022");
-            }
+            result.PublishDate.Should().Be("01/01/2022");
         }
     }
 }
