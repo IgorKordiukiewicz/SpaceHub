@@ -11,6 +11,7 @@ using Refit;
 using FluentValidation;
 using Library.Api.Requests;
 using Library.Validators;
+using Library.Api.Debug;
 
 namespace Library
 {
@@ -29,11 +30,12 @@ namespace Library
                     httpClient.BaseAddress = new Uri(configuration["Api:Article:BaseAddress"]);
                 });
 
-            services.AddRefitClient<ILaunchApi>()
-                .ConfigureHttpClient(httpClient =>
-                {
-                    httpClient.BaseAddress = new Uri(configuration["Api:Launch:BaseAddress"]);
-                });
+            //services.AddRefitClient<ILaunchApi>()
+            //    .ConfigureHttpClient(httpClient =>
+            //    {
+            //        httpClient.BaseAddress = new Uri(configuration["Api:Launch:BaseAddress"]);
+            //    });
+            services.AddSingleton<ILaunchApi, LaunchApiDebug>();
         }
     }
 }

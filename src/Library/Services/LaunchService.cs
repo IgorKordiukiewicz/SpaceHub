@@ -21,6 +21,7 @@ namespace Library.Services
         {
             var result = await _launchApi.GetUpcomingLaunches();
             return result.Launches.ToList();
+            
         }
     }
 }
