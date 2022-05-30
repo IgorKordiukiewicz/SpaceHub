@@ -1,9 +1,30 @@
 ﻿@page
 @model Web.Pages.Launches.IndexModel
 
-@foreach(var launch in Model.Launches)
+@if(Model.Launches != null)
 {
-    <h4>
-        @launch.Name
-    </h4>
+    <div class="row">
+    @foreach(var launch in Model.Launches)
+    {
+        <div class="col-4 d-flex align-items-stretch pb-5">
+            <div class="card">
+                <img class="card-img-top" src="@launch.ImageUrl"/>
+                <div class="card-body">
+                    <h4 class="card-title">
+                        @launch.Name
+                    </h4>
+                    <h5 class="card-subtitle text-muted">
+                        @launch.ServiceProvider.Name
+                        <br/>
+                        @launch.Pad.Name
+                    </h5>
+                    <p class="card-text">
+                        @launch.Date
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
 }
+
