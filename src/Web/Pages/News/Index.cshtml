@@ -1,38 +1,42 @@
 ﻿@page
 @model Web.Pages.News.IndexModel
 
-<form class="d-flex">
+<form class="d-flex pb-3">
     <input asp-for="SearchValue" class="form-control me-sm-2" placeholder="Search" />
     <button class="btn btn-success my-2 my-sm-0" asp-page="/News/Index" type="submit">Search</button>
 </form>
 
 @if(Model.Articles != null)
 {
-    <ul class="list-group mt-3">
+    <div class="row">
     @foreach(var article in Model.Articles)
     {
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-3">
-                    <img src="@article.ImageUrl" width="100%"/>
-                </div>
-                <div class="col-8">
-                    <h4>
+        <div class="col-6 d-flex align-items-stretch pb-3">
+            <div class="card" style="width: 100%">
+                <img class="card-img-top" src="@article.ImageUrl"/>
+                <div class="card-body">
+                    <h4 class="card-title text-center">
                         <a href="@article.Url" target="_blank" style="text-decoration: none">@article.Title</a>
                     </h4>
-                    <p>@article.Summary</p>
-                </div>
-                <div class="col-1 align-text-bottom">
-                    <h6 class="text-muted text-end">
-                        @article.NewsSite
-                        <br/>
-                        @article.PublishDate
-                    </h6>
+                    <hr/>
+                    <p class="card-text text-center">
+                        @article.Summary
+                    </p>
+                    <hr/>
+                    <div class="d-flex justify-content-between align-items-end text-muted">
+                        <h6>
+                            @article.NewsSite
+                        </h6>
+                        <h6>
+                            @article.PublishDate
+                        </h6>
+                        
+                    </div>
                 </div>
             </div>
-        </li>
+        </div>
     }
-    </ul>
+    </div>
 
     <ul class="pagination pagination-lg d-flex justify-content-center pt-3">
         <li class="page-item @if(Model.PageNumber == 1){<text>disabled</text>}">

@@ -7,20 +7,31 @@
     @foreach(var launch in Model.Launches)
     {
         <div class="col-4 d-flex align-items-stretch pb-5">
-            <div class="card">
+            <div class="card" style="width: 100%">
                 <img class="card-img-top" src="@launch.ImageUrl"/>
                 <div class="card-body">
-                    <h4 class="card-title">
+                    <h4 class="card-title text-center">
                         @launch.Name
                     </h4>
-                    <h5 class="card-subtitle text-muted">
-                        @launch.ServiceProvider.Name
+                    <h5 class="card-subtitle text-muted text-center">
+                        <i class="bi bi-building"></i>&nbsp; @launch.ServiceProvider.Name
                         <br/>
-                        @launch.Pad.Name
+                        <i class="bi bi-geo-alt"></i>&nbsp; @launch.Pad.Name
                     </h5>
-                    <p class="card-text">
+                    <hr/>
+                    <h4 class="card-text text-center">
                         @launch.Date
-                    </p>
+                    </h4>
+                    <h4 class="card-text text-center @if(launch.Status.Abbrevation == "Go")
+                        {
+                            <text>text-success</text>
+                        }
+                        else 
+                        {
+                            <text>text-warning</text>
+                        }">
+                        (@launch.Status.Abbrevation)
+                    </h4>
                 </div>
             </div>
         </div>
