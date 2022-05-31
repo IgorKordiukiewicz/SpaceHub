@@ -12,6 +12,10 @@ namespace Web.ViewModels
         public string? WindowEnd { get; init; }
         public string StatusName { get; init; }
         public string StatusDescription { get; init; }
+        public string AgencyName { get; init; }
+        public string AgencyCountryCode { get; init; }
+        public string? AgencyImgUrl { get; init; }
+        public string? AgencyDescription { get; init; }
 
         public LaunchDetailViewModel(LaunchDetailResponse launchResponse)
         {
@@ -19,49 +23,13 @@ namespace Web.ViewModels
             ImageUrl = launchResponse.ImageUrl;
             StatusName = launchResponse.Status.Name;
             StatusDescription = launchResponse.Status.Description;
-
-            if(launchResponse.Date != null)
-            {
-                var date = launchResponse.Date.Value;
-                if (date.Hour == 0 && date.Minute == 0)
-                {
-                    Date = date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    Date = date.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                }
-            }
-            else
-            {
-                Date = string.Empty;
-            }
-
-            if (launchResponse.WindowStart != null)
-            {
-                var date = launchResponse.WindowStart.Value;
-                if (date.Hour == 0 && date.Minute == 0)
-                {
-                    WindowStart = date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    WindowStart = date.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                }
-            }
-
-            if (launchResponse.WindowEnd != null)
-            {
-                var date = launchResponse.WindowStart.Value;
-                if (date.Hour == 0 && date.Minute == 0)
-                {
-                    WindowEnd = date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    WindowEnd = date.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                }
-            }
+            Date = Utils.DateToString(launchResponse.Date) ?? string.Empty;
+            WindowStart = Utils.DateToString(launchResponse.WindowStart);
+            WindowEnd = Utils.DateToString(launchResponse.WindowEnd);
+            AgencyName = launchResponse.ServiceProvider.Name;
+            AgencyCountryCode = launchResponse.ServiceProvider.CountryCode;
+            AgencyImgUrl = launchResponse.ServiceProvider.ImageUrl;
+            AgencyDescription = launchResponse.ServiceProvider.Description;
         }
     }
 }

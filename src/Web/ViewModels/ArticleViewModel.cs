@@ -19,7 +19,7 @@ namespace Web.ViewModels
             Url = articleResponse.Url;
             ImageUrl = articleResponse.ImageUrl;
             NewsSite = articleResponse.NewsSite;
-            PublishDate = articleResponse.PublishDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            PublishDate = Utils.DateToString(articleResponse.PublishDate, true);
         }
     }
 }

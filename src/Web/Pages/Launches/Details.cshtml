@@ -2,8 +2,12 @@
 @model Web.Pages.Launches.DetailsModel
 
 <div class="row">
+    <h3>
+        Launch
+    </h3>
+    <hr />
     <div class="col-12">
-        <div class="card">
+        <div class="card mb-4">
             <div class="row">
                 <div class="col-3">
                     <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left" alt="..." />
@@ -14,15 +18,6 @@
                             @Model.Launch.Name
                         </h2>
                         <hr />
-                        <h3 class="text-center">
-                            @Model.Launch.Date
-                        </h3>
-                        @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
-                        {
-                            <h5 class="text-muted text-center">
-                                @Model.Launch.WindowStart - @Model.Launch.WindowEnd
-                            </h5>
-                        }
                         <h3 class="text-center @if(Model.Launch.StatusName == "Go for Launch")
                         {
                             <text>text-success</text>
@@ -33,12 +28,49 @@
                         }">
                         @Model.Launch.StatusName
                         </h3>
-                        <h5 class="text-center text-muted">
+                        <h5 class="text-center text-muted mb-1">
                             @Model.Launch.StatusDescription
                         </h5>
+                        <h3 class="text-center">
+                            @Model.Launch.Date
+                        </h3>
+                        @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
+                        {
+                            <h5 class="text-muted text-center">
+                                @Model.Launch.WindowStart - @Model.Launch.WindowEnd
+                            </h5>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <h3>
+    Agency
+    </h3>
+    <hr />
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="col-3">
+                    <img src="@Model.Launch.AgencyImgUrl" class="img-fluid rounded-start card-img-left" alt="..." />
+                </div>
+                <div class="col-9">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">
+                            @Model.Launch.AgencyName (@Model.Launch.AgencyCountryCode)
+                        </h2>
+                        <hr />
+                        @if(Model.Launch.AgencyDescription != null)
+                        {
+                            <h5 class="text-center text-muted">
+                                @Model.Launch.AgencyDescription
+                            </h5>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

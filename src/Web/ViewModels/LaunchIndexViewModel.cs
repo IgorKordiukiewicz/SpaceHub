@@ -11,7 +11,7 @@ namespace Web.ViewModels
         public string ServiceProviderName { get; init; }
         public string PadName { get; init; }
         public string Status { get; init; }
-        public string Date { get; init; }
+        public string? Date { get; init; }
 
         public LaunchIndexViewModel(LaunchResponse launchResponse)
         {
@@ -21,23 +21,7 @@ namespace Web.ViewModels
             ServiceProviderName = launchResponse.ServiceProvider.Name;
             PadName = launchResponse.Pad.Name;
             Status = launchResponse.Status.Name;
-
-            if(launchResponse.Date != null)
-            {
-                var date = launchResponse.Date.Value;
-                if(date.Hour == 0 && date.Minute == 0)
-                {
-                    Date = date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    Date = date.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                }
-            }
-            else
-            {
-                Date = string.Empty;
-            }
+            Date = Utils.DateToString(launchResponse.Date);
         }
     }
 }
