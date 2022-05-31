@@ -20,7 +20,7 @@ namespace Web.ViewModels
             ImageUrl = launchResponse.ImageUrl;
             ServiceProviderName = launchResponse.ServiceProvider.Name;
             PadName = launchResponse.Pad.Name;
-            Status = launchResponse.Status.Abbrevation;
+            Status = launchResponse.Status.Name;
 
             if(launchResponse.Date != null)
             {

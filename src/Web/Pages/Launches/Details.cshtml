@@ -1,4 +1,44 @@
 ﻿@page
 @model Web.Pages.Launches.DetailsModel
 
-@Model.Launch.Name
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="col-3">
+                    <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left" alt="..." />
+                </div>
+                <div class="col-9">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">
+                            @Model.Launch.Name
+                        </h2>
+                        <hr />
+                        <h3 class="text-center">
+                            @Model.Launch.Date
+                        </h3>
+                        @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
+                        {
+                            <h5 class="text-muted text-center">
+                                @Model.Launch.WindowStart - @Model.Launch.WindowEnd
+                            </h5>
+                        }
+                        <h3 class="text-center @if(Model.Launch.StatusName == "Go for Launch")
+                        {
+                            <text>text-success</text>
+                        }
+                        else 
+                        {
+                            <text>text-warning</text>
+                        }">
+                        @Model.Launch.StatusName
+                        </h3>
+                        <h5 class="text-center text-muted">
+                            @Model.Launch.StatusDescription
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
