@@ -42,5 +42,31 @@ namespace UnitTests.Web.ViewModels
 
             result.Should().BeNull();
         }
+
+        [Fact]
+        public void ValueToStringWithSymbol_ShouldReturnValueWithSymbolWithSpaceBetween_WhenValueIsNotNullAndSpaceBetweenIsTrue()
+        {
+            var result = Utils.ValueToStringWithSymbol(5, "kg", true, "-");
+
+            result.Should().Be("5 kg");
+        }
+
+        [Fact]
+        public void ValueToStringWithSymbol_ShouldReturnValueWithSymbolWithoutSpaceBetween_WhenValueIsNotNullAndSpaceBetweenIsFalse()
+        {
+            var result = Utils.ValueToStringWithSymbol(5, "kg", false, "-");
+
+            result.Should().Be("5kg");
+        }
+
+        [Fact]
+        public void ValueToStringWithSymbol_ShouldReturnPlaceholder_WhenValueIsNull()
+        {
+            int? value = null;
+
+            var result = Utils.ValueToStringWithSymbol(value, "kg", true, "-");
+
+            result.Should().Be("-");
+        }
     }
 }

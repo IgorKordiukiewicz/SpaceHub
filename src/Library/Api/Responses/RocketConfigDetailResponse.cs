@@ -4,6 +4,9 @@ namespace Library.Api.Responses
 {
     public record RocketConfigDetailResponse : RocketConfigResponse
     {
+        [JsonPropertyName("description")]
+        public string Description { get; init; }
+        
         [JsonPropertyName("manufacturer")]
         public AgencyDetailResponse Manufacturer { get; init; }
         
@@ -32,10 +35,10 @@ namespace Library.Api.Responses
         public int? LaunchMass { get; init; }
 
         [JsonPropertyName("leo_capacity")]
-        public int? LowEarthOrbitCapacity { get; init; }
+        public int? LeoCapacity { get; init; }
 
         [JsonPropertyName("gto_capacity")]
-        public int? GeostationaryTransferOrbitCapacity { get; init; }
+        public int? GeoCapacity { get; init; }
 
         [JsonPropertyName("to_thrust")]
         public int? ThrustAtLiftoff { get; init; }

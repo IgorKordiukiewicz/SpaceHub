@@ -10,7 +10,7 @@
         <div class="card mb-4">
             <div class="row">
                 <div class="col-3">
-                    <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left" alt="..." />
+                    <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left" alt="Launch Image" />
                 </div>
                 <div class="col-9">
                     <div class="card-body">
@@ -46,14 +46,14 @@
         </div>
     </div>
     <h3>
-    Agency
+        Agency
     </h3>
     <hr />
     <div class="col-12">
-        <div class="card">
+        <div class="card mb-4">
             <div class="row">
                 <div class="col-3">
-                    <img src="@Model.Launch.AgencyImgUrl" class="img-fluid rounded-start card-img-left" alt="..." />
+                    <img src="@Model.Launch.AgencyImageUrl" class="img-fluid rounded-start card-img-left" alt="Agency Image" />
                 </div>
                 <div class="col-9">
                     <div class="card-body">
@@ -72,5 +72,100 @@
             </div>
         </div>
     </div>
-
+    <h3>
+        Rocket
+    </h3>
+    <hr />
+    <div class="col-12">
+        <div class="card">
+            <div class="row">
+                <div class="col-3">
+                    <img src="@Model.Launch.RocketImageUrl" class="img-fluid rounded-start card-img-left" alt="Rocket Image" />
+                </div>
+                <div class="col-9">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">
+                            @Model.Launch.RocketName
+                        </h2>
+                        <hr />
+                        <h5 class="text-center text-muted">
+                            @Model.Launch.RocketDescription
+                        </h5>
+                        <hr />
+                        <div class="row">
+                            <div class="col-3">
+                                Length
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketLength
+                            </div>
+                            <div class="col-3">
+                                Diameter
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketDiameter
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                Max Stages
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketMaxStages
+                            </div>
+                            <div class="col-3">
+                                Launch Cost
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketLaunchCost
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                Litfoff Mass
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketLiftoffMass
+                            </div>
+                            <div class="col-3">
+                                Liftoff Thrust
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketLiftoffThrust
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3">
+                                GEO Capacity
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketGeoCapacity
+                            </div>
+                            <div class="col-3">
+                                LEO Capacity
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketLeoCapacity
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-3">
+                                First Launch
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketFirstLaunch
+                            </div>
+                            <div class="col-3">
+                                Successful Launches
+                            </div>
+                            <div class="col-3 text-end">
+                                @Model.Launch.RocketSuccessfulLaunches
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -23,5 +23,17 @@ namespace Web.ViewModels
                 return null;
             }
         }
+
+        public static string ValueToStringWithSymbol<T>(T? value, string symbol, bool spaceBetween = true, string placeholder = "-")
+        {
+            if(value != null)
+            {
+                return value.ToString() + (spaceBetween ? " " : "") + symbol;
+            }
+            else
+            {
+                return placeholder;
+            }
+        }
     }
 }
