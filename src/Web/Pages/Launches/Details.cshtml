@@ -9,23 +9,23 @@
     <div class="col-12">
         <div class="card mb-4">
             <div class="row">
-                <div class="col-3">
+                <div class="col-lg-3">
                     <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left-cover"/>
                 </div>
-                <div class="col-9">
-                    <div class="card-body">
-                        <h2 class="card-title text-center">
+                <div class="col-lg-9">
+                    <div class="card-body text-center">
+                        <h2 class="card-title">
                             @Model.Launch.Name
                         </h2>
                         @if(Model.Launch.Mission != null)
                         {
                             <hr />
-                            <h5 class="text-center text-muted">
+                            <h5 class="text-muted">
                                 @Model.Launch.Mission
                             </h5>
                         }
                         <hr />
-                        <h3 class="text-center @if(Model.Launch.StatusName == "Go for Launch")
+                        <h3 class="@if(Model.Launch.StatusName == "Go for Launch")
                         {
                             <text>text-success</text>
                         }
@@ -35,15 +35,15 @@
                         }">
                         @Model.Launch.StatusName
                         </h3>
-                        <h5 class="text-center text-muted mb-1">
+                        <h5 class="text-muted">
                             @Model.Launch.StatusDescription
                         </h5>
-                        <h3 class="text-center">
+                        <h3>
                             @Model.Launch.Date
                         </h3>
                         @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
                         {
-                            <h5 class="text-muted text-center">
+                            <h5 class="text-muted">
                                 @Model.Launch.WindowStart - @Model.Launch.WindowEnd
                             </h5>
                         }
@@ -59,18 +59,18 @@
     <div class="col-12">
         <div class="card mb-4">
             <div class="row">
-                <div class="col-3">
+                <div class="col-lg-3">
                     <img src="@Model.Launch.AgencyImageUrl" class="img-fluid rounded-start card-img-left-scale"/>
                 </div>
-                <div class="col-9">
-                    <div class="card-body">
-                        <h2 class="card-title text-center">
+                <div class="col-lg-9">
+                    <div class="card-body text-center">
+                        <h2 class="card-title">
                             @Model.Launch.AgencyName (@Model.Launch.AgencyCountryCode)
                         </h2>
                         <hr />
                         @if(Model.Launch.AgencyDescription != null)
                         {
-                            <h5 class="text-center text-muted">
+                            <h5 class="text-muted">
                                 @Model.Launch.AgencyDescription
                             </h5>
                         }
@@ -86,10 +86,10 @@
     <div class="col-12">
         <div class="card mb-4">
             <div class="row">
-                <div class="col-3">
+                <div class="col-lg-3">
                     <img src="@Model.Launch.RocketImageUrl" class="img-fluid rounded-start card-img-left-cover" />
                 </div>
-                <div class="col-9">
+                <div class="col-lg-9">
                     <div class="card-body">
                         <h2 class="card-title text-center">
                             @Model.Launch.RocketName
@@ -181,11 +181,11 @@
     <hr />
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
-                <h2 class="card-title text-center">
+            <div class="card-body text-center">
+                <h2 class="card-title">
                     @Model.Launch.PadName
                 </h2>
-                <h4 class="text-center text-muted">
+                <h4 class="text-muted">
                     @Model.Launch.PadLocationName
                 </h4>
             </div>
