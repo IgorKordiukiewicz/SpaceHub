@@ -6,7 +6,8 @@ namespace Web.ViewModels
     public record LaunchDetailViewModel
     {
         public string Name { get; init; }
-        public string ImageUrl { get; init; }
+        public string ImageUrl { get; init; }    
+        public string? Mission { get; init; }
         public string Date { get; init; }
         public string? WindowStart { get; init; }
         public string? WindowEnd { get; init; }
@@ -28,13 +29,16 @@ namespace Web.ViewModels
         public string RocketGeoCapacity { get; init; }
         public string RocketLeoCapacity { get; init; }
         public string RocketFirstLaunch { get; init; }
-
         public string RocketSuccessfulLaunches { get; init; }
+        public string PadName { get; init; }
+        public string PadLocationName { get; init; }
+        public string PadMapImageUrl { get; init; }
 
         public LaunchDetailViewModel(LaunchDetailResponse launchResponse)
         {
             Name = launchResponse.Name;
             ImageUrl = launchResponse.ImageUrl;
+            Mission = launchResponse.Mission?.Description;
             StatusName = launchResponse.Status.Name;
             StatusDescription = launchResponse.Status.Description;
             Date = Utils.DateToString(launchResponse.Date) ?? string.Empty;
@@ -43,7 +47,7 @@ namespace Web.ViewModels
 
             AgencyName = launchResponse.ServiceProvider.Name;
             AgencyCountryCode = launchResponse.ServiceProvider.CountryCode;
-            AgencyImageUrl = launchResponse.ServiceProvider.ImageUrl;
+            AgencyImageUrl = launchResponse.ServiceProvider.LogoUrl;
             AgencyDescription = launchResponse.ServiceProvider.Description;
 
             RocketName = launchResponse.Rocket.Configuration.Name;
@@ -70,6 +74,10 @@ namespace Web.ViewModels
             {
                 RocketSuccessfulLaunches = "0/0";
             }
+
+            PadName = launchResponse.Pad.Name;
+            PadLocationName = launchResponse.Pad.Location.Name;
+            PadMapImageUrl = launchResponse.Pad.MapImageUrl;
         }
     }
 }

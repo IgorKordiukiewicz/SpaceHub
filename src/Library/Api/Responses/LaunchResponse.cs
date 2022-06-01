@@ -34,7 +34,7 @@ namespace Library.Api.Responses
         public RocketResponse Rocket { get; init; }
 
         [JsonPropertyName("mission")]
-        public MissionResponse Mission { get; init; }
+        public MissionResponse? Mission { get; init; }
 
         [JsonPropertyName("pad")]
         public PadResponse Pad { get; init; }

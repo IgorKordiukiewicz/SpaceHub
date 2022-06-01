@@ -19,27 +19,27 @@ namespace Library.Api.Responses
         public new RocketDetailResponse Rocket { get; init; }
 
         [JsonPropertyName("orbital_launch_attempt_count")]
-        public int OrbitalLaunchAttemptCount { get; init; }
+        public int? OrbitalLaunchAttemptCount { get; init; }
 
         [JsonPropertyName("location_launch_attempt_count")]
-        public int LocationLaunchAttemptCount { get; init; }
+        public int? LocationLaunchAttemptCount { get; init; }
 
         [JsonPropertyName("pad_launch_attempt_count")]
-        public int PadLaunchAttemptCount { get; init; }
+        public int? PadLaunchAttemptCount { get; init; }
 
         [JsonPropertyName("agency_launch_attempt_count")]
-        public int AgencyLaunchAttemptCount { get; init; }
+        public int? AgencyLaunchAttemptCount { get; init; }
 
         [JsonPropertyName("orbital_launch_attempt_count_year")]
-        public int OrbitalLaunchAttemptCountYear { get; init; }
+        public int? OrbitalLaunchAttemptCountYear { get; init; }
 
         [JsonPropertyName("location_launch_attempt_count_year")]
-        public int LocationLaunchAttemptCountYear { get; init; }
+        public int? LocationLaunchAttemptCountYear { get; init; }
 
         [JsonPropertyName("pad_launch_attempt_count_year")]
-        public int PadLaunchAttemptCountYear { get; init; }
+        public int? PadLaunchAttemptCountYear { get; init; }
 
         [JsonPropertyName("agency_launch_attempt_count_year")]
-        public int AgencyLaunchAttemptCountYear { get; init; }
+        public int? AgencyLaunchAttemptCountYear { get; init; }
     }
 }

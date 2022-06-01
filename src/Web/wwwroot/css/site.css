@@ -23,8 +23,14 @@ body {
     object-fit: cover;
 }
 
-.card-img-left {
+.card-img-left-cover {
+    width: 100%;
+    height: 25vw;
+    object-fit: cover;
+}
+
+.card-img-left-scale {
     width: 100%;
     height: 20vw;
-    object-fit: cover;
+    object-fit: scale-down;
 }
