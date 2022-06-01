@@ -23,9 +23,15 @@ namespace Library.Services
             return result.Launches.ToList();
         }
 
-        public async Task<LaunchDetailResponse> GetUpcomingLaunchAsync(string id)
+        public async Task<List<LaunchResponse>> GetPreviousLaunchesAsync()
         {
-            var result = await _launchApi.GetUpcomingLaunch(id);
+            var result = await _launchApi.GetPreviousLaunches();
+            return result.Launches.ToList();
+        }
+
+        public async Task<LaunchDetailResponse> GatLaunchAsync(string id)
+        {
+            var result = await _launchApi.GetLaunch(id);
             return result;
         }
     }

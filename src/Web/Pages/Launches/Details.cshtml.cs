@@ -18,7 +18,7 @@ namespace Web.Pages.Launches
 
         public async Task OnGet(string id)
         {
-            var result = await _launchService.GetUpcomingLaunchAsync(id);
+            var result = await _launchService.GatLaunchAsync(id);
             Launch = new(result);
         }
     }

@@ -13,7 +13,10 @@ namespace Library.Api
         [Get("/launch/upcoming/")]
         Task<LaunchesResponse> GetUpcomingLaunches();
 
-        [Get("/launch/upcoming/{id}")]
-        Task<LaunchDetailResponse> GetUpcomingLaunch(string id);
+        [Get("/launch/previous/")]
+        Task<LaunchesResponse> GetPreviousLaunches();
+
+        [Get("/launch/{id}")]
+        Task<LaunchDetailResponse> GetLaunch(string id);
     }
 }

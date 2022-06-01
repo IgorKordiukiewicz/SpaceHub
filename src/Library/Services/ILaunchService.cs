@@ -11,6 +11,8 @@ namespace Library.Services
     {
         Task<List<LaunchResponse>> GetUpcomingLaunchesAsync();
 
-        Task<LaunchDetailResponse> GetUpcomingLaunchAsync(string id);
+        Task<List<LaunchResponse>> GetPreviousLaunchesAsync();
+
+        Task<LaunchDetailResponse> GatLaunchAsync(string id);
     }
 }

@@ -22,13 +22,19 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/News/Index">News</a>
+                            <a class="nav-link" asp-page="/News/Index">News</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Launches/Index">Launches</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                                Launches
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" asp-page="/Launches/Index" asp-route-launchDateType="@LaunchDateType.Upcoming">Upcoming</a></li>
+                                <li><a class="dropdown-item" asp-page="/Launches/Index" asp-route-launchDateType="@LaunchDateType.Previous">Previous</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
