@@ -26,7 +26,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRockets_ShouldReturnRocketsList()
+        public async Task GetRocketsAsync_ShouldReturnRocketsList()
         {
             List<RocketConfigResponse> expected = new()
             {
@@ -36,7 +36,25 @@ namespace UnitTests.Library.Services
             var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expected).Create();
             _launchApi.Setup(l => l.GetRocketsAsync(50, 0)).Returns(Task.FromResult(rocketsResponse));
             
-            var result = await _rocketService.GetRocketsAsync(1); 
+            var (itemsCount, result) = await _rocketService.GetRocketsAsync(1); 
+
+            result.Should().Equal(expected);
+        }
+
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 50)]
+        public async Task GetRocketsAsync_ShouldReturnDifferentRockets_DependingOnPageNumber(int pageNumber, int offset)
+        {
+            List<RocketConfigResponse> expected = new()
+            {
+                _fixture.Create<RocketConfigResponse>()
+            };
+
+            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expected).Create();
+            _launchApi.Setup(l => l.GetRocketsAsync(50, offset)).Returns(Task.FromResult(rocketsResponse));
+
+            var (itemsCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
 
             result.Should().Equal(expected);
         }

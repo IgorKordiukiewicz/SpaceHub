@@ -2,6 +2,7 @@
 using Library.Api;
 using Library.Api.Requests;
 using Library.Api.Responses;
+using Library.Utils;
 using OneOf;
 using Refit;
 using System;
@@ -16,8 +17,7 @@ namespace Library.Services
     {
         private readonly IArticleApi _articleApi;
         private readonly IValidator<ArticleRequest> _validator;
-
-        private const int ArticlesPerPage = 10;
+        private readonly Pagination _pagination = new() { ItemsPerPage = 10 };
 
         public ArticleService(IArticleApi articleApi, IValidator<ArticleRequest> validator)
         {
@@ -33,14 +33,16 @@ namespace Library.Services
                 return new List<ArticleResponse>();
             }
             
-            int start = (articleRequest.PageNumber - 1) * ArticlesPerPage;
+            int start = _pagination.GetOffset(articleRequest.PageNumber);
+
             return await _articleApi.GetArticlesAsync(articleRequest.SearchValue, start);
         }
 
         public async Task<int> GetPagesCountAsync(string? searchValue)
         {
             var articlesCount = await _articleApi.GetArticlesCountAsync(searchValue);
-            return (articlesCount - 1) / ArticlesPerPage + 1;
+
+            return _pagination.GetPagesCount(articlesCount);
         }
     }
 }

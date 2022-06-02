@@ -13,13 +13,10 @@ namespace Web.Pages.News
 
         public List<ArticleViewModel> Articles { get; set; }
 
+        public PaginationViewModel Pagination { get; set; }
+
         [BindProperty]
         public string? SearchValue { get; set; }
-
-        [BindProperty]
-        public int PageNumber { get; set; }
-
-        public int PagesCount { get; set; } = 1;
 
         public IndexModel(IArticleService articleService)
         {
@@ -29,12 +26,12 @@ namespace Web.Pages.News
         public async Task OnGet(string? searchValue, int pageNumber = 1)
         {
             SearchValue = searchValue;
-            PageNumber = pageNumber;
 
-            PagesCount = await _articleService.GetPagesCountAsync(SearchValue);
-
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = SearchValue, PageNumber = PageNumber });
+            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = SearchValue, PageNumber = pageNumber });
             Articles = result.Select(a => new ArticleViewModel(a)).ToList();
+
+            var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
+            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/News/Index", searchValue != null ? new() { { "searchValue", searchValue} } : null);
         }
 
         public IActionResult OnPost()

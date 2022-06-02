@@ -69,20 +69,5 @@ namespace UnitTests.Library.Services
 
             result.Should().Equal(expected);
         }
-
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(1, 5)]
-        [InlineData(1, 10)]
-        [InlineData(2, 11)]
-        public async Task GetPagesCountAsync_ShouldCalculatePagesCorrectly(int expected, int articles)
-        {
-            string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesCountAsync(searchValue)).Returns(Task.FromResult(articles));
-
-            var result = await _articleService.GetPagesCountAsync(searchValue);
-
-            result.Should().Be(expected);
-        }
     }
 }

@@ -1,0 +1,107 @@
+﻿@model PaginationViewModel
+
+<ul class="pagination pagination-lg d-flex justify-content-center pt-3">
+    <li class="page-item @if(Model.PageNumber == 1){<text>disabled</text>}">
+        @{
+            Model.Parameters["pageNumber"] = (Model.PageNumber - 1).ToString();
+        }
+        <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+    </li>
+    @if(Model.PagesCount <= 7)
+    {
+        for(int i = 1; i <= Model.PagesCount; ++i)
+        {
+            var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+            <li class="@pageClassText">
+                @{
+                    Model.Parameters["pageNumber"] = i.ToString();
+                }
+                <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@i</a>
+            </li>
+        }
+    }
+    else
+    {
+        <li class="page-item @if(Model.PageNumber == 1){<text>active</text>}">
+            @{
+                Model.Parameters["pageNumber"] = "1";
+            }
+            <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">1</a>
+        </li>
+        @if(Model.PageNumber > 3 && Model.PageNumber <= Model.PagesCount - 3)
+        {
+            <li class="page-item disabled">
+                <p class="page-link">...</p>
+            </li>
+            <li class="page-item">
+                @{
+                    Model.Parameters["pageNumber"] = (Model.PageNumber - 1).ToString();
+                }
+                <a class="page-link" asp-page="@Model.PageUrl"  asp-all-route-data="@Model.Parameters">@(Model.PageNumber - 1)</a>
+            </li>
+            <li class="page-item active">
+                @{
+                    Model.Parameters["pageNumber"] = Model.PageNumber.ToString();
+                }
+                <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@(Model.PageNumber)</a>
+            </li>
+            <li class="page-item">
+                @{
+                    Model.Parameters["pageNumber"] = (Model.PageNumber + 1).ToString();
+                }
+                <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@(Model.PageNumber + 1)</a>
+            </li>
+            <li class="page-item disabled">
+                <p class="page-link">...</p>
+            </li>
+        }
+        else if(Model.PageNumber <= 3)
+        {
+            for(int i = 2; i <= 5; ++i)
+            {
+                var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                <li class="@pageClassText">
+                    @{
+                        Model.Parameters["pageNumber"] = i.ToString();
+                    }
+                    <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@i</a>
+                </li>
+            }
+            <li class="page-item disabled">
+                <p class="page-link">...</p>
+            </li>
+        }
+        else if(Model.PageNumber > Model.PagesCount - 3)
+        {
+            <li class="page-item disabled">
+                <p class="page-link">...</p>
+            </li>
+            for(int i = Model.PagesCount - 4; i <= Model.PagesCount - 1; ++i)
+            {
+                var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                <li class="@pageClassText">
+                    @{
+                        Model.Parameters["pageNumber"] = i.ToString();
+                    }
+                    <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@i</a>
+                </li>
+            }
+        }
+        <li class="page-item @if(Model.PageNumber == Model.PagesCount){<text>active</text>}">
+            @{
+                Model.Parameters["pageNumber"] = Model.PagesCount.ToString();
+            }
+            <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">@Model.PagesCount</a>
+        </li>
+    }
+    <li class="page-item @if(Model.PageNumber == Model.PagesCount){<text>disabled</text>}">
+        @{
+            Model.Parameters["pageNumber"] = (Model.PageNumber + 1).ToString();
+        }
+        <a class="page-link" asp-page="@Model.PageUrl" asp-all-route-data="@Model.Parameters">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </li>
+</ul>

@@ -11,10 +11,7 @@ namespace Web.Pages.Rockets
 
         public List<RocketIndexViewModel>? Rockets { get; set; }
 
-        [BindProperty]
-        public int PageNumber { get; set; }
-
-        public int PagesCount { get; set; } = 1;
+        public PaginationViewModel Pagination { get; set; }
 
         public IndexModel(IRocketService rocketService)
         {
@@ -23,11 +20,11 @@ namespace Web.Pages.Rockets
 
         public async Task OnGet(int pageNumber = 1)
         {
-            PageNumber = pageNumber;
-            
-            var (pagesCount, result) = await _rocketService.GetRocketsAsync(PageNumber);
-            PagesCount = pagesCount;
+            var (pagesCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
+
             Rockets = result?.Select(r => new RocketIndexViewModel(r)).ToList();
+
+            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Rockets/Index");
         }
     }
 }
