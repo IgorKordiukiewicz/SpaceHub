@@ -29,7 +29,7 @@ namespace Library.Services
             return result.Launches.ToList();
         }
 
-        public async Task<LaunchDetailResponse> GatLaunchAsync(string id)
+        public async Task<LaunchDetailResponse> GetLaunchAsync(string id)
         {
             var result = await _launchApi.GetLaunch(id);
             return result;

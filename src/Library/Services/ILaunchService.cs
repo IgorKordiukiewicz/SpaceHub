@@ -13,6 +13,6 @@ namespace Library.Services
 
         Task<List<LaunchResponse>> GetPreviousLaunchesAsync();
 
-        Task<LaunchDetailResponse> GatLaunchAsync(string id);
+        Task<LaunchDetailResponse> GetLaunchAsync(string id);
     }
 }

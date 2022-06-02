@@ -36,6 +36,22 @@ namespace UnitTests.Library.Services
             result.Should().BeEmpty();
         }
 
+        [Fact]
+        public async Task GetArticlesAsync_ShouldReturnArticlesList_WhenRequestIsValid()
+        {
+            List<ArticleResponse> expected = new()
+            {
+                _fixture.Create<ArticleResponse>()
+            };
+
+            string searchValue = "search";
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 0)).Returns(Task.FromResult(expected));
+
+            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = 1 });
+
+            result.Should().Equal(expected);
+        }
+
         [Theory]
         [InlineData(1, 0)]
         [InlineData(2, 10)]
@@ -45,10 +61,11 @@ namespace UnitTests.Library.Services
             {
                 _fixture.Create<ArticleResponse>()
             };
-            
-            _articleApi.Setup(a => a.GetArticlesAsync("search", start)).Returns(Task.FromResult(expected));
 
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = "search", PageNumber = pageNumber});
+            string searchValue = "search";
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, start)).Returns(Task.FromResult(expected));
+
+            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = pageNumber});
 
             result.Should().Equal(expected);
         }
@@ -60,11 +77,12 @@ namespace UnitTests.Library.Services
         [InlineData(2, 11)]
         public async Task GetPagesCountAsync_ShouldCalculatePagesCorrectly(int expected, int articles)
         {
-            _articleApi.Setup(a => a.GetArticlesCountAsync("search")).Returns(Task.FromResult(articles));
+            string searchValue = "search";
+            _articleApi.Setup(a => a.GetArticlesCountAsync(searchValue)).Returns(Task.FromResult(articles));
 
-            var pages = await _articleService.GetPagesCountAsync("search");
+            var result = await _articleService.GetPagesCountAsync(searchValue);
 
-            pages.Should().Be(expected);
+            result.Should().Be(expected);
         }
     }
 }
