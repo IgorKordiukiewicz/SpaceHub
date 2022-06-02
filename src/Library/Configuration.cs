@@ -20,6 +20,7 @@ namespace Library
         {
             services.AddSingleton<IArticleService, ArticleService>();
             services.AddSingleton<ILaunchService, LaunchService>();
+            services.AddSingleton<IRocketService, RocketService>();
 
             services.AddTransient<IValidator<ArticleRequest>, ArticleRequestValidator>();
 

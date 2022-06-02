@@ -18,5 +18,8 @@ namespace Library.Api
 
         [Get("/launch/{id}")]
         Task<LaunchDetailResponse> GetLaunch(string id);
+
+        [Get("/config/launcher")]
+        Task<RocketsResponse> GetRockets();
     }
 }

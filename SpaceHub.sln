@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{C425F687-67F5-4B20-BC45-03C4B84E4918}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "src\Library\Library.csproj", "{6C3A77D1-BC4C-497B-98E9-CECA3EB65788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "src\Library\Library.csproj", "{6C3A77D1-BC4C-497B-98E9-CECA3EB65788}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

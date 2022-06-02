@@ -1,0 +1,27 @@
+﻿@page
+@model Web.Pages.Rockets.IndexModel
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Family</th>
+            <th>Variant</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model.Rockets != null)
+        {
+            @foreach(var rocket in Model.Rockets)
+            {
+                <tr>
+                    <td><a href="#" style="text-decoration: none">
+                        @rocket.Name  
+                    </a></td>
+                    <td>@rocket.Family</td>
+                    <td>@rocket.Variant</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
