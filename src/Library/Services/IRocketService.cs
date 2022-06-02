@@ -9,6 +9,6 @@ namespace Library.Services
 {
     public interface IRocketService
     {
-        Task<List<RocketConfigResponse>> GetRockets();
+        Task<(int, List<RocketConfigResponse>)> GetRocketsAsync(int pageNumber = 1);
     }
 }

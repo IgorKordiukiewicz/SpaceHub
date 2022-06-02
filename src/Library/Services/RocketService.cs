@@ -16,11 +16,14 @@ namespace Library.Services
         {
             _launchApi = launchApi;
         }
-        
-        public async Task<List<RocketConfigResponse>> GetRockets()
+
+        public async Task<(int, List<RocketConfigResponse>)> GetRocketsAsync(int pageNumber)
         {
-            var result = await _launchApi.GetRockets();
-            return result.Rockets.ToList();
+            int limit = 50;
+            int offset = (pageNumber - 1) * limit;
+            var result = await _launchApi.GetRocketsAsync(limit, offset);
+            var pagesCount = (result.Count - 1) / limit + 1;
+            return (pagesCount, result.Rockets.ToList());
         }
     }
 }

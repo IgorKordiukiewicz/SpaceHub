@@ -11,15 +11,15 @@ namespace Library.Api
     public interface ILaunchApi
     {
         [Get("/launch/upcoming/")]
-        Task<LaunchesResponse> GetUpcomingLaunches();
+        Task<LaunchesResponse> GetUpcomingLaunchesAsync();
 
         [Get("/launch/previous/")]
-        Task<LaunchesResponse> GetPreviousLaunches();
+        Task<LaunchesResponse> GetPreviousLaunchesAsync();
 
         [Get("/launch/{id}")]
-        Task<LaunchDetailResponse> GetLaunch(string id);
+        Task<LaunchDetailResponse> GetLaunchAsync(string id);
 
-        [Get("/config/launcher")]
-        Task<RocketsResponse> GetRockets();
+        [Get("/config/launcher/?limit={limit}&offset={offset}")]
+        Task<RocketsResponse> GetRocketsAsync(int limit = 50, int offset = 0);
     }
 }

@@ -11,14 +11,22 @@ namespace Web.Pages.Rockets
 
         public List<RocketIndexViewModel>? Rockets { get; set; }
 
+        [BindProperty]
+        public int PageNumber { get; set; }
+
+        public int PagesCount { get; set; } = 1;
+
         public IndexModel(IRocketService rocketService)
         {
             _rocketService = rocketService;
         }
 
-        public async Task OnGet()
+        public async Task OnGet(int pageNumber = 1)
         {
-            var result = await _rocketService.GetRockets();
+            PageNumber = pageNumber;
+            
+            var (pagesCount, result) = await _rocketService.GetRocketsAsync(PageNumber);
+            PagesCount = pagesCount;
             Rockets = result?.Select(r => new RocketIndexViewModel(r)).ToList();
         }
     }

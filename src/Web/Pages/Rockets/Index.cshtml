@@ -1,7 +1,9 @@
 ﻿@page
 @model Web.Pages.Rockets.IndexModel
 
-<table class="table">
+@if(Model.Rockets != null)
+{
+    <table class="table">
     <thead>
         <tr>
             <th>Name</th>
@@ -10,18 +12,93 @@
         </tr>
     </thead>
     <tbody>
-        @if(Model.Rockets != null)
+        @foreach(var rocket in Model.Rockets)
         {
-            @foreach(var rocket in Model.Rockets)
-            {
-                <tr>
-                    <td><a href="#" style="text-decoration: none">
-                        @rocket.Name  
-                    </a></td>
-                    <td>@rocket.Family</td>
-                    <td>@rocket.Variant</td>
-                </tr>
-            }
+            <tr>
+                <td><a href="#" style="text-decoration: none">
+                    @rocket.Name  
+                </a></td>
+                <td>@rocket.Family</td>
+                <td>@rocket.Variant</td>
+            </tr>
         }
     </tbody>
-</table>
+    </table>
+
+    <ul class="pagination pagination-lg d-flex justify-content-center pt-3">
+        <li class="page-item @if(Model.PageNumber == 1){<text>disabled</text>}">
+            <a class="page-link" asp-route-pageNumber="@(Model.PageNumber - 1)">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        @if(Model.PagesCount <= 7)
+        {
+            for(int i = 1; i <= Model.PagesCount; ++i)
+            {
+                var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                <li class="@pageClassText">
+                    <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@i">@i</a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="page-item @if(Model.PageNumber == 1){<text>active</text>}">
+                <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="1">1</a>
+            </li>
+            @if(Model.PageNumber > 3 && Model.PageNumber <= Model.PagesCount - 3)
+            {
+                <li class="page-item disabled">
+                    <p class="page-link">...</p>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@(Model.PageNumber - 1)">@(Model.PageNumber - 1)</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@(Model.PageNumber)">@(Model.PageNumber)</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@(Model.PageNumber + 1)">@(Model.PageNumber + 1)</a>
+                </li>
+                <li class="page-item disabled">
+                    <p class="page-link">...</p>
+                </li>
+            }
+            else if(Model.PageNumber <= 3)
+            {
+                for(int i = 2; i <= 5; ++i)
+                {
+                    var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                    <li class="@pageClassText">
+                        <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item disabled">
+                    <p class="page-link">...</p>
+                </li>
+            }
+            else if(Model.PageNumber > Model.PagesCount - 3)
+            {
+                <li class="page-item disabled">
+                    <p class="page-link">...</p>
+                </li>
+                for(int i = Model.PagesCount - 4; i <= Model.PagesCount - 1; ++i)
+                {
+                    var pageClassText = "page-item " + (Model.PageNumber == i ? "active" : "");
+                    <li class="@pageClassText">
+                        <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@i">@i</a>
+                    </li>
+                }
+            }
+            <li class="page-item @if(Model.PageNumber == Model.PagesCount){<text>active</text>}">
+                <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@Model.PagesCount">@Model.PagesCount</a>
+            </li>
+        }
+        <li class="page-item @if(Model.PageNumber == Model.PagesCount){<text>disabled</text>}">
+            <a class="page-link" asp-page="/Rockets/Index" asp-route-pageNumber="@(Model.PageNumber + 1)">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+    </ul>
+}
+

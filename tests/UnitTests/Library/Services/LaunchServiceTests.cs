@@ -33,7 +33,7 @@ namespace UnitTests.Library.Services
             };
 
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expected).Create();  
-            _launchApi.Setup(l => l.GetUpcomingLaunches()).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
 
             var result = await _launchService.GetUpcomingLaunchesAsync();
 
@@ -49,7 +49,7 @@ namespace UnitTests.Library.Services
             };
 
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expected).Create();
-            _launchApi.Setup(l => l.GetPreviousLaunches()).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetPreviousLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
 
             var result = await _launchService.GetPreviousLaunchesAsync();
 
@@ -61,7 +61,7 @@ namespace UnitTests.Library.Services
         {
             var expected = _fixture.Create<LaunchDetailResponse>();
             string launchId = "test";
-            _launchApi.Setup(l => l.GetLaunch(launchId)).Returns(Task.FromResult(expected));
+            _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expected));
 
             var result = await _launchService.GetLaunchAsync(launchId);
 

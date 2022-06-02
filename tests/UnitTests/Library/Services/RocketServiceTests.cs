@@ -34,9 +34,9 @@ namespace UnitTests.Library.Services
             };
             
             var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expected).Create();
-            _launchApi.Setup(l => l.GetRockets()).Returns(Task.FromResult(rocketsResponse));
+            _launchApi.Setup(l => l.GetRocketsAsync(50, 0)).Returns(Task.FromResult(rocketsResponse));
             
-            var result = await _rocketService.GetRockets(); 
+            var result = await _rocketService.GetRocketsAsync(1); 
 
             result.Should().Equal(expected);
         }
