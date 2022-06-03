@@ -58,5 +58,17 @@ namespace UnitTests.Library.Services
 
             result.Should().Equal(expected);
         }
+
+        [Fact]
+        public async Task GetRocketAsync_ShouldReturnRocket()
+        {
+            var expected = _fixture.Create<RocketConfigDetailResponse>();
+            int id = 1;
+            _launchApi.Setup(l => l.GetRocketAsync(id)).Returns(Task.FromResult(expected));
+
+            var result = await _rocketService.GetRocketAsync(id);
+
+            result.Should().Be(expected);
+        }
     }
 }

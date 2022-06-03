@@ -15,7 +15,7 @@
         @foreach(var rocket in Model.Rockets)
         {
             <tr>
-                <td><a href="#" style="text-decoration: none">
+                <td><a asp-page="/Rockets/Details" asp-route-id="@rocket.Id" style="text-decoration: none">
                     @rocket.Name  
                 </a></td>
                 <td>@rocket.Family</td>

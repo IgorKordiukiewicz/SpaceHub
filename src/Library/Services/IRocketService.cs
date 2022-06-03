@@ -10,5 +10,7 @@ namespace Library.Services
     public interface IRocketService
     {
         Task<(int, List<RocketConfigResponse>)> GetRocketsAsync(int pageNumber = 1);
+
+        Task<RocketConfigDetailResponse> GetRocketAsync(int id);
     }
 }

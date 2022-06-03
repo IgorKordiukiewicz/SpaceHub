@@ -27,5 +27,10 @@ namespace Library.Services
 
             return (pagesCount, result.Rockets.ToList());
         }
+
+        public async Task<RocketConfigDetailResponse> GetRocketAsync(int id)
+        {
+            return await _launchApi.GetRocketAsync(id);
+        }
     }
 }
