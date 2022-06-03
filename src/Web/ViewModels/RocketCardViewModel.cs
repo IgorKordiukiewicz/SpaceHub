@@ -7,6 +7,8 @@ namespace Web.ViewModels
         public string Name { get; init; }
         public string Description { get; init; }
         public string? ImageUrl { get; init; }
+        public string Family { get; init; }
+        public string Variant { get; init; }
         public string Length { get; init; }
         public string Diameter { get; init; }
         public string MaxStages { get; init; }
@@ -23,6 +25,8 @@ namespace Web.ViewModels
             Name = rocket.Name;
             Description = rocket.Description;
             ImageUrl = rocket.ImageUrl;
+            Family = rocket.Family ?? "-";
+            Variant = rocket.Variant ?? "-";
             Length = Utils.ValueToStringWithSymbol(rocket.Length, "m");
             Diameter = Utils.ValueToStringWithSymbol(rocket.Diameter, "m");
             MaxStages = Utils.ValueToStringWithSymbol(rocket.MaxStage, "");

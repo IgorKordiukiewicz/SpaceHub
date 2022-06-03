@@ -23,7 +23,7 @@ namespace Library.Services
         {
             int offset = _pagination.GetOffset(pageNumber);
             var result = await _launchApi.GetRocketsAsync(_pagination.ItemsPerPage, offset);
-            var pagesCount = _pagination.GetPagesCount(pageNumber);
+            var pagesCount = _pagination.GetPagesCount(result.Count);
 
             return (pagesCount, result.Rockets.ToList());
         }
