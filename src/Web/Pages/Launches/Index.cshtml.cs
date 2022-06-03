@@ -11,7 +11,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public List<LaunchIndexViewModel>? Launches { get; set; }
+        public List<LaunchCardViewModel>? Launches { get; set; }
 
         public IndexModel(ILaunchService launchService)
         {
@@ -23,7 +23,7 @@ namespace Web.Pages.Launches
             var result = launchDateType == LaunchDateType.Upcoming ? 
                 await _launchService.GetUpcomingLaunchesAsync()
                 : await _launchService.GetPreviousLaunchesAsync();
-            Launches = result?.Select(l => new LaunchIndexViewModel(l)).ToList();
+            Launches = result?.Select(l => new LaunchCardViewModel(l)).ToList();
         }
     }
 }

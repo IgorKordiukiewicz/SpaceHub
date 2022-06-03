@@ -12,14 +12,14 @@ namespace Web.ViewModels
         public string NewsSite { get; init; }
         public string PublishDate { get; init; }
 
-        public ArticleViewModel(ArticleResponse articleResponse)
+        public ArticleViewModel(ArticleResponse article)
         {
-            Title = articleResponse.Title;
-            Summary = articleResponse.Summary;
-            Url = articleResponse.Url;
-            ImageUrl = articleResponse.ImageUrl;
-            NewsSite = articleResponse.NewsSite;
-            PublishDate = Utils.DateToString(articleResponse.PublishDate, true);
+            Title = article.Title;
+            Summary = article.Summary;
+            Url = article.Url;
+            ImageUrl = article.ImageUrl;
+            NewsSite = article.NewsSite;
+            PublishDate = Utils.DateToString(article.PublishDate, true);
         }
     }
 }

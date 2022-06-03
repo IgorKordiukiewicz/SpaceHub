@@ -56,29 +56,7 @@
         Agency
     </h3>
     <hr />
-    <div class="col-12">
-        <div class="card mb-4">
-            <div class="row">
-                <div class="col-lg-3">
-                    <img src="@Model.Launch.AgencyImageUrl" class="img-fluid rounded-start card-img-left-scale"/>
-                </div>
-                <div class="col-lg-9">
-                    <div class="card-body text-center">
-                        <h2 class="card-title">
-                            @Model.Launch.AgencyName (@Model.Launch.AgencyCountryCode)
-                        </h2>
-                        <hr />
-                        @if(Model.Launch.AgencyDescription != null)
-                        {
-                            <h5 class="text-muted">
-                                @Model.Launch.AgencyDescription
-                            </h5>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial name="_Agency" model="@Model.Launch.Agency" />
     <h3>
         Rocket
     </h3>
@@ -88,17 +66,5 @@
         Pad
     </h3>
     <hr />
-    <div class="col-12">
-        <div class="card mb-4">
-            <div class="card-body text-center">
-                <h2 class="card-title">
-                    @Model.Launch.PadName
-                </h2>
-                <h4 class="text-muted">
-                    @Model.Launch.PadLocationName
-                </h4>
-            </div>
-            <img src="@Model.Launch.PadMapImageUrl" class="img-fluid rounded-bottom card-img-bottom" />
-        </div>
-    </div>
+    <partial name="_Pad" model="@Model.Launch.Pad" />
 </div>

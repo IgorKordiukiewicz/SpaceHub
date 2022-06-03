@@ -9,7 +9,7 @@ namespace Web.Pages.Rockets
     {
         private readonly IRocketService _rocketService;
 
-        public RocketDetailViewModel Rocket { get; set; }
+        public RocketCardViewModel Rocket { get; set; }
 
         public DetailsModel(IRocketService rocketService)
         {

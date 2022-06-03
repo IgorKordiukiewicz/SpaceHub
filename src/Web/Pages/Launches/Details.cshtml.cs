@@ -9,7 +9,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public LaunchDetailViewModel Launch { get; set; }
+        public LaunchViewModel Launch { get; set; }
 
         public DetailsModel(ILaunchService launchService)
         {
