@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using Library.Api;
 using Library.Api.Requests;
-using Library.Api.Responses;
+using Library.Mapping;
+using Library.Models;
 using Library.Utils;
 using OneOf;
 using Refit;
@@ -25,17 +26,18 @@ namespace Library.Services
             _validator = validator;
         }
 
-        public async Task<List<ArticleResponse>> GetArticlesAsync(ArticleRequest articleRequest)
+        public async Task<List<Article>> GetArticlesAsync(ArticleRequest articleRequest)
         {
             var validationResult = _validator.Validate(articleRequest);
             if(!validationResult.IsValid)
             {
-                return new List<ArticleResponse>();
+                return new List<Article>();
             }
             
             int start = _pagination.GetOffset(articleRequest.PageNumber);
+            var result = await _articleApi.GetArticlesAsync(articleRequest.SearchValue, start);
 
-            return await _articleApi.GetArticlesAsync(articleRequest.SearchValue, start);
+            return result.Select(a => a.ToModel()).ToList();
         }
 
         public async Task<int> GetPagesCountAsync(string? searchValue)

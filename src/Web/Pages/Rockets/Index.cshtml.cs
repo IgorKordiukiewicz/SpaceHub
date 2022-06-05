@@ -2,6 +2,7 @@ using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
+using Web.Mapping;
 
 namespace Web.Pages.Rockets
 {
@@ -22,7 +23,7 @@ namespace Web.Pages.Rockets
         {
             var (pagesCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
 
-            Rockets = result?.Select(r => new RocketListItemViewModel(r)).ToList();
+            Rockets = result?.Select(r => r.ToRocketListItemViewModel()).ToList();
 
             Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Rockets/Index");
         }

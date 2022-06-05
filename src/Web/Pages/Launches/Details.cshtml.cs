@@ -2,6 +2,7 @@ using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
+using Web.Mapping;
 
 namespace Web.Pages.Launches
 {
@@ -19,7 +20,7 @@ namespace Web.Pages.Launches
         public async Task OnGet(string id)
         {
             var result = await _launchService.GetLaunchAsync(id);
-            Launch = new(result);
+            Launch = result.ToLaunchViewModel();
         }
     }
 }

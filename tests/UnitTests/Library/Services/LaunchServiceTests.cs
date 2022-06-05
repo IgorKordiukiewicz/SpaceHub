@@ -10,6 +10,8 @@ using AutoFixture;
 using Library.Services;
 using Library.Api;
 using Library.Api.Responses;
+using Library.Models;
+using Library.Mapping;
 
 namespace UnitTests.Library.Services
 {
@@ -27,45 +29,52 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetUpcomingLaunchesAsync_ShouldReturnLaunchesList()
         { 
-            List<LaunchResponse> expected = new()
+            List<LaunchResponse> expectedResponse = new()
             {
                 _fixture.Create<LaunchResponse>()
             };
 
-            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expected).Create();  
+            List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
+
+            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();  
             _launchApi.Setup(l => l.GetUpcomingLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
 
             var result = await _launchService.GetUpcomingLaunchesAsync();
 
-            result.Should().Equal(expected);
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }
 
         [Fact]
         public async Task GetPreviousLaunchesAsync_ShouldReturnLaunchesList()
         {
-            List<LaunchResponse> expected = new()
+            List<LaunchResponse> expectedResponse = new()
             {
                 _fixture.Create<LaunchResponse>()
             };
 
-            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expected).Create();
+            List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
+
+
+            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();
             _launchApi.Setup(l => l.GetPreviousLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
 
             var result = await _launchService.GetPreviousLaunchesAsync();
 
-            result.Should().Equal(expected);
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }
 
         [Fact]
         public async Task GetLaunchAsync_ShouldReturnLaunch()
         {
-            var expected = _fixture.Create<LaunchDetailResponse>();
+            var expectedResponse = _fixture.Create<LaunchDetailResponse>();
+            var expected = expectedResponse.ToModel();
             string launchId = "test";
-            _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expected));
+            _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _launchService.GetLaunchAsync(launchId);
 
-            result.Should().Be(expected);
+            //result.Should().Be(expected);
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }
     }
 }

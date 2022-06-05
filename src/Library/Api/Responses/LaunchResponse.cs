@@ -28,7 +28,7 @@ namespace Library.Api.Responses
         public DateTime? WindowEnd { get; init; }
 
         [JsonPropertyName("launch_service_provider")]
-        public AgencyResponse ServiceProvider { get; init; }
+        public AgencyResponse Agency { get; init; }
 
         [JsonPropertyName("rocket")]
         public RocketResponse Rocket { get; init; }

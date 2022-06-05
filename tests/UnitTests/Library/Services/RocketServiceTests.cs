@@ -11,6 +11,8 @@ using Library.Services;
 using Library.Api;
 using Library.Api.Responses;
 using System.Linq.Expressions;
+using Library.Models;
+using Library.Mapping;
 
 namespace UnitTests.Library.Services
 {
@@ -28,12 +30,14 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetRocketsAsync_ShouldReturnRocketsList()
         {
-            List<RocketConfigResponse> expected = new()
+            List<RocketConfigResponse> expectedResponse = new()
             {
                 _fixture.Create<RocketConfigResponse>()
             };
+
+            List<Rocket> expected = expectedResponse.Select(r => r.ToModel()).ToList();
             
-            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expected).Create();
+            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
             _launchApi.Setup(l => l.GetRocketsAsync(50, 0)).Returns(Task.FromResult(rocketsResponse));
             
             var (itemsCount, result) = await _rocketService.GetRocketsAsync(1); 
@@ -46,12 +50,14 @@ namespace UnitTests.Library.Services
         [InlineData(2, 50)]
         public async Task GetRocketsAsync_ShouldReturnDifferentRockets_DependingOnPageNumber(int pageNumber, int offset)
         {
-            List<RocketConfigResponse> expected = new()
+            List<RocketConfigResponse> expectedResponse = new()
             {
                 _fixture.Create<RocketConfigResponse>()
             };
 
-            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expected).Create();
+            List<Rocket> expected = expectedResponse.Select(r => r.ToModel()).ToList();
+
+            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
             _launchApi.Setup(l => l.GetRocketsAsync(50, offset)).Returns(Task.FromResult(rocketsResponse));
 
             var (itemsCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
@@ -62,9 +68,10 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetRocketAsync_ShouldReturnRocket()
         {
-            var expected = _fixture.Create<RocketConfigDetailResponse>();
+            var expectedResponse = _fixture.Create<RocketConfigDetailResponse>();
+            var expected = expectedResponse.ToModel();
             int id = 1;
-            _launchApi.Setup(l => l.GetRocketAsync(id)).Returns(Task.FromResult(expected));
+            _launchApi.Setup(l => l.GetRocketAsync(id)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _rocketService.GetRocketAsync(id);
 

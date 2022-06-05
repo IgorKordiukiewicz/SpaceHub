@@ -16,21 +16,5 @@ namespace Web.ViewModels
         public AgencyCardViewModel Agency { get; init; }
         public RocketCardViewModel Rocket { get; init; }
         public PadCardViewModel Pad { get; init; }
-
-        public LaunchViewModel(LaunchDetailResponse launch)
-        {
-            Name = launch.Name;
-            ImageUrl = launch.ImageUrl;
-            Mission = launch.Mission?.Description;
-            StatusName = launch.Status.Name;
-            StatusDescription = launch.Status.Description;
-            Date = Utils.DateToString(launch.Date) ?? string.Empty;
-            WindowStart = Utils.DateToString(launch.WindowStart);
-            WindowEnd = Utils.DateToString(launch.WindowEnd);
-
-            Agency = new(launch.ServiceProvider);
-            Rocket = new(launch.Rocket.Configuration);
-            Pad = new(launch.Pad);
-        }
     }
 }

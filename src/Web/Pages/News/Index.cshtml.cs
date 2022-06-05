@@ -4,6 +4,7 @@ using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
+using Web.Mapping;
 
 namespace Web.Pages.News
 {
@@ -28,7 +29,7 @@ namespace Web.Pages.News
             SearchValue = searchValue;
 
             var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = SearchValue, PageNumber = pageNumber });
-            Articles = result.Select(a => new ArticleViewModel(a)).ToList();
+            Articles = result.Select(a => a.ToArticleViewModel()).ToList();
 
             var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
             Pagination = new PaginationViewModel(pageNumber, pagesCount, "/News/Index", searchValue != null ? new() { { "searchValue", searchValue} } : null);

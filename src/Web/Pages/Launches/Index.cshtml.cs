@@ -4,6 +4,7 @@ using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
+using Web.Mapping;
 
 namespace Web.Pages.Launches
 {
@@ -23,7 +24,7 @@ namespace Web.Pages.Launches
             var result = launchDateType == LaunchDateType.Upcoming ? 
                 await _launchService.GetUpcomingLaunchesAsync()
                 : await _launchService.GetPreviousLaunchesAsync();
-            Launches = result?.Select(l => new LaunchCardViewModel(l)).ToList();
+            Launches = result?.Select(l => l.ToLaunchCardViewModel()).ToList();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Library.Api;
-using Library.Api.Responses;
+using Library.Models;
+using Library.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,23 +18,25 @@ namespace Library.Services
             _launchApi = launchApi;
         }
         
-        public async Task<List<LaunchResponse>> GetUpcomingLaunchesAsync()
+        public async Task<List<Launch>> GetUpcomingLaunchesAsync()
         {
             var result = await _launchApi.GetUpcomingLaunchesAsync();
 
-            return result.Launches.ToList();
+            return result.Launches.Select(l => l.ToModel()).ToList();
         }
 
-        public async Task<List<LaunchResponse>> GetPreviousLaunchesAsync()
+        public async Task<List<Launch>> GetPreviousLaunchesAsync()
         {
             var result = await _launchApi.GetPreviousLaunchesAsync();
 
-            return result.Launches.ToList();
+            return result.Launches.Select(l => l.ToModel()).ToList();
         }
 
-        public async Task<LaunchDetailResponse> GetLaunchAsync(string id)
+        public async Task<Launch> GetLaunchAsync(string id)
         {
-            return await _launchApi.GetLaunchAsync(id);
+            var result = await _launchApi.GetLaunchAsync(id);
+            
+            return result.ToModel();
         }
     }
 }

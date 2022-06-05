@@ -2,6 +2,7 @@ using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
+using Web.Mapping;
 
 namespace Web.Pages.Rockets
 {
@@ -19,7 +20,7 @@ namespace Web.Pages.Rockets
         public async Task OnGet(int id)
         {
             var result = await _rocketService.GetRocketAsync(id);
-            Rocket = new(result);
+            Rocket = result.ToRocketCardViewModel();
         }
     }
 }

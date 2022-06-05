@@ -13,7 +13,7 @@ namespace Library.Api.Responses
         public string? SpaceXApiId { get; init; }
 
         [JsonPropertyName("launch_service_provider")]
-        public new AgencyDetailResponse ServiceProvider { get; init; }
+        public new AgencyDetailResponse Agency { get; init; }
 
         [JsonPropertyName("rocket")]
         public new RocketDetailResponse Rocket { get; init; }

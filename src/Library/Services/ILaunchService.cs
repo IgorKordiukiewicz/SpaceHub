@@ -1,4 +1,4 @@
-﻿using Library.Api.Responses;
+﻿using Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +9,10 @@ namespace Library.Services
 {
     public interface ILaunchService
     {
-        Task<List<LaunchResponse>> GetUpcomingLaunchesAsync();
+        Task<List<Launch>> GetUpcomingLaunchesAsync();
 
-        Task<List<LaunchResponse>> GetPreviousLaunchesAsync();
+        Task<List<Launch>> GetPreviousLaunchesAsync();
 
-        Task<LaunchDetailResponse> GetLaunchAsync(string id);
+        Task<Launch> GetLaunchAsync(string id);
     }
 }

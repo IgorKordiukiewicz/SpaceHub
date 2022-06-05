@@ -1,5 +1,6 @@
 ﻿using Library.Api;
-using Library.Api.Responses;
+using Library.Models;
+using Library.Mapping;
 using Library.Utils;
 using System;
 using System.Collections.Generic;
@@ -19,18 +20,20 @@ namespace Library.Services
             _launchApi = launchApi;
         }
 
-        public async Task<(int, List<RocketConfigResponse>)> GetRocketsAsync(int pageNumber)
+        public async Task<(int, List<Rocket>)> GetRocketsAsync(int pageNumber)
         {
             int offset = _pagination.GetOffset(pageNumber);
             var result = await _launchApi.GetRocketsAsync(_pagination.ItemsPerPage, offset);
             var pagesCount = _pagination.GetPagesCount(result.Count);
 
-            return (pagesCount, result.Rockets.ToList());
+            return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());
         }
 
-        public async Task<RocketConfigDetailResponse> GetRocketAsync(int id)
+        public async Task<Rocket> GetRocketAsync(int id)
         {
-            return await _launchApi.GetRocketAsync(id);
+            var result = await _launchApi.GetRocketAsync(id);
+
+            return result.ToModel();
         }
     }
 }

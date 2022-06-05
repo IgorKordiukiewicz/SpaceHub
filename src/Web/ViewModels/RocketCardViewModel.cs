@@ -19,35 +19,5 @@ namespace Web.ViewModels
         public string LeoCapacity { get; init; }
         public string FirstLaunch { get; init; }
         public string SuccessfulLaunches { get; init; }
-
-        public RocketCardViewModel(RocketConfigDetailResponse rocket)
-        {
-            Name = rocket.Name;
-            Description = rocket.Description;
-            ImageUrl = rocket.ImageUrl;
-            Family = rocket.Family ?? "-";
-            Variant = rocket.Variant ?? "-";
-            Length = Utils.ValueToStringWithSymbol(rocket.Length, "m");
-            Diameter = Utils.ValueToStringWithSymbol(rocket.Diameter, "m");
-            MaxStages = Utils.ValueToStringWithSymbol(rocket.MaxStage, "");
-            LaunchCost = Utils.ValueToStringWithSymbol(rocket.LaunchCost, "$");
-            LiftoffMass = Utils.ValueToStringWithSymbol(rocket.LaunchMass, "T");
-            LiftoffThrust = Utils.ValueToStringWithSymbol(rocket.ThrustAtLiftoff, "kN");
-            GeoCapacity = Utils.ValueToStringWithSymbol(rocket.GeoCapacity, "kg");
-            LeoCapacity = Utils.ValueToStringWithSymbol(rocket.LeoCapacity, "kg");
-            FirstLaunch = Utils.DateToString(rocket.FirstFlight) ?? "-";
-
-            var totalLaunches = rocket.TotalLaunchCount;
-            if (totalLaunches > 0)
-            {
-                var successPercent = (rocket.SuccessfulLaunches * 100) / totalLaunches;
-                SuccessfulLaunches = rocket.SuccessfulLaunches.ToString() + "/" + totalLaunches.ToString()
-                    + " (" + successPercent + "%)";
-            }
-            else
-            {
-                SuccessfulLaunches = "0/0";
-            }
-        }
     }
 }

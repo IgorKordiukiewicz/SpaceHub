@@ -13,6 +13,8 @@ using AutoFixture;
 using Library.Api.Requests;
 using FluentValidation;
 using Library.Validators;
+using Library.Models;
+using Library.Mapping;
 
 namespace UnitTests.Library.Services
 {
@@ -39,13 +41,15 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetArticlesAsync_ShouldReturnArticlesList_WhenRequestIsValid()
         {
-            List<ArticleResponse> expected = new()
+            List<ArticleResponse> expectedResponse = new()
             {
                 _fixture.Create<ArticleResponse>()
             };
 
+            List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 0)).Returns(Task.FromResult(expected));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 0)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = 1 });
 
@@ -57,13 +61,15 @@ namespace UnitTests.Library.Services
         [InlineData(2, 10)]
         public async Task GetArticlesAsync_ShouldReturnDifferentArticles_DependingOnPageNumber(int pageNumber, int start)
         {
-            List<ArticleResponse> expected = new()
+            List<ArticleResponse> expectedResponse = new()
             {
                 _fixture.Create<ArticleResponse>()
             };
 
+            List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, start)).Returns(Task.FromResult(expected));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, start)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = pageNumber});
 

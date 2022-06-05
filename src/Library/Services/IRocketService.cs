@@ -1,4 +1,4 @@
-﻿using Library.Api.Responses;
+﻿using Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +9,8 @@ namespace Library.Services
 {
     public interface IRocketService
     {
-        Task<(int, List<RocketConfigResponse>)> GetRocketsAsync(int pageNumber = 1);
+        Task<(int, List<Rocket>)> GetRocketsAsync(int pageNumber = 1);
 
-        Task<RocketConfigDetailResponse> GetRocketAsync(int id);
+        Task<Rocket> GetRocketAsync(int id);
     }
 }
