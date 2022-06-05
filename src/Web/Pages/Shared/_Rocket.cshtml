@@ -18,13 +18,13 @@
                     <hr />
                     <div class="row">
                         <div class="col-3">
-                            Family
+                            <label asp-for="Family"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Family
                         </div>
                         <div class="col-3">
-                            Variant
+                            <label asp-for="Variant"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Variant
@@ -33,13 +33,13 @@
                     <hr />
                     <div class="row">
                         <div class="col-3">
-                            Length
+                            <label asp-for="Length"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Length
                         </div>
                         <div class="col-3">
-                            Diameter
+                            <label asp-for="Diameter"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Diameter
@@ -47,13 +47,13 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            Max Stages
+                            <label asp-for="MaxStages"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.MaxStages
                         </div>
                         <div class="col-3">
-                            Launch Cost
+                            <label asp-for="LaunchCost"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LaunchCost
@@ -61,13 +61,13 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            Litfoff Mass
+                            <label asp-for="LiftoffMass"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffMass
                         </div>
                         <div class="col-3">
-                            Liftoff Thrust
+                            <label asp-for="LiftoffThrust"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffThrust
@@ -75,27 +75,27 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            GEO Capacity
-                        </div>
-                        <div class="col-3 text-end">
-                            @Model.GeoCapacity
-                        </div>
-                        <div class="col-3">
-                            LEO Capacity
+                            <label asp-for="LeoCapacity"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LeoCapacity
                         </div>
+                        <div class="col-3">
+                            <label asp-for="GeoCapacity"></label>
+                        </div>
+                        <div class="col-3 text-end">
+                            @Model.GeoCapacity
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            Cost per kg to LEO
+                            <label asp-for="CostPerKgToLeo"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToLeo
                         </div>
                         <div class="col-3">
-                            Cost per kg to GEO
+                            <label asp-for="CostPerKgToGeo"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToGeo
@@ -104,13 +104,13 @@
                     <hr />
                     <div class="row">
                         <div class="col-3">
-                            First Launch
+                            <label asp-for="FirstLaunch"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.FirstLaunch
                         </div>
                         <div class="col-3">
-                            Successful Launches
+                            <label asp-for="SuccessfulLaunches"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.SuccessfulLaunches

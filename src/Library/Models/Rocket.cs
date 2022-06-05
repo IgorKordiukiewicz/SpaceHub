@@ -18,16 +18,16 @@ namespace Library.Models
             public string Description { get; init; }
             public Agency Manufacturer { get; init; }
             public string Alias { get; init; }
-            public int? MinStage { get; init; }
-            public int? MaxStage { get; init; }
+            public int? MinStages { get; init; }
+            public int? MaxStages { get; init; }
             public double? Length { get; init; }
             public double? Diameter { get; init; }
             public DateTime? FirstFlight { get; init; }
             public int? LaunchCost { get; init; }
-            public int? LaunchMass { get; init; }
+            public int? LiftoffMass { get; init; }
             public int? LeoCapacity { get; init; }
             public int? GeoCapacity { get; init; }
-            public int? ThrustAtLiftoff { get; init; }
+            public int? LiftoffThrust { get; init; }
             public int? Apogee { get; init; }
             public string? ImageUrl { get; init; }
             public string? WikiUrl { get; init; }
