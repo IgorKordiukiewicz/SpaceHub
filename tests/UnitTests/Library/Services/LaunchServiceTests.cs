@@ -66,14 +66,15 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetLaunchAsync_ShouldReturnLaunch()
         {
-            var expectedResponse = _fixture.Create<LaunchDetailResponse>();
+            var expectedResponse = _fixture.Build<LaunchDetailResponse>()
+                .With(l => l.Rocket, _fixture.Build<RocketDetailResponse>()
+                .With(r => r.Configuration, _fixture.Build<RocketConfigDetailResponse>().With(c => c.LaunchCost, "1000").Create()).Create()).Create();
             var expected = expectedResponse.ToModel();
             string launchId = "test";
             _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _launchService.GetLaunchAsync(launchId);
 
-            //result.Should().Be(expected);
             result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }
     }

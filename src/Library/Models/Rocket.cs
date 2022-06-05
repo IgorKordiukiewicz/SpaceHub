@@ -23,7 +23,7 @@ namespace Library.Models
             public double? Length { get; init; }
             public double? Diameter { get; init; }
             public DateTime? FirstFlight { get; init; }
-            public string? LaunchCost { get; init; }
+            public int? LaunchCost { get; init; }
             public int? LaunchMass { get; init; }
             public int? LeoCapacity { get; init; }
             public int? GeoCapacity { get; init; }
@@ -36,6 +36,9 @@ namespace Library.Models
             public int SuccessfulLaunches { get; init; }
             public int FailedLaunches { get; init; }
             public int PendingLaunches { get; init; }
+            public int LaunchSuccessPercent { get => (TotalLaunchCount > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunchCount) : 0); }
+            public int? CostPerKgToLeo { get => (LaunchCost != null && LeoCapacity != null && LeoCapacity > 0) ? LaunchCost / LeoCapacity : null; }
+            public int? CostPerKgToGeo { get => (LaunchCost != null && GeoCapacity != null && GeoCapacity > 0) ? LaunchCost / GeoCapacity : null; }
         }
         public Detail? Details { get; set; }
     }

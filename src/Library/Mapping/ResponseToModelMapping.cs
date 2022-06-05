@@ -121,7 +121,7 @@ namespace Library.Mapping
                 Length = response.Length,
                 Diameter = response.Diameter,
                 FirstFlight = response.FirstFlight,
-                LaunchCost = response.LaunchCost,
+                LaunchCost = response.LaunchCost != null ? Int32.Parse(response.LaunchCost) : null,
                 LeoCapacity = response.LeoCapacity,
                 GeoCapacity = response.GeoCapacity,
                 LaunchMass = response.LaunchMass,

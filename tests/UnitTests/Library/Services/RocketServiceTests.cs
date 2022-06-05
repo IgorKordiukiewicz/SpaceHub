@@ -68,7 +68,7 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetRocketAsync_ShouldReturnRocket()
         {
-            var expectedResponse = _fixture.Create<RocketConfigDetailResponse>();
+            var expectedResponse = _fixture.Build<RocketConfigDetailResponse>().With(r => r.LaunchCost, "1000").Create();
             var expected = expectedResponse.ToModel();
             int id = 1;
             _launchApi.Setup(l => l.GetRocketAsync(id)).Returns(Task.FromResult(expectedResponse));

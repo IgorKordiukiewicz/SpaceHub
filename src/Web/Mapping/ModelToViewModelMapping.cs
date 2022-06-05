@@ -78,9 +78,8 @@ namespace Web.Mapping
                 var totalLaunches = rocket.Details.TotalLaunchCount;
                 if (totalLaunches > 0)
                 {
-                    var successPercent = (rocket.Details.SuccessfulLaunches * 100) / totalLaunches;
                     return rocket.Details.SuccessfulLaunches.ToString() + "/" + totalLaunches.ToString()
-                        + " (" + successPercent + "%)";
+                        + " (" + rocket.Details.LaunchSuccessPercent.ToString() + "%)";
                 }
                 else
                 {
@@ -104,7 +103,9 @@ namespace Web.Mapping
                 GeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.GeoCapacity, "kg"),
                 LeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.LeoCapacity, "kg"),
                 FirstLaunch = Utils.DateToString(rocket.Details.FirstFlight) ?? "-",
-                SuccessfulLaunches = getSuccessfulLaunches(rocket)
+                SuccessfulLaunches = getSuccessfulLaunches(rocket),
+                CostPerKgToLeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
+                CostPerKgToGeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
             };
         }
 

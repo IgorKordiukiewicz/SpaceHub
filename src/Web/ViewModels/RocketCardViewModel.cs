@@ -19,5 +19,7 @@ namespace Web.ViewModels
         public string LeoCapacity { get; init; }
         public string FirstLaunch { get; init; }
         public string SuccessfulLaunches { get; init; }
+        public string CostPerKgToLeo { get; init; }
+        public string CostPerKgToGeo { get; init; }
     }
 }
