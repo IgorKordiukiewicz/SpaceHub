@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Library.Api;
-using Library.Api.Requests;
 using Library.Mapping;
 using Library.Models;
 using Library.Utils;
@@ -17,25 +16,17 @@ namespace Library.Services
     public class ArticleService : IArticleService
     {
         private readonly IArticleApi _articleApi;
-        private readonly IValidator<ArticleRequest> _validator;
         private readonly Pagination _pagination = new() { ItemsPerPage = 10 };
 
-        public ArticleService(IArticleApi articleApi, IValidator<ArticleRequest> validator)
+        public ArticleService(IArticleApi articleApi)
         {
             _articleApi = articleApi;
-            _validator = validator;
         }
 
-        public async Task<List<Article>> GetArticlesAsync(ArticleRequest articleRequest)
-        {
-            var validationResult = _validator.Validate(articleRequest);
-            if(!validationResult.IsValid)
-            {
-                return new List<Article>();
-            }
-            
-            int start = _pagination.GetOffset(articleRequest.PageNumber);
-            var result = await _articleApi.GetArticlesAsync(articleRequest.SearchValue, start);
+        public async Task<List<Article>> GetArticlesAsync(string? searchValue, int pageNumber = 1)
+        {         
+            int start = _pagination.GetOffset(pageNumber);
+            var result = await _articleApi.GetArticlesAsync(searchValue, _pagination.ItemsPerPage, start);
 
             return result.Select(a => a.ToModel()).ToList();
         }

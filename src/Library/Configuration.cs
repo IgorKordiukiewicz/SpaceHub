@@ -9,8 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
 using FluentValidation;
-using Library.Api.Requests;
-using Library.Validators;
 
 namespace Library
 {
@@ -21,8 +19,6 @@ namespace Library
             services.AddSingleton<IArticleService, ArticleService>();
             services.AddSingleton<ILaunchService, LaunchService>();
             services.AddSingleton<IRocketService, RocketService>();
-
-            services.AddTransient<IValidator<ArticleRequest>, ArticleRequestValidator>();
 
             services.AddRefitClient<IArticleApi>()
                 .ConfigureHttpClient(httpClient =>

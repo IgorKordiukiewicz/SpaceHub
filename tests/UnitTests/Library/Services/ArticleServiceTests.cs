@@ -10,9 +10,7 @@ using Library.Services;
 using FluentAssertions;
 using Library.Api.Responses;
 using AutoFixture;
-using Library.Api.Requests;
 using FluentValidation;
-using Library.Validators;
 using Library.Models;
 using Library.Mapping;
 
@@ -23,19 +21,10 @@ namespace UnitTests.Library.Services
         private readonly ArticleService _articleService;
         private readonly Mock<IArticleApi> _articleApi = new();
         private readonly Fixture _fixture = new();
-        private readonly IValidator<ArticleRequest> _validator = new ArticleRequestValidator();
 
         public ArticleServiceTests()
         {
-            _articleService = new ArticleService(_articleApi.Object, _validator);
-        }
-
-        [Fact]
-        public async Task GetArticlesAsync_ShouldReturnEmptyList_WhenRequestIsInvalid()
-        {
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { PageNumber = -1 });
-
-            result.Should().BeEmpty();
+            _articleService = new ArticleService(_articleApi.Object);
         }
 
         [Fact]
@@ -49,9 +38,9 @@ namespace UnitTests.Library.Services
             List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 0)).Returns(Task.FromResult(expectedResponse));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, 0)).Returns(Task.FromResult(expectedResponse));
 
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = 1 });
+            var result = await _articleService.GetArticlesAsync(searchValue, 1);
 
             result.Should().Equal(expected);
         }
@@ -69,9 +58,9 @@ namespace UnitTests.Library.Services
             List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, start)).Returns(Task.FromResult(expectedResponse));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, start)).Returns(Task.FromResult(expectedResponse));
 
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = searchValue, PageNumber = pageNumber});
+            var result = await _articleService.GetArticlesAsync(searchValue, pageNumber);
 
             result.Should().Equal(expected);
         }

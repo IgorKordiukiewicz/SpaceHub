@@ -1,4 +1,3 @@
-using Library.Api.Requests;
 using Library.Api.Responses;
 using Library.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +27,7 @@ namespace Web.Pages.News
         {
             SearchValue = searchValue;
 
-            var result = await _articleService.GetArticlesAsync(new ArticleRequest { SearchValue = SearchValue, PageNumber = pageNumber });
+            var result = await _articleService.GetArticlesAsync(SearchValue, pageNumber);
             Articles = result.Select(a => a.ToArticleViewModel()).ToList();
 
             var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
