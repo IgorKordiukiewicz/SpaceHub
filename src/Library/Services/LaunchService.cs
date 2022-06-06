@@ -20,22 +20,22 @@ namespace Library.Services
             _launchApi = launchApi;
         }
         
-        public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(int pageNumber)
+        public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber)
         {
-            return await GetLaunchesAsync(pageNumber, true);
+            return await GetLaunchesAsync(searchValue, pageNumber, true);
         }
 
-        public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(int pageNumber)
+        public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber)
         {
-            return await GetLaunchesAsync(pageNumber, false);
+            return await GetLaunchesAsync(searchValue, pageNumber, false);
         }
 
-        private async Task<(int, List<Launch>)> GetLaunchesAsync(int pageNumber, bool upcoming)
+        private async Task<(int, List<Launch>)> GetLaunchesAsync(string? searchValue, int pageNumber, bool upcoming)
         {
             var offset = _pagination.GetOffset(pageNumber);
             var result = upcoming ? 
-                await _launchApi.GetUpcomingLaunchesAsync(_pagination.ItemsPerPage, offset)
-                : await _launchApi.GetPreviousLaunchesAsync(_pagination.ItemsPerPage, offset);
+                await _launchApi.GetUpcomingLaunchesAsync(searchValue, _pagination.ItemsPerPage, offset)
+                : await _launchApi.GetPreviousLaunchesAsync(searchValue, _pagination.ItemsPerPage, offset);
             var pagesCount = _pagination.GetPagesCount(result.Count);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());

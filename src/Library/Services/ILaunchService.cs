@@ -9,9 +9,9 @@ namespace Library.Services
 {
     public interface ILaunchService
     {
-        Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(int pageNumber = 1);
+        Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber = 1);
 
-        Task<(int, List<Launch>)> GetPreviousLaunchesAsync(int pageNumber = 1);
+        Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber = 1);
 
         Task<Launch> GetLaunchAsync(string id);
     }

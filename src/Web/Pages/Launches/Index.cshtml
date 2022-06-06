@@ -1,6 +1,11 @@
 ﻿@page
 @model Web.Pages.Launches.IndexModel
 
+<form class="d-flex pb-3">
+    <input asp-for="SearchValue" class="form-control me-sm-2" placeholder="Search" />
+    <button class="btn btn-success my-2 my-sm-0" asp-page="/Launches/Index" type="submit">Search</button>
+</form>
+
 @if(Model.Launches != null)
 {
     <div class="row">

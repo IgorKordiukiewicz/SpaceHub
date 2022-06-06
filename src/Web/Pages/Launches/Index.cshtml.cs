@@ -16,20 +16,43 @@ namespace Web.Pages.Launches
 
         public PaginationViewModel Pagination { get; set; }
 
+        [BindProperty]
+        public string? SearchValue { get; set; }
+
+        [BindProperty]
+        public LaunchDateType LaunchDateType { get; set; }
+
         public IndexModel(ILaunchService launchService)
         {
             _launchService = launchService;
         }
 
-        public async Task OnGet(LaunchDateType launchDateType, int pageNumber = 1)
+        public async Task OnGet(LaunchDateType launchDateType, string? searchValue, int pageNumber = 1)
         {
+            LaunchDateType = launchDateType;
+            SearchValue = searchValue;
+            
             var (pagesCount, result) = launchDateType == LaunchDateType.Upcoming ? 
-                await _launchService.GetUpcomingLaunchesAsync(pageNumber)
-                : await _launchService.GetPreviousLaunchesAsync(pageNumber);
+                await _launchService.GetUpcomingLaunchesAsync(searchValue, pageNumber)
+                : await _launchService.GetPreviousLaunchesAsync(searchValue, pageNumber);
 
             Launches = result?.Select(l => l.ToLaunchCardViewModel()).ToList();
 
-            Pagination = new(pageNumber, pagesCount, "/Launches/Index", new() { { "launchDateType", launchDateType.ToString() } });
+            Dictionary<string, string> paginationParameters = new()
+            {
+                { "launchDateType", launchDateType.ToString() }
+            };
+            if(SearchValue != null)
+            {
+                paginationParameters.Add("searchValue", SearchValue);
+            }
+
+            Pagination = new(pageNumber, pagesCount, "/Launches/Index", paginationParameters);
+        }
+
+        public IActionResult OnPost()
+        {
+            return RedirectToPage("Index", new { launchDateType = LaunchDateType, searchValue = SearchValue, pageNumber = 1 });
         }
     }
 }

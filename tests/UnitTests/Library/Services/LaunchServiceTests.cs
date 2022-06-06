@@ -38,10 +38,11 @@ namespace UnitTests.Library.Services
 
             List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
 
+            string searchValue = "search";
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();  
-            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(12, offset)).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(searchValue, 12, offset)).Returns(Task.FromResult(launchesResponse));
 
-            var (itemsCount, result) = await _launchService.GetUpcomingLaunchesAsync(pageNumber);
+            var (itemsCount, result) = await _launchService.GetUpcomingLaunchesAsync(searchValue, pageNumber);
 
             result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
         }
@@ -58,10 +59,11 @@ namespace UnitTests.Library.Services
 
             List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
 
+            string searchValue = "search";
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetPreviousLaunchesAsync(12, offset)).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetPreviousLaunchesAsync(searchValue, 12, offset)).Returns(Task.FromResult(launchesResponse));
 
-            var (itemsCount, result) = await _launchService.GetPreviousLaunchesAsync(pageNumber);
+            var (itemsCount, result) = await _launchService.GetPreviousLaunchesAsync(searchValue, pageNumber);
 
             result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
         }
