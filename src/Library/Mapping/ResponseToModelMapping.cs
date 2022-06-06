@@ -181,7 +181,7 @@ namespace Library.Mapping
             };
         }
 
-        public static Program ToModel(this ProgramResponse response)
+        public static SpaceProgram ToModel(this ProgramResponse response)
         {
             return new()
             {

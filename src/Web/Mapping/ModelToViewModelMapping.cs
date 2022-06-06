@@ -48,6 +48,8 @@ namespace Web.Mapping
                 Agency = launch.Agency.ToAgencyCardViewModel(),
                 Rocket = launch.Rocket.ToRocketCardViewModel(),
                 Pad = launch.Pad.ToPadCardViewModel(),
+
+                Programs = launch.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
             };
         }
         public static AgencyCardViewModel ToAgencyCardViewModel(this Agency agency)
@@ -118,6 +120,18 @@ namespace Web.Mapping
                 Name = rocket.Name,
                 Family = rocket.Family,
                 Variant = rocket.Variant,
+            };
+        }
+
+        public static SpaceProgramCardViewModel ToSpaceProgramCardViewModel(this SpaceProgram program)
+        {
+            return new()
+            {
+                Name = program.Name,
+                Description = program.Description,
+                ImageUrl = program.ImageUrl,
+                StartDate = Utils.DateToString(program.StartDate, true),
+                EndDate = Utils.DateToString(program.EndDate, true)
             };
         }
     }

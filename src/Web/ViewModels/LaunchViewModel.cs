@@ -16,5 +16,6 @@ namespace Web.ViewModels
         public AgencyCardViewModel Agency { get; init; }
         public RocketCardViewModel Rocket { get; init; }
         public PadCardViewModel Pad { get; init; }
+        public List<SpaceProgramCardViewModel> Programs { get; init; }
     }
 }

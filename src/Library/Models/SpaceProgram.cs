@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    public record Program
+    public record SpaceProgram
     {
         public string Name { get; init; }
         public string Description { get; init; }

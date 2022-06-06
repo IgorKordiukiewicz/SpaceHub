@@ -20,7 +20,7 @@ namespace Library.Models
         public Rocket Rocket { get; init; }
         public Mission? Mission { get; init; }
         public Pad Pad { get; init; }
-        public List<Program> Programs { get; init; }
+        public List<SpaceProgram> Programs { get; init; }
         public string ImageUrl { get; init; }
     }
 }

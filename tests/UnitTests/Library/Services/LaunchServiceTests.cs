@@ -43,7 +43,7 @@ namespace UnitTests.Library.Services
 
             var (itemsCount, result) = await _launchService.GetUpcomingLaunchesAsync(pageNumber);
 
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
         }
 
         [Theory]
@@ -63,7 +63,7 @@ namespace UnitTests.Library.Services
 
             var (itemsCount, result) = await _launchService.GetPreviousLaunchesAsync(pageNumber);
 
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace UnitTests.Library.Services
 
             var result = await _launchService.GetLaunchAsync(launchId);
 
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
         }
     }
 }

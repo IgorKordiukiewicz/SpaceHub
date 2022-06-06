@@ -1,0 +1,39 @@
+﻿@model SpaceProgramCardViewModel
+
+<div class="col-12">
+    <div class="card mb-4 border-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <img src="@Model.ImageUrl" class="img-fluid rounded-start card-img-left-scale"/>
+            </div>
+            <div class="col-lg-9">
+                <div class="card-body text-center">
+                    <h2 class="card-title">
+                        @Model.Name
+                    </h2>
+                    <hr />
+                    @if(Model.Description != null)
+                    {
+                        <h5 class="text-muted">
+                            @Model.Description
+                        </h5>
+                    }
+                    @if(Model.StartDate != null)
+                    {
+                        <hr />
+                        <h4>
+                            @if(Model.EndDate != null)
+                            {
+                                <text>@Model.StartDate - @Model.EndDate</text>
+                            }
+                            else
+                            {
+                                <text>Since @Model.StartDate</text>
+                            }
+                        </h4>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

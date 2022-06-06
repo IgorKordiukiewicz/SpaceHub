@@ -62,6 +62,23 @@
     </h3>
     <hr />
     <partial name="_Rocket" model="@Model.Launch.Rocket" />
+    @if(Model.Launch.Programs.Count > 0)
+    {
+        <h3>
+            Programs
+        </h3>
+        <hr />
+        <div class="col-12">
+            <div class="card mb-4 p-4">
+                <div class="row">
+                    @foreach(var program in Model.Launch.Programs)
+                    {
+                        <partial name="_SpaceProgram" model="@program"/>
+                    }
+                </div>
+            </div>
+        </div>
+    }
     <h3>
         Pad
     </h3>
