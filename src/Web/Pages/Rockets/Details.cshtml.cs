@@ -11,6 +11,7 @@ namespace Web.Pages.Rockets
         private readonly IRocketService _rocketService;
 
         public RocketCardViewModel Rocket { get; set; }
+        public AgencyCardViewModel Manufacturer { get; set; }
 
         public DetailsModel(IRocketService rocketService)
         {
@@ -23,6 +24,7 @@ namespace Web.Pages.Rockets
             result.Details.RankedProperties = await _rocketService.GetRocketRankedProperties(id);
 
             Rocket = result.ToRocketCardViewModel();
+            Manufacturer = result.Details.Manufacturer.ToAgencyCardViewModel();
         }
     }
 }

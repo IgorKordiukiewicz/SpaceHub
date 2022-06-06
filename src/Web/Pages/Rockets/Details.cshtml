@@ -2,5 +2,14 @@
 @model Web.Pages.Rockets.DetailsModel
 
 <div class="row">
+    <h3>
+        Rocket
+    </h3>
+    <hr />
     <partial name="_Rocket" model="@Model.Rocket" />
+    <h3>
+        Manufacturer
+    </h3>
+    <hr />
+    <partial name="_Agency" model="@Model.Manufacturer" />
 </div>
