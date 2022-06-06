@@ -23,10 +23,10 @@ namespace Library.Services
             _launchApi = launchApi;
         }
 
-        public async Task<(int, List<Rocket>)> GetRocketsAsync(int pageNumber)
+        public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber)
         {
             var offset = _pagination.GetOffset(pageNumber);
-            var result = await _launchApi.GetRocketsAsync(_pagination.ItemsPerPage, offset);
+            var result = await _launchApi.GetRocketsAsync(searchValue, _pagination.ItemsPerPage, offset);
             var pagesCount = _pagination.GetPagesCount(result.Count);
 
             return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());

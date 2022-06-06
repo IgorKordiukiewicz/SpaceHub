@@ -19,8 +19,8 @@ namespace Library.Api
         [Get("/launch/{id}")]
         Task<LaunchDetailResponse> GetLaunchAsync(string id);
 
-        [Get("/config/launcher/?limit={limit}&offset={offset}")]
-        Task<RocketsResponse> GetRocketsAsync(int limit = 50, int offset = 0);
+        [Get("/config/launcher/?search={searchValue}&limit={limit}&offset={offset}")]
+        Task<RocketsResponse> GetRocketsAsync(string? searchValue, int limit = 50, int offset = 0);
 
         [Get("/config/launcher/?mode=detailed&limit={limit}&offset={offset}")]
         Task<RocketsDetailResponse> GetRocketsDetailAsync(int limit = 50, int offset = 0);

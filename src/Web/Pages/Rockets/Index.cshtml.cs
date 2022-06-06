@@ -14,18 +14,28 @@ namespace Web.Pages.Rockets
 
         public PaginationViewModel Pagination { get; set; }
 
+        [BindProperty]
+        public string? SearchValue { get; set; }
+
         public IndexModel(IRocketService rocketService)
         {
             _rocketService = rocketService;
         }
 
-        public async Task OnGet(int pageNumber = 1)
+        public async Task OnGet(string? searchValue, int pageNumber = 1)
         {
-            var (pagesCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
+            SearchValue = searchValue;
+            
+            var (pagesCount, result) = await _rocketService.GetRocketsAsync(SearchValue, pageNumber);
 
             Rockets = result?.Select(r => r.ToRocketListItemViewModel()).ToList();
 
-            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Rockets/Index");
+            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Rockets/Index", searchValue != null ? new() { { "searchValue", searchValue } } : null);
+        }
+
+        public IActionResult OnPost()
+        {
+            return RedirectToPage("Index", new { searchValue = SearchValue, pageNumber = 1 });
         }
     }
 }

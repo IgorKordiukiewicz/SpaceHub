@@ -43,10 +43,11 @@ namespace UnitTests.Library.Services
 
             List<Rocket> expected = expectedResponse.Select(r => r.ToModel()).ToList();
 
+            string searchValue = "search";
             var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetRocketsAsync(50, offset)).Returns(Task.FromResult(rocketsResponse));
+            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, 50, offset)).Returns(Task.FromResult(rocketsResponse));
 
-            var (itemsCount, result) = await _rocketService.GetRocketsAsync(pageNumber);
+            var (itemsCount, result) = await _rocketService.GetRocketsAsync(searchValue, pageNumber);
 
             result.Should().Equal(expected);
         }
