@@ -106,6 +106,7 @@ namespace Web.Mapping
                 SuccessfulLaunches = getSuccessfulLaunches(rocket),
                 CostPerKgToLeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
                 CostPerKgToGeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
+                RankedProperties = rocket.Details.RankedProperties ?? new()
             };
         }
 

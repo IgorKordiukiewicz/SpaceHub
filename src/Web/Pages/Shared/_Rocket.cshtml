@@ -37,12 +37,14 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.Length
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.Length]" />
                         </div>
                         <div class="col-3">
                             <label asp-for="Diameter"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Diameter
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.Diameter]" />
                         </div>
                     </div>
                     <div class="row">
@@ -57,6 +59,7 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LaunchCost
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LaunchCost]" />
                         </div>
                     </div>
                     <div class="row">
@@ -65,12 +68,14 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffMass
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LiftoffMass]" />
                         </div>
                         <div class="col-3">
                             <label asp-for="LiftoffThrust"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffThrust
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LiftoffThrust]" />
                         </div>
                     </div>
                     <div class="row">
@@ -79,12 +84,14 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LeoCapacity
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LeoCapacity]" />
                         </div>
                         <div class="col-3">
                             <label asp-for="GeoCapacity"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.GeoCapacity
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.GeoCapacity]" />
                         </div>
                     </div>
                     <div class="row">
@@ -93,12 +100,14 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToLeo
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.CostPerKgToLeo]" />
                         </div>
                         <div class="col-3">
                             <label asp-for="CostPerKgToGeo"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToGeo
+                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.CostPerKgToGeo]" />
                         </div>
                     </div>
                     <hr />

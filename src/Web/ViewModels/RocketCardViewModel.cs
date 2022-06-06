@@ -1,4 +1,5 @@
 ﻿using Library.Api.Responses;
+using Library.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Web.ViewModels
@@ -42,5 +43,7 @@ namespace Web.ViewModels
 
         [Display(Name = "Cost per kg to GEO")]
         public string CostPerKgToGeo { get; init; }
+
+        public Dictionary<RocketRankedPropertyType, int> RankedProperties { get; init; }
     }
 }

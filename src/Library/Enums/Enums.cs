@@ -11,4 +11,17 @@ namespace Library.Enums
         Upcoming,
         Previous
     }
+
+    public enum RocketRankedPropertyType
+    {
+        Length,
+        Diameter,
+        LaunchCost,
+        LiftoffMass,
+        LiftoffThrust,
+        LeoCapacity,
+        GeoCapacity,
+        CostPerKgToLeo,
+        CostPerKgToGeo,
+    }
 }

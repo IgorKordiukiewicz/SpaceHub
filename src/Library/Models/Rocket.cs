@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,7 @@ namespace Library.Models
             public int LaunchSuccessPercent { get => (TotalLaunchCount > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunchCount) : 0); }
             public int? CostPerKgToLeo { get => (LaunchCost != null && LeoCapacity != null && LeoCapacity > 0) ? LaunchCost / LeoCapacity : null; }
             public int? CostPerKgToGeo { get => (LaunchCost != null && GeoCapacity != null && GeoCapacity > 0) ? LaunchCost / GeoCapacity : null; }
+            public Dictionary<RocketRankedPropertyType, int>? RankedProperties { get; set; }
         }
         public Detail? Details { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library.Enums;
+using Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Library.Services
         Task<(int, List<Rocket>)> GetRocketsAsync(int pageNumber = 1);
 
         Task<Rocket> GetRocketAsync(int id);
+
+        Task<Dictionary<RocketRankedPropertyType, int>?> GetRocketRankedProperties(int id);
     }
 }
