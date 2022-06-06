@@ -12,7 +12,7 @@ namespace Library.Models
         public string Description { get; init; }
         public string? Designator { get; init; }
         public string Type { get; init; }
-        public string OrbitName { get; init; }
-        public string OrbitAbbrevation { get; init; }
+        public string? OrbitName { get; init; }
+        public string? OrbitAbbrevation { get; init; }
     }
 }

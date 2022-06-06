@@ -147,8 +147,8 @@ namespace Library.Mapping
                 Description = response.Description,
                 Designator = response.Designator,
                 Type = response.Type,
-                OrbitName = response.Orbit.Name,
-                OrbitAbbrevation = response.Orbit.Abbrevation
+                OrbitName = response.Orbit?.Name,
+                OrbitAbbrevation = response.Orbit?.Abbrevation
             };
         }
 

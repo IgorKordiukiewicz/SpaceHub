@@ -10,11 +10,11 @@ namespace Library.Api
 {
     public interface ILaunchApi
     {
-        [Get("/launch/upcoming/")]
-        Task<LaunchesResponse> GetUpcomingLaunchesAsync();
+        [Get("/launch/upcoming/?limit={limit}&offset={offset}")]
+        Task<LaunchesResponse> GetUpcomingLaunchesAsync(int limit, int offset = 0);
 
-        [Get("/launch/previous/")]
-        Task<LaunchesResponse> GetPreviousLaunchesAsync();
+        [Get("/launch/previous/?limit={limit}&offset={offset}")]
+        Task<LaunchesResponse> GetPreviousLaunchesAsync(int limit, int offset = 0);
 
         [Get("/launch/{id}")]
         Task<LaunchDetailResponse> GetLaunchAsync(string id);

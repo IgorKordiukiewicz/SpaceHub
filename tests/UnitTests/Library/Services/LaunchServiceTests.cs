@@ -26,8 +26,10 @@ namespace UnitTests.Library.Services
             _launchService = new LaunchService(_launchApi.Object);
         }
 
-        [Fact]
-        public async Task GetUpcomingLaunchesAsync_ShouldReturnLaunchesList()
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 12)]
+        public async Task GetUpcomingLaunchesAsync_ShouldReturnDifferentLaunches_DependingOnPageNumber(int pageNumber, int offset)
         { 
             List<LaunchResponse> expectedResponse = new()
             {
@@ -37,15 +39,17 @@ namespace UnitTests.Library.Services
             List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
 
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();  
-            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(12, offset)).Returns(Task.FromResult(launchesResponse));
 
-            var result = await _launchService.GetUpcomingLaunchesAsync();
+            var (itemsCount, result) = await _launchService.GetUpcomingLaunchesAsync(pageNumber);
 
             result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }
 
-        [Fact]
-        public async Task GetPreviousLaunchesAsync_ShouldReturnLaunchesList()
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 12)]
+        public async Task GetPreviousLaunchesAsync_ShouldReturnDifferentLaunches_DependingOnPageNumber(int pageNumber, int offset)
         {
             List<LaunchResponse> expectedResponse = new()
             {
@@ -54,11 +58,10 @@ namespace UnitTests.Library.Services
 
             List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
 
-
             var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetPreviousLaunchesAsync()).Returns(Task.FromResult(launchesResponse));
+            _launchApi.Setup(l => l.GetPreviousLaunchesAsync(12, offset)).Returns(Task.FromResult(launchesResponse));
 
-            var result = await _launchService.GetPreviousLaunchesAsync();
+            var (itemsCount, result) = await _launchService.GetPreviousLaunchesAsync(pageNumber);
 
             result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Program>>());
         }

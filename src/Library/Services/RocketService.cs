@@ -25,7 +25,7 @@ namespace Library.Services
 
         public async Task<(int, List<Rocket>)> GetRocketsAsync(int pageNumber)
         {
-            int offset = _pagination.GetOffset(pageNumber);
+            var offset = _pagination.GetOffset(pageNumber);
             var result = await _launchApi.GetRocketsAsync(_pagination.ItemsPerPage, offset);
             var pagesCount = _pagination.GetPagesCount(result.Count);
 

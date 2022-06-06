@@ -31,24 +31,6 @@ namespace UnitTests.Library.Services
             _rocketRankedPropertyTestHelper = new(_rocketService, _launchApi, _fixture);
         }
 
-        [Fact]
-        public async Task GetRocketsAsync_ShouldReturnRocketsList()
-        {
-            List<RocketConfigResponse> expectedResponse = new()
-            {
-                _fixture.Create<RocketConfigResponse>()
-            };
-
-            List<Rocket> expected = expectedResponse.Select(r => r.ToModel()).ToList();
-            
-            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetRocketsAsync(50, 0)).Returns(Task.FromResult(rocketsResponse));
-            
-            var (itemsCount, result) = await _rocketService.GetRocketsAsync(1); 
-
-            result.Should().Equal(expected);
-        }
-
         [Theory]
         [InlineData(1, 0)]
         [InlineData(2, 50)]

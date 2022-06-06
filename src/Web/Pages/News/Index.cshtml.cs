@@ -32,7 +32,7 @@ namespace Web.Pages.News
             Articles = result.Select(a => a.ToArticleViewModel()).ToList();
 
             var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
-            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/News/Index", searchValue != null ? new() { { "searchValue", searchValue} } : null);
+            Pagination = new(pageNumber, pagesCount, "/News/Index", searchValue != null ? new() { { "searchValue", searchValue} } : null);
         }
 
         public IActionResult OnPost()

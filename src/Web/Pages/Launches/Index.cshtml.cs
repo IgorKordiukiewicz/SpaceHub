@@ -14,18 +14,22 @@ namespace Web.Pages.Launches
 
         public List<LaunchCardViewModel>? Launches { get; set; }
 
+        public PaginationViewModel Pagination { get; set; }
+
         public IndexModel(ILaunchService launchService)
         {
             _launchService = launchService;
         }
 
-        public async Task OnGet(LaunchDateType launchDateType)
+        public async Task OnGet(LaunchDateType launchDateType, int pageNumber = 1)
         {
-            var result = launchDateType == LaunchDateType.Upcoming ? 
-                await _launchService.GetUpcomingLaunchesAsync()
-                : await _launchService.GetPreviousLaunchesAsync();
+            var (pagesCount, result) = launchDateType == LaunchDateType.Upcoming ? 
+                await _launchService.GetUpcomingLaunchesAsync(pageNumber)
+                : await _launchService.GetPreviousLaunchesAsync(pageNumber);
 
             Launches = result?.Select(l => l.ToLaunchCardViewModel()).ToList();
+
+            Pagination = new(pageNumber, pagesCount, "/Launches/Index", new() { { "launchDateType", launchDateType.ToString() } });
         }
     }
 }
