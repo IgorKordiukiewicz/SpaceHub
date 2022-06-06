@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 namespace Library.Enums
 {
-    public enum LaunchDateType
-    {
-        Upcoming,
-        Previous
-    }
-
     public enum RocketRankedPropertyType
     {
         Length,
