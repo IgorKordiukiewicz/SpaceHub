@@ -88,7 +88,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.Length, r => r.Length, 2.0, null, 3.0);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.Diameter, r => r.Diameter, 2.0, null, 3.0);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LaunchCost, r => r.LaunchCost, "100", null, "200");
 
-            result.Should().Equal(new int[3] { 1, 3, 2 });
+            result.Should().Equal(new int?[3] { 1, null, 2 });
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LiftoffMass, r => r.LaunchMass, 10, null, 20);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LiftoffThrust, r => r.ThrustAtLiftoff, 10, null, 20);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LeoCapacity, r => r.LeoCapacity, 10, null, 20);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace UnitTests.Library.Services
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.GeoCapacity, r => r.GeoCapacity, 10, null, 20);
 
-            result.Should().Equal(new int[3] { 2, 3, 1 });
+            result.Should().Equal(new int?[3] { 2, null, 1 });
         }
 
         [Fact]
@@ -146,7 +146,7 @@ namespace UnitTests.Library.Services
                 , r => r.LaunchCost, "100", null, "200"
                 , r => r.LeoCapacity, 10, 10, 10);
 
-            result.Should().Equal(new int[3] { 1, 3, 2 });
+            result.Should().Equal(new int?[3] { 1, null, 2 });
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace UnitTests.Library.Services
                 , r => r.LaunchCost, "100", null, "200"
                 , r => r.GeoCapacity, 10, 10, 10);
 
-            result.Should().Equal(new int[3] { 1, 3, 2 });
+            result.Should().Equal(new int?[3] { 1, null, 2 });
         }
 
         private class RocketRankedPropertyTestHelper
@@ -172,7 +172,7 @@ namespace UnitTests.Library.Services
                 _fixture = fixture;
             }
             
-            public async Task<int[]> RunSingleProp<T>(RocketRankedPropertyType propertyType, Expression<Func<RocketConfigDetailResponse, T?>> propertyPicker
+            public async Task<int?[]> RunSingleProp<T>(RocketRankedPropertyType propertyType, Expression<Func<RocketConfigDetailResponse, T?>> propertyPicker
                 , T? value1, T? value2, T? value3)
             {
                 RocketsDetailResponse expectedResponse = new()
@@ -191,10 +191,10 @@ namespace UnitTests.Library.Services
                 var rocket2Result = await _rocketService.GetRocketRankedProperties(2);
                 var rocket3Result = await _rocketService.GetRocketRankedProperties(3);
 
-                return new int[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
+                return new int?[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
             }
 
-            public async Task<int[]> RunDoubleProp<TA, TB>(RocketRankedPropertyType propertyType
+            public async Task<int?[]> RunDoubleProp<TA, TB>(RocketRankedPropertyType propertyType
                 , Expression<Func<RocketConfigDetailResponse, TA?>> propertyPickerA, TA? value1A, TA? value2A, TA? value3A
                 , Expression<Func<RocketConfigDetailResponse, TB?>> propertyPickerB, TB? value1B, TB? value2B, TB? value3B)
             {
@@ -214,7 +214,7 @@ namespace UnitTests.Library.Services
                 var rocket2Result = await _rocketService.GetRocketRankedProperties(2);
                 var rocket3Result = await _rocketService.GetRocketRankedProperties(3);
 
-                return new int[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
+                return new int?[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
             }
         }
     }

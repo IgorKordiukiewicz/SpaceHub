@@ -42,6 +42,8 @@ namespace Web.Mapping
                 StatusName = launch.StatusName,
                 StatusDescription = launch.StatusDescription,
                 Date = Utils.DateToString(launch.Date) ?? string.Empty,
+                DateJsMilliseconds = launch.Date != null ? Utils.DateToJsMilliseconds(launch.Date.Value) : 0,
+                Upcoming = launch.Date > DateTime.Now,
                 WindowStart = Utils.DateToString(launch.WindowStart),
                 WindowEnd = Utils.DateToString(launch.WindowEnd),
 

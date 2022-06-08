@@ -4,6 +4,8 @@ namespace Web.ViewModels
 {
     public static class Utils
     {
+        private static readonly long _startDateTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+
         public static string? DateToString(DateTime? dateTime, bool onlyDate = false)
         {
             if (dateTime != null)
@@ -22,6 +24,11 @@ namespace Web.ViewModels
             {
                 return null;
             }
+        }
+
+        public static long DateToJsMilliseconds(DateTime dateTime)
+        {
+            return (dateTime.ToUniversalTime().Ticks - _startDateTicks) / 10000;
         }
 
         public static string ValueToStringWithSymbol<T>(T? value, string symbol, bool spaceBetween = true, string placeholder = "-")

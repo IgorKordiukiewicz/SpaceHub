@@ -43,6 +43,18 @@ namespace UnitTests.Web.ViewModels
             result.Should().BeNull();
         }
 
+        [Theory]
+        [InlineData(2020, 1, 1, 0, 0, 0, 1577836800000)]
+        [InlineData(1970, 1, 1, 0, 0, 5, 5000)]
+        public void DateToJsMilliseconds_ShouldCalculateMillisecondsProperly(int year, int month, int day, int hour, int minute, int second, long expected)
+        {
+            var dateTime = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
+
+            var result = Utils.DateToJsMilliseconds(dateTime);
+
+            result.Should().Be(expected);
+        }
+
         [Fact]
         public void ValueToStringWithSymbol_ShouldReturnValueWithSymbolWithSpaceBetween_WhenValueIsNotNullAndSpaceBetweenIsTrue()
         {

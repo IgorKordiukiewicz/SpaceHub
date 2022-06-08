@@ -38,9 +38,21 @@
                         <h5 class="text-muted">
                             @Model.Launch.StatusDescription
                         </h5>
-                        <h3>
-                            @Model.Launch.Date
-                        </h3>
+                        @if(Model.Launch.Upcoming)
+                        {
+                            <h1 id="countdownTimer">
+                                00:00:00:00
+                            </h1>
+                            <h4>
+                                @Model.Launch.Date
+                            </h4>
+                        }
+                        else
+                        {
+                            <h3>
+                                @Model.Launch.Date
+                            </h3>
+                        }
                         @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
                         {
                             <h5 class="text-muted">
@@ -85,3 +97,26 @@
     <hr />
     <partial name="_Pad" model="@Model.Launch.Pad" />
 </div>
+
+<script type="text/javascript">
+    var date = @Model.Launch.DateJsMilliseconds;
+    var d = new Date(date);
+    console.log(d);
+
+    var countdown = setInterval(function() {
+        var now = new Date().getTime();
+        var diff = date - now;
+
+        var days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        var hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        var minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        var seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+
+        $("#countdownTimer").html(days + ":" + hours + ":" + minutes + ":" + seconds);
+
+        if(diff < 0) {
+            clearInterval(countdown);
+            $("#countdownTimer").html("00:00:00:00");
+        }
+    }, 1000);
+</script>
