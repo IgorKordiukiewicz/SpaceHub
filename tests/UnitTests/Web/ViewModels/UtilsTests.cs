@@ -14,7 +14,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnOnlyDate_WhenHoursAndMinutesAreZero()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1));
+            var result = Utils.DateToString(new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Local));
 
             result.Should().Be("01/01/2022");
         }
@@ -22,7 +22,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnFullDate_WhenHoursAndMinutesAreNotZero()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1, 1, 1, 1));
+            var result = Utils.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local));
 
             result.Should().Be("01/01/2022 01:01");
         }
@@ -30,7 +30,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnOnlyDate_WhenOnlyDateParamIsTrue()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1), true);
+            var result = Utils.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local), true);
 
             result.Should().Be("01/01/2022");
         }

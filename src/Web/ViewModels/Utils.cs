@@ -10,7 +10,7 @@ namespace Web.ViewModels
         {
             if (dateTime != null)
             {
-                var date = dateTime.Value;
+                var date = dateTime.Value.ToLocalTime();
                 if (date.Hour == 0 && date.Minute == 0 || onlyDate)
                 {
                     return date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
