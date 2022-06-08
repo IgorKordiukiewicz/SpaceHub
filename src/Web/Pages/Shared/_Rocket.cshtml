@@ -37,14 +37,16 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.Length
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.Length]" />
+                            <label id="LengthProperty">
+                            </label>
                         </div>
                         <div class="col-3">
                             <label asp-for="Diameter"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.Diameter
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.Diameter]" />
+                            <label id="DiameterProperty">
+                            </label>
                         </div>
                     </div>
                     <div class="row">
@@ -59,7 +61,8 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LaunchCost
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LaunchCost]" />
+                            <label id="LaunchCostProperty">
+                            </label>
                         </div>
                     </div>
                     <div class="row">
@@ -68,14 +71,16 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffMass
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LiftoffMass]" />
+                            <label id="LiftoffMassProperty">
+                            </label>
                         </div>
                         <div class="col-3">
                             <label asp-for="LiftoffThrust"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.LiftoffThrust
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LiftoffThrust]" />
+                            <label id="LiftoffThrustProperty">
+                            </label>
                         </div>
                     </div>
                     <div class="row">
@@ -84,14 +89,16 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.LeoCapacity
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.LeoCapacity]" />
+                            <label id="LeoCapacityProperty">
+                            </label>
                         </div>
                         <div class="col-3">
                             <label asp-for="GeoCapacity"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.GeoCapacity
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.GeoCapacity]" />
+                            <label id="GeoCapacityProperty">
+                            </label>
                         </div>
                     </div>
                     <div class="row">
@@ -100,14 +107,16 @@
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToLeo
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.CostPerKgToLeo]" />
+                            <label id="CostPerKgToLeoProperty">
+                            </label>
                         </div>
                         <div class="col-3">
                             <label asp-for="CostPerKgToGeo"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.CostPerKgToGeo
-                            <partial name="_Trophy" model="@Model.RankedProperties[RocketRankedPropertyType.CostPerKgToGeo]" />
+                            <label id="CostPerKgToGeoProperty">
+                            </label>
                         </div>
                     </div>
                     <hr />
@@ -125,8 +134,52 @@
                             @Model.SuccessfulLaunches
                         </div>
                     </div>
+                    <hr />
+                    <div class="form-check form-switch float-end text-end">
+                        <input class="form-check-input" type="checkbox" id="showPropertyRankToggle">
+                        <label class="form-check-label" for="showPropertyRankToggle">Show Properties Ranks</label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    var toggle = document.getElementById("showPropertyRankToggle");
+    var goldTrophy = "<i class=\"bi bi-trophy-fill\" style=\"color:#D6AF36;\"></i> ";
+    var silverTrophy = "<i class=\"bi bi-trophy-fill\" style=\"color:#A7A7AD;\"></i> ";
+    var bronzeTrophy = "<i class=\"bi bi-trophy-fill\" style=\"color:#A77044;\"></i> ";
+
+    toggle.addEventListener("change", function() {
+        if(toggle.checked) {
+            @{
+                foreach(var propertyType in Enum.GetValues<RocketRankedPropertyType>())
+                {
+                    var rank = Model.RankedProperties[propertyType];
+                    if(rank != null)
+                    {
+                        var htmlId = propertyType.ToString() + "Property";
+                        <text>
+                            var trophyText = @rank == 1 ? goldTrophy : (@rank == 2 ? silverTrophy : (@rank == 3 ? bronzeTrophy : ""));
+                            $(@htmlId).html(" (" + trophyText + @rank.ToString() + ")");
+                        </text>
+                    }
+                
+                }
+            }
+        }
+        else {
+            var diameterProperty = document.getElementById("diameterProperty");
+            @{
+                foreach(var propertyType in Enum.GetValues<RocketRankedPropertyType>())
+                {
+                    var htmlId = propertyType.ToString() + "Property";
+                    <text>
+                        $(@htmlId).html("");
+                    </text>
+                }
+            }
+        }
+    });
+</script>

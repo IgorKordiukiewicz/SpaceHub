@@ -16,7 +16,7 @@ namespace Library.Services
     {
         private readonly ILaunchApi _launchApi;
         private readonly Pagination _pagination = new() { ItemsPerPage = 50 };
-        private Dictionary<int, Dictionary<RocketRankedPropertyType, int>>? _rocketRankedProperties;
+        private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
 
         public RocketService(ILaunchApi launchApi)
         {
@@ -39,7 +39,7 @@ namespace Library.Services
             return result.ToModel();
         }
 
-        public async Task<Dictionary<RocketRankedPropertyType, int>?> GetRocketRankedProperties(int id)
+        public async Task<Dictionary<RocketRankedPropertyType, int?>?> GetRocketRankedProperties(int id)
         {
             if(_rocketRankedProperties == null)
             {
@@ -80,18 +80,11 @@ namespace Library.Services
 
         private static Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> InitializeRankedPropertiesByType(List<RocketConfigDetailResponse> rockets)
         {
-            Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType = new()
+            Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType = new();
+            foreach (var propertyType in Enum.GetValues<RocketRankedPropertyType>())
             {
-                { RocketRankedPropertyType.Length, new() },
-                { RocketRankedPropertyType.Diameter, new() },
-                { RocketRankedPropertyType.LaunchCost, new() },
-                { RocketRankedPropertyType.LiftoffMass, new() },
-                { RocketRankedPropertyType.LiftoffThrust, new() },
-                { RocketRankedPropertyType.LeoCapacity, new() },
-                { RocketRankedPropertyType.GeoCapacity, new() },
-                { RocketRankedPropertyType.CostPerKgToLeo, new() },
-                { RocketRankedPropertyType.CostPerKgToGeo, new() },
-            };
+                propertiesByType.Add(propertyType, new());
+            }
 
             foreach (var rocketResponse in rockets)
             {
@@ -135,15 +128,12 @@ namespace Library.Services
             {
                 for (int i = 0; i < properties.Count; ++i)
                 {
-                    if (_rocketRankedProperties.ContainsKey(properties[i].RocketId))
-                    {
-                        _rocketRankedProperties[properties[i].RocketId].Add(type, i + 1);
-                    }
-                    else
+                    if (!_rocketRankedProperties.ContainsKey(properties[i].RocketId))
                     {
                         _rocketRankedProperties[properties[i].RocketId] = new();
-                        _rocketRankedProperties[properties[i].RocketId].Add(type, i + 1);
                     }
+
+                    _rocketRankedProperties[properties[i].RocketId].Add(type, properties[i].Value != null ? i + 1 : null);
                 }
             }
         }
