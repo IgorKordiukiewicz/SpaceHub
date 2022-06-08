@@ -58,33 +58,44 @@ namespace UnitTests.Library.Services
             var expectedResponse = _fixture.Build<RocketConfigDetailResponse>().With(r => r.LaunchCost, "1000").Create();
             var expected = expectedResponse.ToModel();
             int id = 1;
+            _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(new RocketsDetailResponse()
+            {
+                Count = 1,
+                Rockets = new List<RocketConfigDetailResponse>()
+                {
+                    expectedResponse
+                }
+            }));
             _launchApi.Setup(l => l.GetRocketAsync(id)).Returns(Task.FromResult(expectedResponse));
 
             var result = await _rocketService.GetRocketAsync(id);
 
-            result.Should().Be(expected);
+            result.Should().BeEquivalentTo(expected, options => options.Excluding(r => r.Details.RankedProperties));
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_ShouldReturnNull_WhenIdIsNotFound()
+        public async Task SetRocketRankedProperties_ShouldSetToNull_WhenIdIsNotFound()
         {
+            var rocketResponse = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).Create();
+
             RocketsDetailResponse expectedResponse = new()
             {
                 Count = 1,
                 Rockets = new List<RocketConfigDetailResponse>()
                 {
-                    _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).Create()
+                    rocketResponse
                 }
             };
             _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(expectedResponse));
+            _launchApi.Setup(l => l.GetRocketAsync(2)).Returns(Task.FromResult(_fixture.Create<RocketConfigDetailResponse>()));
 
-            var result = await _rocketService.GetRocketRankedProperties(2);
+            var result = await _rocketService.GetRocketAsync(2);
 
-            result.Should().BeNull();
+            result.Details.RankedProperties.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_LengthShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_LengthShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.Length, r => r.Length, 2.0, null, 3.0);
 
@@ -92,7 +103,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_DiameterShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_DiameterShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.Diameter, r => r.Diameter, 2.0, null, 3.0);
 
@@ -100,7 +111,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_LaunchCostShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_LaunchCostShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LaunchCost, r => r.LaunchCost, "100", null, "200");
 
@@ -108,7 +119,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_LiftoffMassShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_LiftoffMassShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LiftoffMass, r => r.LaunchMass, 10, null, 20);
 
@@ -116,7 +127,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_LiftoffThrustShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_LiftoffThrustShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LiftoffThrust, r => r.ThrustAtLiftoff, 10, null, 20);
 
@@ -124,7 +135,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_LeoCapacityShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_LeoCapacityShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.LeoCapacity, r => r.LeoCapacity, 10, null, 20);
 
@@ -132,7 +143,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_GeoCapacityShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_GeoCapacityShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.GeoCapacity, r => r.GeoCapacity, 10, null, 20);
 
@@ -140,7 +151,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_CostPerKgToLeoShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_CostPerKgToLeoShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunDoubleProp(RocketRankedPropertyType.CostPerKgToLeo
                 , r => r.LaunchCost, "100", null, "200"
@@ -150,7 +161,7 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetRocketRankedProperties_CostPerKgToGeoShouldBeRankedProperly()
+        public async Task SetRocketRankedProperties_CostPerKgToGeoShouldBeRankedProperly()
         {
             var result = await _rocketRankedPropertyTestHelper.RunDoubleProp(RocketRankedPropertyType.CostPerKgToGeo
                 , r => r.LaunchCost, "100", null, "200"
@@ -175,46 +186,46 @@ namespace UnitTests.Library.Services
             public async Task<int?[]> RunSingleProp<T>(RocketRankedPropertyType propertyType, Expression<Func<RocketConfigDetailResponse, T?>> propertyPicker
                 , T? value1, T? value2, T? value3)
             {
-                RocketsDetailResponse expectedResponse = new()
-                {
-                    Count = 3,
-                    Rockets = new List<RocketConfigDetailResponse>()
-                    {
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).With(propertyPicker, value1).Create(),
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 2).With(propertyPicker, value2).Create(),
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 3).With(propertyPicker, value3).Create(),
-                    }
-                };
-                _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(expectedResponse));
+                var rocket1Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).With(propertyPicker, value1).Create();
+                var rocket2Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 2).With(propertyPicker, value2).Create();
+                var rocket3Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 3).With(propertyPicker, value3).Create();
 
-                var rocket1Result = await _rocketService.GetRocketRankedProperties(1);
-                var rocket2Result = await _rocketService.GetRocketRankedProperties(2);
-                var rocket3Result = await _rocketService.GetRocketRankedProperties(3);
-
-                return new int?[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
+                return await Run(propertyType, new[] { rocket1Response, rocket2Response, rocket3Response });
             }
 
             public async Task<int?[]> RunDoubleProp<TA, TB>(RocketRankedPropertyType propertyType
                 , Expression<Func<RocketConfigDetailResponse, TA?>> propertyPickerA, TA? value1A, TA? value2A, TA? value3A
                 , Expression<Func<RocketConfigDetailResponse, TB?>> propertyPickerB, TB? value1B, TB? value2B, TB? value3B)
             {
+                var rocket1Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).With(propertyPickerA, value1A).With(propertyPickerB, value1B).Create();
+                var rocket2Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 2).With(propertyPickerA, value2A).With(propertyPickerB, value2B).Create();
+                var rocket3Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 3).With(propertyPickerA, value3A).With(propertyPickerB, value3B).Create();
+
+                return await Run(propertyType, new[] { rocket1Response, rocket2Response, rocket3Response });
+            }
+
+            private async Task<int?[]> Run(RocketRankedPropertyType propertyType, RocketConfigDetailResponse[] rocketResponses)
+            {
                 RocketsDetailResponse expectedResponse = new()
                 {
                     Count = 3,
                     Rockets = new List<RocketConfigDetailResponse>()
                     {
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).With(propertyPickerA, value1A).With(propertyPickerB, value1B).Create(),
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 2).With(propertyPickerA, value2A).With(propertyPickerB, value2B).Create(),
-                        _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 3).With(propertyPickerA, value3A).With(propertyPickerB, value3B).Create(),
+                        rocketResponses[0], rocketResponses[1], rocketResponses[2]
                     }
                 };
                 _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(expectedResponse));
+                _launchApi.Setup(l => l.GetRocketAsync(1)).Returns(Task.FromResult(rocketResponses[0]));
+                _launchApi.Setup(l => l.GetRocketAsync(2)).Returns(Task.FromResult(rocketResponses[1]));
+                _launchApi.Setup(l => l.GetRocketAsync(3)).Returns(Task.FromResult(rocketResponses[2]));
 
-                var rocket1Result = await _rocketService.GetRocketRankedProperties(1);
-                var rocket2Result = await _rocketService.GetRocketRankedProperties(2);
-                var rocket3Result = await _rocketService.GetRocketRankedProperties(3);
+                var rocket1 = await _rocketService.GetRocketAsync(1);
+                var rocket2 = await _rocketService.GetRocketAsync(2);
+                var rocket3 = await _rocketService.GetRocketAsync(3);
 
-                return new int?[3] { rocket1Result[propertyType], rocket2Result[propertyType], rocket3Result[propertyType] };
+                return new int?[3] { rocket1.Details.RankedProperties[propertyType],
+                    rocket2.Details.RankedProperties[propertyType],
+                    rocket3.Details.RankedProperties[propertyType] };
             }
         }
     }

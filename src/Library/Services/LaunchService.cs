@@ -14,10 +14,12 @@ namespace Library.Services
     {
         private readonly ILaunchApi _launchApi;
         private readonly Pagination _pagination = new() { ItemsPerPage = 12 };
+        private readonly IRocketService _rocketService;
 
-        public LaunchService(ILaunchApi launchApi)
+        public LaunchService(ILaunchApi launchApi, IRocketService rocketService)
         {
             _launchApi = launchApi;
+            _rocketService = rocketService;
         }
         
         public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber)
@@ -44,8 +46,11 @@ namespace Library.Services
         public async Task<Launch> GetLaunchAsync(string id)
         {
             var result = await _launchApi.GetLaunchAsync(id);
+
+            var launch = result.ToModel();
+            await _rocketService.SetRocketRankedProperties(launch.Rocket);
             
-            return result.ToModel();
+            return launch;
         }
     }
 }

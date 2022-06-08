@@ -21,7 +21,6 @@ namespace Web.Pages.Rockets
         public async Task OnGet(int id)
         {
             var result = await _rocketService.GetRocketAsync(id);
-            result.Details.RankedProperties = await _rocketService.GetRocketRankedProperties(id);
 
             Rocket = result.ToRocketCardViewModel();
             Manufacturer = result.Details.Manufacturer.ToAgencyCardViewModel();

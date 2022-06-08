@@ -37,17 +37,20 @@ namespace Library.Services
         {
             var result = await _launchApi.GetRocketAsync(id);
 
-            return result.ToModel();
+            var rocket = result.ToModel();
+            await SetRocketRankedProperties(rocket);
+
+            return rocket;
         }
 
-        public async Task<Dictionary<RocketRankedPropertyType, int?>?> GetRocketRankedProperties(int id)
+        public async Task SetRocketRankedProperties(Rocket rocket)
         {
-            if(_rocketRankedProperties == null)
+            if (_rocketRankedProperties == null)
             {
                 await InitializeRocketRankedPropertiesAsync();
             }
 
-            return _rocketRankedProperties.GetValueOrDefault(id);
+            rocket.Details.RankedProperties = _rocketRankedProperties.GetValueOrDefault(rocket.ApiId);
         }
 
         private async Task InitializeRocketRankedPropertiesAsync()

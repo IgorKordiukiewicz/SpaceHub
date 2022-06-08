@@ -22,8 +22,6 @@ namespace Web.Pages.Launches
         public async Task OnGet(string id)
         {
             var result = await _launchService.GetLaunchAsync(id);
-            result.Rocket.Details.RankedProperties = await _rocketService.GetRocketRankedProperties(result.Rocket.ApiId);
-
             Launch = result.ToLaunchViewModel();
         }
     }

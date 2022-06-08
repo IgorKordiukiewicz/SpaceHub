@@ -23,7 +23,7 @@ namespace UnitTests.Library.Services
 
         public LaunchServiceTests()
         {
-            _launchService = new LaunchService(_launchApi.Object);
+            _launchService = new LaunchService(_launchApi.Object, new RocketService(_launchApi.Object));
         }
 
         [Theory]
@@ -71,16 +71,25 @@ namespace UnitTests.Library.Services
         [Fact]
         public async Task GetLaunchAsync_ShouldReturnLaunch()
         {
+            var rocketResponse = _fixture.Build<RocketConfigDetailResponse>().With(c => c.LaunchCost, "1000").Create();
             var expectedResponse = _fixture.Build<LaunchDetailResponse>()
                 .With(l => l.Rocket, _fixture.Build<RocketDetailResponse>()
-                .With(r => r.Configuration, _fixture.Build<RocketConfigDetailResponse>().With(c => c.LaunchCost, "1000").Create()).Create()).Create();
+                .With(r => r.Configuration, rocketResponse).Create()).Create();
             var expected = expectedResponse.ToModel();
             string launchId = "test";
             _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expectedResponse));
+            _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(new RocketsDetailResponse()
+            {
+                Count = 1,
+                Rockets = new List<RocketConfigDetailResponse>()
+                {
+                    rocketResponse
+                }
+            }));
 
             var result = await _launchService.GetLaunchAsync(launchId);
 
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>().Excluding(r => r.Rocket.Details.RankedProperties));
         }
     }
 }
