@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Library.Enums;
 using Library.Api.Responses;
+using System.Diagnostics;
 
 namespace Library.Services
 {
@@ -69,10 +70,16 @@ namespace Library.Services
             rockets.AddRange(result.Rockets);
 
             int additionalRequestsRequired = result.Count / maxItemsPerRequest;
+            List<Task<RocketsDetailResponse>> tasks = new();
             for (int i = 1; i <= additionalRequestsRequired; ++i)
             {
-                result = await _launchApi.GetRocketsDetailAsync(maxItemsPerRequest, i * maxItemsPerRequest);
-                rockets.AddRange(result.Rockets);
+                tasks.Add(_launchApi.GetRocketsDetailAsync(maxItemsPerRequest, i * maxItemsPerRequest));
+            }
+            await Task.WhenAll(tasks);
+
+            foreach (var task in tasks)
+            {
+                rockets.AddRange(task.Result.Rockets);
             }
 
             return rockets;
