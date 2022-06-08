@@ -13,6 +13,6 @@ namespace Library.Api.Responses
         public int Count { get; init; }
 
         [JsonPropertyName("results")]
-        public IReadOnlyList<RocketConfigResponse> Rockets { get; init; }
+        public IEnumerable<RocketConfigResponse> Rockets { get; init; }
     }
 }

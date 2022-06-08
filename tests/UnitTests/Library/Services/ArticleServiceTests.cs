@@ -38,7 +38,7 @@ namespace UnitTests.Library.Services
             List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, 0)).Returns(Task.FromResult(expectedResponse));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, 0)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse));
 
             var result = await _articleService.GetArticlesAsync(searchValue, 1);
 
@@ -58,7 +58,7 @@ namespace UnitTests.Library.Services
             List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, start)).Returns(Task.FromResult(expectedResponse));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, start)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse));
 
             var result = await _articleService.GetArticlesAsync(searchValue, pageNumber);
 

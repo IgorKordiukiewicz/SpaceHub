@@ -17,7 +17,7 @@ namespace Library.Api.Responses
         public string Description { get; init; }
 
         [JsonPropertyName("agencies")]
-        public List<AgencyResponse> Agencies { get; init; }
+        public IEnumerable<AgencyResponse> Agencies { get; init; }
 
         [JsonPropertyName("image_url")]
         public string ImageUrl { get; init; }

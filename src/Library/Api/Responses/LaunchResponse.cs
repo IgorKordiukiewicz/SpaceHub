@@ -40,7 +40,7 @@ namespace Library.Api.Responses
         public PadResponse Pad { get; init; }
 
         [JsonPropertyName("program")]
-        public List<ProgramResponse> Programs { get; init; }
+        public IEnumerable<ProgramResponse> Programs { get; init; }
 
         [JsonPropertyName("image")]
         public string ImageUrl { get; init; }

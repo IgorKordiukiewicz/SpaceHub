@@ -13,6 +13,6 @@ namespace Library.Api.Responses
         public int Count { get; init; }
 
         [JsonPropertyName("results")]
-        public IReadOnlyList<LaunchResponse> Launches { get; init; }
+        public IEnumerable<LaunchResponse> Launches { get; init; }
     }
 }
