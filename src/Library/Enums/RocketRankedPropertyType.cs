@@ -17,5 +17,8 @@ namespace Library.Enums
         GeoCapacity,
         CostPerKgToLeo,
         CostPerKgToGeo,
+        SuccessfulLaunches,
+        TotalLaunches,
+        LaunchSuccessPercent
     }
 }

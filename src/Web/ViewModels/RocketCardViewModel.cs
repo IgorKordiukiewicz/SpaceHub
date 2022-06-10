@@ -32,11 +32,17 @@ namespace Web.ViewModels
         [Display(Name = "LEO Capacity")]
         public string LeoCapacity { get; init; }
 
+        [Display(Name = "Successful Launches")]
+        public string SuccessfulLaunches { get; init; }
+
+        [Display(Name = "Total Launches")]
+        public string TotalLaunches { get; init; }
+
         [Display(Name = "First Launch")]
         public string FirstLaunch { get; init; }
 
-        [Display(Name = "Successful Launches")]
-        public string SuccessfulLaunches { get; init; }
+        [Display(Name = "Launch Success")]
+        public string LaunchSuccessPercent { get; init; }
 
         [Display(Name = "Cost per kg to LEO")]
         public string CostPerKgToLeo { get; init; }

@@ -110,6 +110,10 @@ namespace Library.Services
                 propertiesByType[RocketRankedPropertyType.GeoCapacity].Add(new() { RocketId = id, Value = rocketDetails.GeoCapacity });
                 propertiesByType[RocketRankedPropertyType.CostPerKgToLeo].Add(new() { RocketId = id, Value = rocketDetails.CostPerKgToLeo });
                 propertiesByType[RocketRankedPropertyType.CostPerKgToGeo].Add(new() { RocketId = id, Value = rocketDetails.CostPerKgToGeo });
+                propertiesByType[RocketRankedPropertyType.SuccessfulLaunches].Add(new() { RocketId = id, Value = rocketDetails.SuccessfulLaunches });
+                propertiesByType[RocketRankedPropertyType.TotalLaunches].Add(new() { RocketId = id, Value = rocketDetails.TotalLaunchCount });
+                propertiesByType[RocketRankedPropertyType.LaunchSuccessPercent].Add(new() { RocketId = id, Value = rocketDetails.LaunchSuccessPercent, 
+                    SecondaryValue = rocketDetails.SuccessfulLaunches });
             }
 
             return propertiesByType;
@@ -130,6 +134,9 @@ namespace Library.Services
             propertiesByType[RocketRankedPropertyType.GeoCapacity].Sort(descendingIntComparer);
             propertiesByType[RocketRankedPropertyType.CostPerKgToLeo].Sort(ascendingIntComparer);
             propertiesByType[RocketRankedPropertyType.CostPerKgToGeo].Sort(ascendingIntComparer);
+            propertiesByType[RocketRankedPropertyType.SuccessfulLaunches].Sort(descendingIntComparer);
+            propertiesByType[RocketRankedPropertyType.TotalLaunches].Sort(descendingIntComparer);
+            propertiesByType[RocketRankedPropertyType.LaunchSuccessPercent].Sort(descendingIntComparer);
         }
 
         private void AssignRankedPropertiesToRockets(Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType)
@@ -152,6 +159,7 @@ namespace Library.Services
         {
             public int RocketId { get; set; }
             public object? Value { get; set; }
+            public object? SecondaryValue { get; set; }
         }
 
         private class AscendingComparer<T> : IComparer<RocketRankedProperty> where T : IComparable<T>
@@ -163,7 +171,17 @@ namespace Library.Services
                 {
                     var xValue = (T)x.Value;
                     var yValue = (T)y.Value;
-                    return xValue.CompareTo(yValue);
+                    result = xValue.CompareTo(yValue);
+                    if(result.Value == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
+                    {
+                        var xSecondaryValue = (T)x.SecondaryValue;
+                        var ySecondaryValue = (T)y.SecondaryValue;
+                        return xSecondaryValue.CompareTo(ySecondaryValue);
+                    }
+                    else
+                    {
+                        return result.Value;
+                    }
                 }
                 else
                 {
@@ -181,7 +199,17 @@ namespace Library.Services
                 {
                     var xValue = (T)x.Value;
                     var yValue = (T)y.Value;
-                    return -xValue.CompareTo(yValue);
+                    result = -xValue.CompareTo(yValue);
+                    if(result.Value == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
+                    {
+                        var xSecondaryValue = (T)x.SecondaryValue;
+                        var ySecondaryValue = (T)y.SecondaryValue;
+                        return -xSecondaryValue.CompareTo(ySecondaryValue);
+                    }
+                    else
+                    {
+                        return result.Value;
+                    }
                 }
                 else
                 {

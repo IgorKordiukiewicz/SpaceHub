@@ -170,6 +170,32 @@ namespace UnitTests.Library.Services
             result.Should().Equal(new int?[3] { 1, null, 2 });
         }
 
+        [Fact]
+        public async Task SetRocketRankedProperties_SuccessfulLaunchesShouldBeRankedProperly()
+        {
+            var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.SuccessfulLaunches, r => r.SuccessfulLaunches, 10, 30, 20);
+
+            result.Should().Equal(new int?[3] { 3, 1, 2 });
+        }
+
+        [Fact]
+        public async Task SetRocketRankedProperties_TotalLaunchesShouldBeRankedProperly()
+        {
+            var result = await _rocketRankedPropertyTestHelper.RunSingleProp(RocketRankedPropertyType.TotalLaunches, r => r.TotalLaunchCount, 10, 30, 20);
+
+            result.Should().Equal(new int?[3] { 3, 1, 2 });
+        }
+
+        [Fact]
+        public async Task SetRocketRankedProperties_LaunchSuccessPercentShouldBeRankedProperly()
+        {
+            var result = await _rocketRankedPropertyTestHelper.RunDoubleProp(RocketRankedPropertyType.LaunchSuccessPercent
+                , r => r.SuccessfulLaunches, 10, 20, 15
+                , r => r.TotalLaunchCount, 10, 20, 30);
+
+            result.Should().Equal(new int?[3] { 2, 1, 3 });
+        }
+
         private class RocketRankedPropertyTestHelper
         {
             private readonly RocketService _rocketService;

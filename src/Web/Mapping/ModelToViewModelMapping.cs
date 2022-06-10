@@ -106,8 +106,10 @@ namespace Web.Mapping
                 LiftoffThrust = Utils.ValueToStringWithSymbol(rocket.Details.LiftoffThrust, "kN"),
                 GeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.GeoCapacity, "kg"),
                 LeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.LeoCapacity, "kg"),
+                SuccessfulLaunches = Utils.ValueToStringWithSymbol(rocket.Details.SuccessfulLaunches, ""),
+                TotalLaunches = Utils.ValueToStringWithSymbol(rocket.Details.TotalLaunchCount, ""),
                 FirstLaunch = Utils.DateToString(rocket.Details.FirstFlight) ?? "-",
-                SuccessfulLaunches = getSuccessfulLaunches(rocket),
+                LaunchSuccessPercent = Utils.ValueToStringWithSymbol(rocket.Details.LaunchSuccessPercent, "%"),
                 CostPerKgToLeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
                 CostPerKgToGeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
                 RankedProperties = rocket.Details.RankedProperties ?? new()

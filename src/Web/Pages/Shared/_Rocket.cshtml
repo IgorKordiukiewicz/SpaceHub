@@ -1,4 +1,5 @@
-﻿@model RocketCardViewModel
+﻿@using System.Diagnostics
+@model RocketCardViewModel
 
 <div class="col-12">
     <div class="card mb-4">
@@ -122,16 +123,36 @@
                     <hr />
                     <div class="row">
                         <div class="col-3">
+                            <label asp-for="SuccessfulLaunches"></label>
+                        </div>
+                        <div class="col-3 text-end">
+                            @Model.SuccessfulLaunches
+                            <label id="SuccessfulLaunchesProperty">
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <label asp-for="TotalLaunches"></label>
+                        </div>
+                        <div class="col-3 text-end">
+                            @Model.TotalLaunches
+                            <label id="TotalLaunchesProperty">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
                             <label asp-for="FirstLaunch"></label>
                         </div>
                         <div class="col-3 text-end">
                             @Model.FirstLaunch
                         </div>
                         <div class="col-3">
-                            <label asp-for="SuccessfulLaunches"></label>
+                            <label asp-for="LaunchSuccessPercent"></label>
                         </div>
                         <div class="col-3 text-end">
-                            @Model.SuccessfulLaunches
+                            @Model.LaunchSuccessPercent
+                            <label id="LaunchSuccessPercentProperty">
+                            </label>
                         </div>
                     </div>
                     <hr />
@@ -158,14 +179,14 @@
                 {
                     var rank = Model.RankedProperties[propertyType];
                     if(rank != null)
-                    {
-                        var htmlId = propertyType.ToString() + "Property";
-                        <text>
-                            var trophyText = @rank == 1 ? goldTrophy : (@rank == 2 ? silverTrophy : (@rank == 3 ? bronzeTrophy : ""));
-                            $(@htmlId).html(" (" + trophyText + @rank.ToString() + ")");
-                        </text>
-                    }
-                
+                        {
+                            var htmlId = propertyType.ToString() + "Property";
+                            <text>
+                                var trophyText = @rank == 1 ? goldTrophy : (@rank == 2 ? silverTrophy : (@rank == 3 ? bronzeTrophy : ""));
+                                $(@htmlId).html(" (" + trophyText + @rank.ToString() + ")");
+                            </text>
+                        }
+                    
                 }
             }
         }
