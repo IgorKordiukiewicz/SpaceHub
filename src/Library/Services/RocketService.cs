@@ -166,27 +166,7 @@ namespace Library.Services
         {
             public int Compare(RocketRankedProperty x, RocketRankedProperty y)
             {
-                int? result = ComparerHelper.CompareNulls(x, y);
-                if (result == null)
-                {
-                    var xValue = (T)x.Value;
-                    var yValue = (T)y.Value;
-                    result = xValue.CompareTo(yValue);
-                    if(result.Value == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
-                    {
-                        var xSecondaryValue = (T)x.SecondaryValue;
-                        var ySecondaryValue = (T)y.SecondaryValue;
-                        return xSecondaryValue.CompareTo(ySecondaryValue);
-                    }
-                    else
-                    {
-                        return result.Value;
-                    }
-                }
-                else
-                {
-                    return result.Value;
-                }
+                return ComparerHelper.Compare<T>(x, y, false);
             }
         }
 
@@ -194,33 +174,13 @@ namespace Library.Services
         {
             public int Compare(RocketRankedProperty x, RocketRankedProperty y)
             {
-                int? result = ComparerHelper.CompareNulls(x, y);
-                if (result == null)
-                {
-                    var xValue = (T)x.Value;
-                    var yValue = (T)y.Value;
-                    result = -xValue.CompareTo(yValue);
-                    if(result.Value == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
-                    {
-                        var xSecondaryValue = (T)x.SecondaryValue;
-                        var ySecondaryValue = (T)y.SecondaryValue;
-                        return -xSecondaryValue.CompareTo(ySecondaryValue);
-                    }
-                    else
-                    {
-                        return result.Value;
-                    }
-                }
-                else
-                {
-                    return result.Value;
-                }
+                return ComparerHelper.Compare<T>(x, y, true);
             }
         }
 
         private static class ComparerHelper
         {
-            public static int? CompareNulls(RocketRankedProperty x, RocketRankedProperty y)
+            public static int Compare<T>(RocketRankedProperty x, RocketRankedProperty y, bool reverseResult) where T : IComparable<T>
             {
                 if (x.Value != null && y.Value == null)
                 {
@@ -236,7 +196,20 @@ namespace Library.Services
                 }
                 else
                 {
-                    return null;
+                    var xValue = (T)x.Value;
+                    var yValue = (T)y.Value;
+                    var result = xValue.CompareTo(yValue);
+                    if (result == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
+                    {
+                        var xSecondaryValue = (T)x.SecondaryValue;
+                        var ySecondaryValue = (T)y.SecondaryValue;
+                        result = xSecondaryValue.CompareTo(ySecondaryValue);
+                        return reverseResult ? -result : result;
+                    }
+                    else
+                    {
+                        return reverseResult ? -result : result;
+                    }
                 }
             }
         }
