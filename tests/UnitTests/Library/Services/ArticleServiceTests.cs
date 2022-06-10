@@ -13,6 +13,8 @@ using AutoFixture;
 using FluentValidation;
 using Library.Models;
 using Library.Mapping;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace UnitTests.Library.Services
 {
@@ -24,7 +26,12 @@ namespace UnitTests.Library.Services
 
         public ArticleServiceTests()
         {
-            _articleService = new ArticleService(_articleApi.Object);
+            var services = new ServiceCollection();
+            services.AddMemoryCache();
+            var serviceProvider = services.BuildServiceProvider();
+            var memoryCache = serviceProvider.GetService<IMemoryCache>();
+
+            _articleService = new ArticleService(_articleApi.Object, memoryCache);
         }
 
         [Fact]

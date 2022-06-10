@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Library.Enums;
 using Library.Api.Responses;
 using System.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Library.Services
 {
@@ -17,17 +18,22 @@ namespace Library.Services
     {
         private readonly ILaunchApi _launchApi;
         private readonly Pagination _pagination = new() { ItemsPerPage = 50 };
+        private readonly IMemoryCache _cache;
         private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
 
-        public RocketService(ILaunchApi launchApi)
+        public RocketService(ILaunchApi launchApi, IMemoryCache cachce)
         {
             _launchApi = launchApi;
+            _cache = cachce;
         }
 
         public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber)
         {
             var offset = _pagination.GetOffset(pageNumber);
-            var result = await _launchApi.GetRocketsAsync(searchValue, _pagination.ItemsPerPage, offset);
+            var result = await _cache.GetOrCreateAsync("rockets" + searchValue + pageNumber.ToString(), async entry =>
+            {
+                return await _launchApi.GetRocketsAsync(searchValue, _pagination.ItemsPerPage, offset);
+            });
             var pagesCount = _pagination.GetPagesCount(result.Count);
 
             return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());
@@ -35,7 +41,10 @@ namespace Library.Services
 
         public async Task<Rocket> GetRocketAsync(int id)
         {
-            var result = await _launchApi.GetRocketAsync(id);
+            var result = await _cache.GetOrCreateAsync("rocket" + id.ToString(), async entry =>
+            {
+                return await _launchApi.GetRocketAsync(id);
+            });
 
             var rocket = result.ToModel();
             await SetRocketRankedProperties(rocket);

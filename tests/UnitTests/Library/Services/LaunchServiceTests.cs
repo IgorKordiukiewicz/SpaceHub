@@ -12,6 +12,8 @@ using Library.Api;
 using Library.Api.Responses;
 using Library.Models;
 using Library.Mapping;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace UnitTests.Library.Services
 {
@@ -23,7 +25,12 @@ namespace UnitTests.Library.Services
 
         public LaunchServiceTests()
         {
-            _launchService = new LaunchService(_launchApi.Object, new RocketService(_launchApi.Object));
+            var services = new ServiceCollection();
+            services.AddMemoryCache();
+            var serviceProvider = services.BuildServiceProvider();
+            var memoryCache = serviceProvider.GetService<IMemoryCache>();
+
+            _launchService = new LaunchService(_launchApi.Object, new RocketService(_launchApi.Object, memoryCache), memoryCache);
         }
 
         [Theory]

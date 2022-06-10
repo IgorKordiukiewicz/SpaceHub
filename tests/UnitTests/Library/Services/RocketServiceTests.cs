@@ -15,6 +15,8 @@ using Library.Models;
 using Library.Mapping;
 using FluentAssertions.Execution;
 using Library.Enums;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace UnitTests.Library.Services
 {
@@ -27,7 +29,12 @@ namespace UnitTests.Library.Services
 
         public RocketServiceTests()
         {
-            _rocketService = new(_launchApi.Object);
+            var services = new ServiceCollection();
+            services.AddMemoryCache();
+            var serviceProvider = services.BuildServiceProvider();
+            var memoryCache = serviceProvider.GetService<IMemoryCache>();
+
+            _rocketService = new(_launchApi.Object, memoryCache);
             _rocketRankedPropertyTestHelper = new(_rocketService, _launchApi, _fixture);
         }
 
