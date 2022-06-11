@@ -64,7 +64,7 @@ namespace Library.Services
             });
 
             var launch = result.ToModel();
-            await _rocketService.SetRocketRankedProperties(launch.Rocket);
+            await _rocketService.SetRocketRankedPropertiesAsync(launch.Rocket);
             
             return launch;
         }

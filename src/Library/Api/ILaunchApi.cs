@@ -27,5 +27,8 @@ namespace Library.Api
 
         [Get("/config/launcher/{id}/")]
         Task<RocketConfigDetailResponse> GetRocketAsync(int id);
+
+        [Get("/event/upcoming/?search={searchValue}&limit={limit}&offset={offset}")]
+        Task<EventsResponse> GetUpcomingEventsAsync(string? searchValue, int limit, int offset = 0);
     }
 }

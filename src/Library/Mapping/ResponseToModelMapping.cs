@@ -194,6 +194,22 @@ namespace Library.Mapping
             };
         }
 
+        public static Event ToModel(this EventResponse response)
+        {
+            return new()
+            {
+                ApiId = response.Id,
+                Name = response.Name,
+                Type = response.Type.Name,
+                Description = response.Description,
+                Location = response.Location,
+                NewsUrl = response.NewsUrl,
+                VideoUrl = response.VideoUrl,
+                ImageUrl = response.ImageUrl,
+                Date = response.Date,
+            };
+        }
+
         private static Agency AgencyResponseToModel(AgencyResponse response)
         {
             return new()

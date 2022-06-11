@@ -133,5 +133,21 @@ namespace Web.Mapping
                 WikiUrl = program.WikiUrl
             };
         }
+
+        public static EventCardViewModel ToEventCardViewModel(this Event event_)
+        {
+            return new()
+            {
+                ApiId = event_.ApiId,
+                Name = event_.Name,
+                Type = event_.Type,
+                Description = event_.Description,
+                Location = event_.Location ?? "-",
+                ImageUrl = event_.ImageUrl,
+                NewsUrl = event_.NewsUrl,
+                VideoUrl = event_.VideoUrl,
+                Date = Utils.DateToString(event_.Date) ?? "-"
+            };
+        }
     }
 }

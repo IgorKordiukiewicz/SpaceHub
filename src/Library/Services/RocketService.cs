@@ -47,12 +47,12 @@ namespace Library.Services
             });
 
             var rocket = result.ToModel();
-            await SetRocketRankedProperties(rocket);
+            await SetRocketRankedPropertiesAsync(rocket);
 
             return rocket;
         }
 
-        public async Task SetRocketRankedProperties(Rocket rocket)
+        public async Task SetRocketRankedPropertiesAsync(Rocket rocket)
         {
             if (_rocketRankedProperties == null)
             {

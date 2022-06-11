@@ -19,6 +19,7 @@ namespace Library
             services.AddSingleton<IArticleService, ArticleService>();
             services.AddSingleton<ILaunchService, LaunchService>();
             services.AddSingleton<IRocketService, RocketService>();
+            services.AddSingleton<IEventService, EventService>();
 
             services.AddRefitClient<IArticleApi>()
                 .ConfigureHttpClient(httpClient =>

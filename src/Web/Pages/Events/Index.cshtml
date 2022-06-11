@@ -1,0 +1,19 @@
+﻿@page
+@model Web.Pages.Events.IndexModel
+
+<form class="d-flex pb-3">
+    <input asp-for="SearchValue" class="form-control me-sm-2" placeholder="Search" />
+    <button class="btn btn-success my-2 my-sm-0" asp-page="/Events/Index" type="submit">Search</button>
+</form>
+
+@if(Model.Events != null)
+{
+    <div class="row">
+        @foreach(var event_ in Model.Events)
+        {
+            <partial name="_Event" model="@event_"/>
+        }
+    </div>
+
+    <partial name="_Pagination" model="@Model.Pagination"/>
+}
