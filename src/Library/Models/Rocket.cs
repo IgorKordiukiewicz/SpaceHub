@@ -14,6 +14,9 @@ namespace Library.Models
         public string Family { get; init; }
         public string FullName { get; init; }
         public string Variant { get; init; }
+        public string? ImageUrl { get; init; }
+        public string? InfoUrl { get; init; }
+        public string? WikiUrl { get; init; }
         public record Detail
         {
             public string Description { get; init; }
@@ -30,9 +33,6 @@ namespace Library.Models
             public int? GeoCapacity { get; init; }
             public int? LiftoffThrust { get; init; }
             public int? Apogee { get; init; }
-            public string? ImageUrl { get; init; }
-            public string? InfoUrl { get; init; }
-            public string? WikiUrl { get; init; }
             public int TotalLaunchCount { get; init; }
             public int ConsecutiveSuccessfulLaunches { get; init; }
             public int SuccessfulLaunches { get; init; }

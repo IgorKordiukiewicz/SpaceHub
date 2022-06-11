@@ -48,7 +48,7 @@ namespace Web.Mapping
                 WindowEnd = Utils.DateToString(launch.WindowEnd),
 
                 Agency = launch.Agency.ToAgencyCardViewModel(),
-                Rocket = launch.Rocket.ToRocketCardViewModel(),
+                Rocket = launch.Rocket.ToRocketDetailsCardViewModel(),
                 Pad = launch.Pad.ToPadCardViewModel(),
 
                 Programs = launch.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
@@ -79,15 +79,15 @@ namespace Web.Mapping
             };
         }
 
-        public static RocketCardViewModel ToRocketCardViewModel(this Rocket rocket)
+        public static RocketDetailsCardViewModel ToRocketDetailsCardViewModel(this Rocket rocket)
         {
             return new()
             {
                 Name = rocket.Name,
                 Description = rocket.Details.Description,
-                ImageUrl = rocket.Details.ImageUrl,
-                InfoUrl = rocket.Details.InfoUrl,
-                WikiUrl = rocket.Details.WikiUrl,
+                ImageUrl = rocket.ImageUrl,
+                InfoUrl = rocket.InfoUrl,
+                WikiUrl = rocket.WikiUrl,
                 Family = rocket.Family ?? "-",
                 Variant = rocket.Variant ?? "-",
                 Length = Utils.ValueToStringWithSymbol(rocket.Details.Length, "m"),
@@ -108,7 +108,7 @@ namespace Web.Mapping
             };
         }
 
-        public static RocketListItemViewModel ToRocketListItemViewModel(this Rocket rocket)
+        public static RocketIndexCardViewModel ToRocketIndexCardViewModel(this Rocket rocket)
         {
             return new()
             { 
@@ -116,6 +116,7 @@ namespace Web.Mapping
                 Name = rocket.Name,
                 Family = rocket.Family,
                 Variant = rocket.Variant,
+                ImageUrl = rocket.ImageUrl
             };
         }
 

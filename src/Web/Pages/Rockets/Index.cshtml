@@ -8,27 +8,12 @@
 
 @if(Model.Rockets != null)
 {
-    <table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Family</th>
-            <th>Variant</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var rocket in Model.Rockets)
-        {
-            <tr>
-                <td><a asp-page="/Rockets/Details" asp-route-id="@rocket.ApiId" style="text-decoration: none">
-                    @rocket.Name  
-                </a></td>
-                <td>@rocket.Family</td>
-                <td>@rocket.Variant</td>
-            </tr>
-        }
-    </tbody>
-    </table>
+    <div class="row">
+    @foreach(var rocket in Model.Rockets)
+    {
+        <partial name="_RocketIndex" model="@rocket" />
+    }
+    </div>
 
     <partial name="_Pagination" model="@Model.Pagination"/>
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Web.ViewModels
 {
-    public record RocketCardViewModel
+    public record RocketDetailsCardViewModel
     {
         public string Name { get; init; }
         public string Description { get; init; }

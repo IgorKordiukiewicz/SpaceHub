@@ -40,7 +40,7 @@ namespace UnitTests.Library.Services
 
         [Theory]
         [InlineData(1, 0)]
-        [InlineData(2, 50)]
+        [InlineData(2, 12)]
         public async Task GetRocketsAsync_ShouldReturnDifferentRockets_DependingOnPageNumber(int pageNumber, int offset)
         {
             List<RocketConfigResponse> expectedResponse = new()
@@ -52,7 +52,7 @@ namespace UnitTests.Library.Services
 
             string searchValue = "search";
             var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, 50, offset)).Returns(Task.FromResult(rocketsResponse));
+            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, 12, offset)).Returns(Task.FromResult(rocketsResponse));
 
             var (itemsCount, result) = await _rocketService.GetRocketsAsync(searchValue, pageNumber);
 

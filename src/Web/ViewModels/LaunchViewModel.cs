@@ -16,7 +16,7 @@ namespace Web.ViewModels
         public string StatusName { get; init; }
         public string StatusDescription { get; init; }
         public AgencyCardViewModel Agency { get; init; }
-        public RocketCardViewModel Rocket { get; init; }
+        public RocketDetailsCardViewModel Rocket { get; init; }
         public PadCardViewModel Pad { get; init; }
         public List<SpaceProgramCardViewModel> Programs { get; init; }
     }

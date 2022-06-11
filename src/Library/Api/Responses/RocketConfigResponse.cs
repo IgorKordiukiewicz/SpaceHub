@@ -22,5 +22,14 @@ namespace Library.Api.Responses
 
         [JsonPropertyName("variant")]
         public string Variant { get; init; }
+
+        [JsonPropertyName("image_url")]
+        public string? ImageUrl { get; init; }
+
+        [JsonPropertyName("info_url")]
+        public string? InfoUrl { get; init; }
+
+        [JsonPropertyName("wiki_url")]
+        public string? WikiUrl { get; init; }
     }
 }

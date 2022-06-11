@@ -10,7 +10,7 @@ namespace Web.Pages.Rockets
     {
         private readonly IRocketService _rocketService;
 
-        public List<RocketListItemViewModel>? Rockets { get; set; }
+        public List<RocketIndexCardViewModel>? Rockets { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
 
@@ -28,7 +28,7 @@ namespace Web.Pages.Rockets
             
             var (pagesCount, result) = await _rocketService.GetRocketsAsync(SearchValue, pageNumber);
 
-            Rockets = result?.Select(r => r.ToRocketListItemViewModel()).ToList();
+            Rockets = result?.Select(r => r.ToRocketIndexCardViewModel()).ToList();
 
             Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Rockets/Index", searchValue != null ? new() { { "searchValue", searchValue } } : null);
         }

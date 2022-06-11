@@ -46,15 +46,6 @@ namespace Library.Api.Responses
         [JsonPropertyName("apogee")]
         public int? Apogee { get; init; }
 
-        [JsonPropertyName("image_url")]
-        public string? ImageUrl { get; init; }
-
-        [JsonPropertyName("info_url")]
-        public string? InfoUrl { get; init; }
-
-        [JsonPropertyName("wiki_url")]
-        public string? WikiUrl { get; init; }
-
         [JsonPropertyName("total_launch_count")]
         public int TotalLaunchCount { get; init; }
 

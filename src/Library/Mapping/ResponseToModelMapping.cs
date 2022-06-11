@@ -127,9 +127,6 @@ namespace Library.Mapping
                 LiftoffMass = response.LaunchMass,
                 LiftoffThrust = response.ThrustAtLiftoff,
                 Apogee = response.Apogee,
-                ImageUrl = response.ImageUrl,
-                InfoUrl = response.InfoUrl,
-                WikiUrl = response.WikiUrl,
                 TotalLaunchCount = response.TotalLaunchCount,
                 ConsecutiveSuccessfulLaunches = response.ConsecutiveSuccessfulLaunches,
                 SuccessfulLaunches = response.SuccessfulLaunches,
@@ -215,6 +212,9 @@ namespace Library.Mapping
                 Family = response.Family,
                 FullName = response.FullName,
                 Variant = response.Variant,
+                ImageUrl = response.ImageUrl,
+                InfoUrl = response.InfoUrl,
+                WikiUrl = response.WikiUrl
             };
         }
     }

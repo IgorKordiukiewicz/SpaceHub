@@ -10,7 +10,7 @@ namespace Web.Pages.Rockets
     {
         private readonly IRocketService _rocketService;
 
-        public RocketCardViewModel Rocket { get; set; }
+        public RocketDetailsCardViewModel Rocket { get; set; }
         public AgencyCardViewModel Manufacturer { get; set; }
 
         public DetailsModel(IRocketService rocketService)
@@ -22,7 +22,7 @@ namespace Web.Pages.Rockets
         {
             var result = await _rocketService.GetRocketAsync(id);
 
-            Rocket = result.ToRocketCardViewModel();
+            Rocket = result.ToRocketDetailsCardViewModel();
             Manufacturer = result.Details.Manufacturer.ToAgencyCardViewModel();
         }
     }

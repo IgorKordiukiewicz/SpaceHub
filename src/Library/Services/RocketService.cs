@@ -17,7 +17,7 @@ namespace Library.Services
     public class RocketService : IRocketService
     {
         private readonly ILaunchApi _launchApi;
-        private readonly Pagination _pagination = new() { ItemsPerPage = 50 };
+        private readonly Pagination _pagination = new() { ItemsPerPage = 12 };
         private readonly IMemoryCache _cache;
         private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
 
