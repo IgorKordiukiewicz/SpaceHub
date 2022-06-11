@@ -9,12 +9,12 @@ using FluentAssertions;
 
 namespace UnitTests.Web.ViewModels
 {
-    public class UtilsTests
+    public class HelpersTests
     {
         [Fact]
         public void DateToString_ShouldReturnOnlyDate_WhenHoursAndMinutesAreZero()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Local));
+            var result = Helpers.DateToString(new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Local));
 
             result.Should().Be("01/01/2022");
         }
@@ -22,7 +22,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnFullDate_WhenHoursAndMinutesAreNotZero()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local));
+            var result = Helpers.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local));
 
             result.Should().Be("01/01/2022 01:01");
         }
@@ -30,7 +30,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnOnlyDate_WhenOnlyDateParamIsTrue()
         {
-            var result = Utils.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local), true);
+            var result = Helpers.DateToString(new DateTime(2022, 1, 1, 1, 1, 1, DateTimeKind.Local), true);
 
             result.Should().Be("01/01/2022");
         }
@@ -38,7 +38,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void DateToString_ShouldReturnNull_WhenDateTimeIsNull()
         {
-            var result = Utils.DateToString(null);
+            var result = Helpers.DateToString(null);
 
             result.Should().BeNull();
         }
@@ -50,7 +50,7 @@ namespace UnitTests.Web.ViewModels
         {
             var dateTime = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
 
-            var result = Utils.DateToJsMilliseconds(dateTime);
+            var result = Helpers.DateToJsMilliseconds(dateTime);
 
             result.Should().Be(expected);
         }
@@ -58,7 +58,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void ValueToStringWithSymbol_ShouldReturnValueWithSymbolWithSpaceBetween_WhenValueIsNotNullAndSpaceBetweenIsTrue()
         {
-            var result = Utils.ValueToStringWithSymbol(5, "kg", true, "-");
+            var result = Helpers.ValueToStringWithSymbol(5, "kg", true, "-");
 
             result.Should().Be("5 kg");
         }
@@ -66,7 +66,7 @@ namespace UnitTests.Web.ViewModels
         [Fact]
         public void ValueToStringWithSymbol_ShouldReturnValueWithSymbolWithoutSpaceBetween_WhenValueIsNotNullAndSpaceBetweenIsFalse()
         {
-            var result = Utils.ValueToStringWithSymbol(5, "kg", false, "-");
+            var result = Helpers.ValueToStringWithSymbol(5, "kg", false, "-");
 
             result.Should().Be("5kg");
         }
@@ -76,7 +76,7 @@ namespace UnitTests.Web.ViewModels
         {
             int? value = null;
 
-            var result = Utils.ValueToStringWithSymbol(value, "kg", true, "-");
+            var result = Helpers.ValueToStringWithSymbol(value, "kg", true, "-");
 
             result.Should().Be("-");
         }

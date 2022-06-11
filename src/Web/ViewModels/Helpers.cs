@@ -2,7 +2,7 @@
 
 namespace Web.ViewModels
 {
-    public static class Utils
+    public static class Helpers
     {
         private static readonly long _startDateTicks = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
 

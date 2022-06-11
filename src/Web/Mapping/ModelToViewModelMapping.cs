@@ -14,7 +14,7 @@ namespace Web.Mapping
                 Url = article.Url,
                 ImageUrl = article.ImageUrl,
                 NewsSite = article.NewsSite,
-                PublishDate = Utils.DateToString(article.PublishDate, true)
+                PublishDate = Helpers.DateToString(article.PublishDate, true)
             };
         }
 
@@ -28,7 +28,7 @@ namespace Web.Mapping
                 AgencyName = launch.Agency.Name,
                 PadName = launch.Pad.Name,
                 Status = launch.StatusName,
-                Date = Utils.DateToString(launch.Date),
+                Date = Helpers.DateToString(launch.Date),
             };
         }
 
@@ -41,11 +41,11 @@ namespace Web.Mapping
                 Mission = launch.Mission?.Description,
                 StatusName = launch.StatusName,
                 StatusDescription = launch.StatusDescription,
-                Date = Utils.DateToString(launch.Date) ?? string.Empty,
-                DateJsMilliseconds = launch.Date != null ? Utils.DateToJsMilliseconds(launch.Date.Value) : 0,
+                Date = Helpers.DateToString(launch.Date) ?? string.Empty,
+                DateJsMilliseconds = launch.Date != null ? Helpers.DateToJsMilliseconds(launch.Date.Value) : 0,
                 Upcoming = launch.Date > DateTime.Now,
-                WindowStart = Utils.DateToString(launch.WindowStart),
-                WindowEnd = Utils.DateToString(launch.WindowEnd),
+                WindowStart = Helpers.DateToString(launch.WindowStart),
+                WindowEnd = Helpers.DateToString(launch.WindowEnd),
             };
         }
 
@@ -96,20 +96,20 @@ namespace Web.Mapping
                 WikiUrl = rocket.WikiUrl,
                 Family = rocket.Family ?? "-",
                 Variant = rocket.Variant ?? "-",
-                Length = Utils.ValueToStringWithSymbol(rocket.Details.Length, "m"),
-                Diameter = Utils.ValueToStringWithSymbol(rocket.Details.Diameter, "m"),
-                MaxStages = Utils.ValueToStringWithSymbol(rocket.Details.MaxStages, ""),
-                LaunchCost = Utils.ValueToStringWithSymbol(rocket.Details.LaunchCost, "$"),
-                LiftoffMass = Utils.ValueToStringWithSymbol(rocket.Details.LiftoffMass, "T"),
-                LiftoffThrust = Utils.ValueToStringWithSymbol(rocket.Details.LiftoffThrust, "kN"),
-                GeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.GeoCapacity, "kg"),
-                LeoCapacity = Utils.ValueToStringWithSymbol(rocket.Details.LeoCapacity, "kg"),
-                SuccessfulLaunches = Utils.ValueToStringWithSymbol(rocket.Details.SuccessfulLaunches, ""),
-                TotalLaunches = Utils.ValueToStringWithSymbol(rocket.Details.TotalLaunchCount, ""),
-                FirstLaunch = Utils.DateToString(rocket.Details.FirstFlight) ?? "-",
-                LaunchSuccessPercent = Utils.ValueToStringWithSymbol(rocket.Details.LaunchSuccessPercent, "%"),
-                CostPerKgToLeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
-                CostPerKgToGeo = Utils.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
+                Length = Helpers.ValueToStringWithSymbol(rocket.Details.Length, "m"),
+                Diameter = Helpers.ValueToStringWithSymbol(rocket.Details.Diameter, "m"),
+                MaxStages = Helpers.ValueToStringWithSymbol(rocket.Details.MaxStages, ""),
+                LaunchCost = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchCost, "$"),
+                LiftoffMass = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffMass, "T"),
+                LiftoffThrust = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffThrust, "kN"),
+                GeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.GeoCapacity, "kg"),
+                LeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.LeoCapacity, "kg"),
+                SuccessfulLaunches = Helpers.ValueToStringWithSymbol(rocket.Details.SuccessfulLaunches, ""),
+                TotalLaunches = Helpers.ValueToStringWithSymbol(rocket.Details.TotalLaunchCount, ""),
+                FirstLaunch = Helpers.DateToString(rocket.Details.FirstFlight) ?? "-",
+                LaunchSuccessPercent = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchSuccessPercent, "%"),
+                CostPerKgToLeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
+                CostPerKgToGeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
                 RankedProperties = rocket.Details.RankedProperties ?? new()
             };
         }
@@ -133,8 +133,8 @@ namespace Web.Mapping
                 Name = program.Name,
                 Description = program.Description,
                 ImageUrl = program.ImageUrl,
-                StartDate = Utils.DateToString(program.StartDate, true),
-                EndDate = Utils.DateToString(program.EndDate, true),
+                StartDate = Helpers.DateToString(program.StartDate, true),
+                EndDate = Helpers.DateToString(program.EndDate, true),
                 InfoUrl = program.InfoUrl,
                 WikiUrl = program.WikiUrl
             };
@@ -152,7 +152,7 @@ namespace Web.Mapping
                 ImageUrl = event_.ImageUrl,
                 NewsUrl = event_.NewsUrl,
                 VideoUrl = event_.VideoUrl,
-                Date = Utils.DateToString(event_.Date) ?? "-"
+                Date = Helpers.DateToString(event_.Date) ?? "-"
             };
         }
 
@@ -168,8 +168,8 @@ namespace Web.Mapping
                 ImageUrl = event_.ImageUrl,
                 NewsUrl = event_.NewsUrl,
                 VideoUrl = event_.VideoUrl,
-                Date = Utils.DateToString(event_.Date) ?? "-",
-                DateJsMilliseconds = event_.Date != null ? Utils.DateToJsMilliseconds(event_.Date.Value) : 0,
+                Date = Helpers.DateToString(event_.Date) ?? "-",
+                DateJsMilliseconds = event_.Date != null ? Helpers.DateToJsMilliseconds(event_.Date.Value) : 0,
                 Upcoming = event_.Date > DateTime.Now,
                 Launches = event_.Launches.Select(l => l.ToLaunchDetailsCardViewModel()).ToList(),
                 Programs = event_.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
