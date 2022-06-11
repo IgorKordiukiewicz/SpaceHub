@@ -11,7 +11,35 @@
     <div class="row">
     @foreach(var rocket in Model.Rockets)
     {
-        <partial name="_RocketIndex" model="@rocket" />
+        <div class="col-md-4 d-flex align-items-stretch pb-4">
+            <div class="card" style="width: 100%">
+                <img class="card-img-top" src="@rocket.ImageUrl"/>
+                <div class="card-body d-flex flex-column text-center">
+                    <h3 class="card-title">
+                        @rocket.Name
+                    </h3>
+                    <hr />
+                    <div class="row text-center text-muted">
+                        <h6 class="col-6">
+                            <label asp-for="@rocket.Family"></label>
+                        </h6>
+                        <h6 class="col-6">
+                            <label asp-for="@rocket.Variant"></label>
+                        </h6>
+                    </div>
+                    <div class="row text-center">
+                        <h5 class="col-6">
+                            @rocket.Family
+                        </h5>
+                        <h5 class="col-6">
+                            @rocket.Variant
+                        </h5>
+                    </div>
+                    <hr />
+                    <a asp-page="Details" asp-route-id="@rocket.ApiId" class="btn btn-secondary" style="width:100%">Details</a>       
+                </div>
+            </div>
+        </div>
     }
     </div>
 

@@ -54,6 +54,7 @@
                                 @Model.Event.Date
                             </h3>
                         }
+                        <hr />
                         <div class="d-flex justify-content-end">
                             @if(Model.Event.NewsUrl != null)
                             {
@@ -85,7 +86,7 @@
             <div class="card mb-4 p-4 pb-0">
                 @foreach(var launch in Model.Event.Launches)
                 {
-                    <partial name="_LaunchDetails" model="@launch"/>
+                    <partial name="_LaunchDetailsCard" model="@launch"/>
                 }
             </div>
         </div>
@@ -100,7 +101,7 @@
             <div class="card mb-4 p-4 pb-0">
                 @foreach(var program in Model.Event.Programs)
                 {
-                    <partial name="_SpaceProgram" model="@program"/>
+                    <partial name="_SpaceProgramCard" model="@program"/>
                 }
             </div>
         </div>
