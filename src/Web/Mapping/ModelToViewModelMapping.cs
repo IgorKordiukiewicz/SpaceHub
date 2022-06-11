@@ -49,7 +49,7 @@ namespace Web.Mapping
             };
         }
 
-        public static LaunchViewModel ToLaunchViewModel(this Launch launch)
+        public static LaunchDetailsViewModel ToLaunchDetailsViewModel(this Launch launch)
         {
             return new()
             {
@@ -156,7 +156,7 @@ namespace Web.Mapping
             };
         }
 
-        public static EventViewModel ToEventViewModel(this Event event_)
+        public static EventDetailsViewModel ToEventDetailsViewModel(this Event event_)
         {
             return new()
             {

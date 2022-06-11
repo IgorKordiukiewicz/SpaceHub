@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Web.ViewModels
 {
-    public record LaunchViewModel
+    public record LaunchDetailsViewModel
     {
         public LaunchDetailsCardViewModel Launch { get; init; }
         public AgencyCardViewModel Agency { get; init; }

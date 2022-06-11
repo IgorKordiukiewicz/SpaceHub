@@ -1,6 +1,6 @@
 ﻿namespace Web.ViewModels
 {
-    public class EventViewModel
+    public class EventDetailsViewModel
     {
         public int ApiId { get; init; }
         public string Name { get; init; }

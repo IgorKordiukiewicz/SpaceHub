@@ -10,7 +10,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public LaunchViewModel Launch { get; set; }
+        public LaunchDetailsViewModel Launch { get; set; }
 
         public DetailsModel(ILaunchService launchService)
         {
@@ -20,7 +20,7 @@ namespace Web.Pages.Launches
         public async Task OnGet(string id)
         {
             var result = await _launchService.GetLaunchAsync(id);
-            Launch = result.ToLaunchViewModel();
+            Launch = result.ToLaunchDetailsViewModel();
         }
     }
 }
