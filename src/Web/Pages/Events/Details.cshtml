@@ -90,6 +90,21 @@
             </div>
         </div>
     }
+    @if(Model.Event.Programs.Count > 0)
+    {
+        <h3>
+            Programs
+        </h3>
+        <hr />
+        <div class="col-12">
+            <div class="card mb-4 p-4 pb-0">
+                @foreach(var program in Model.Event.Programs)
+                {
+                    <partial name="_SpaceProgram" model="@program"/>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 <script type="text/javascript">

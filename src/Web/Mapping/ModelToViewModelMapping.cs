@@ -171,7 +171,8 @@ namespace Web.Mapping
                 Date = Utils.DateToString(event_.Date) ?? "-",
                 DateJsMilliseconds = event_.Date != null ? Utils.DateToJsMilliseconds(event_.Date.Value) : 0,
                 Upcoming = event_.Date > DateTime.Now,
-                Launches = event_.Launches.Select(l => l.ToLaunchDetailsCardViewModel()).ToList()
+                Launches = event_.Launches.Select(l => l.ToLaunchDetailsCardViewModel()).ToList(),
+                Programs = event_.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
             };
         }
     }
