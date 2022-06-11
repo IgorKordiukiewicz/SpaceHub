@@ -20,19 +20,19 @@ namespace Web.Pages.Launches
         public string? SearchValue { get; set; }
 
         [BindProperty]
-        public LaunchDateType LaunchDateType { get; set; }
+        public DateType LaunchDateType { get; set; }
 
         public IndexModel(ILaunchService launchService)
         {
             _launchService = launchService;
         }
 
-        public async Task OnGet(LaunchDateType launchDateType, string? searchValue, int pageNumber = 1)
+        public async Task OnGet(DateType launchDateType, string? searchValue, int pageNumber = 1)
         {
             LaunchDateType = launchDateType;
             SearchValue = searchValue;
             
-            var (pagesCount, result) = launchDateType == LaunchDateType.Upcoming ? 
+            var (pagesCount, result) = LaunchDateType == DateType.Upcoming ? 
                 await _launchService.GetUpcomingLaunchesAsync(searchValue, pageNumber)
                 : await _launchService.GetPreviousLaunchesAsync(searchValue, pageNumber);
 
@@ -40,7 +40,7 @@ namespace Web.Pages.Launches
 
             Dictionary<string, string> paginationParameters = new()
             {
-                { "launchDateType", launchDateType.ToString() }
+                { "launchDateType", LaunchDateType.ToString() }
             };
             if(SearchValue != null)
             {

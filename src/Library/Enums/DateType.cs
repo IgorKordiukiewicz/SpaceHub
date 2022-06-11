@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Enums
 {
-    public enum LaunchDateType
+    public enum DateType
     {
         Upcoming,
         Previous

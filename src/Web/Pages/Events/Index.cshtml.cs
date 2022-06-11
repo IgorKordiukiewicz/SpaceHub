@@ -1,3 +1,4 @@
+using Library.Enums;
 using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -17,25 +18,39 @@ namespace Web.Pages.Events
         [BindProperty]
         public string? SearchValue { get; set; }
 
+        [BindProperty]
+        public DateType EventDateType { get; set; }
+
         public IndexModel(IEventService eventService)
         {
             _eventService = eventService;
         }
         
-        public async Task OnGet(string? searchValue, int pageNumber = 1)
+        public async Task OnGet(DateType eventDateType, string? searchValue, int pageNumber = 1)
         {
+            EventDateType = eventDateType;
             SearchValue = searchValue;
 
-            var (pagesCount, result) = await _eventService.GetUpcomingEventsAsync(searchValue, pageNumber);
+            var (pagesCount, result) = EventDateType == DateType.Upcoming ?
+                await _eventService.GetUpcomingEventsAsync(searchValue, pageNumber)
+                : await _eventService.GetPreviousEventsAsync(searchValue, pageNumber);
 
             Events = result?.Select(e => e.ToEventCardViewModel()).ToList();
 
-            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Events/Index", searchValue != null ? new() { { "searchValue", searchValue } } : null);
+            Dictionary<string, string> paginationParameters = new()
+            {
+                { "eventDateType", EventDateType.ToString() }
+            };
+            if(searchValue != null)
+            {
+                paginationParameters.Add("searchValue", SearchValue);
+            }
+            Pagination = new PaginationViewModel(pageNumber, pagesCount, "/Events/Index", paginationParameters);
         }
 
         public IActionResult OnPost()
         {
-            return RedirectToPage("Index", new { searchValue = SearchValue, pageNumber = 1 });
+            return RedirectToPage("Index", new { eventDateType = EventDateType, searchValue = SearchValue, pageNumber = 1 });
         }
     }
 }

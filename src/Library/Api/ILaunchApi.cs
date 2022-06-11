@@ -30,5 +30,8 @@ namespace Library.Api
 
         [Get("/event/upcoming/?search={searchValue}&limit={limit}&offset={offset}")]
         Task<EventsResponse> GetUpcomingEventsAsync(string? searchValue, int limit, int offset = 0);
+
+        [Get("/event/previous/?search={searchValue}&limit={limit}&offset={offset}")]
+        Task<EventsResponse> GetPreviousEventsAsync(string? searchValue, int limit, int offset = 0);
     }
 }

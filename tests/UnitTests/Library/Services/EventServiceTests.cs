@@ -54,5 +54,26 @@ namespace UnitTests.Library.Services
 
             result.Should().Equal(expected);
         }
+
+        [Theory]
+        [InlineData(1, 0)]
+        [InlineData(2, 12)]
+        public async Task GetPreviousEventsAsync_ShouldReturnDifferentEvents_DependingOnPageNumber(int pageNumber, int offset)
+        {
+            List<EventResponse> expectedResponse = new()
+            {
+                _fixture.Create<EventResponse>()
+            };
+
+            List<Event> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+
+            string searchValue = "search";
+            var eventsResponse = _fixture.Build<EventsResponse>().With(a => a.Events, expectedResponse).Create();
+            _launchApi.Setup(l => l.GetPreviousEventsAsync(searchValue, 12, offset)).Returns(Task.FromResult(eventsResponse));
+
+            var (itemsCount, result) = await _eventService.GetPreviousEventsAsync(searchValue, pageNumber);
+
+            result.Should().Equal(expected);
+        }
     }
 }
