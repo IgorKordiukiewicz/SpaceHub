@@ -1,0 +1,99 @@
+﻿@page
+@model Web.Pages.Events.DetailsModel
+
+<div class="row">
+    <h3>
+        Event
+    </h3>
+    <hr />
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="row">
+                <div class="col-lg-3">
+                    <img src="@Model.Event.ImageUrl" class="img-fluid rounded-start card-img-left-cover"/>
+                </div>
+                <div class="col-lg-9">
+                    <div class="card-body text-center">
+                        <h2 class="card-title">
+                            @Model.Event.Name
+                        </h2>
+                        <hr />
+                        <h5 class="text-muted">
+                            @Model.Event.Description
+                        </h5>
+                        <hr />
+                        <div class="row text-center text-muted">
+                            <h6 class="col-6">
+                                <label asp-for="Event.Location"></label>
+                            </h6>
+                            <h6 class="col-6">
+                                <label asp-for="Event.Type"></label>
+                            </h6>
+                        </div>
+                        <div class="row text-center">
+                            <h5 class="col-6">
+                                @Model.Event.Location
+                            </h5>
+                            <h5 class="col-6">
+                                @Model.Event.Type
+                            </h5>
+                        </div>
+                        <hr />
+                        @if(Model.Event.Upcoming)
+                        {
+                            <h1 id="countdownTimer">
+                                00:00:00:00
+                            </h1>
+                            <h4>
+                                @Model.Event.Date
+                            </h4>
+                        }
+                        else
+                        {
+                            <h3>
+                                @Model.Event.Date
+                            </h3>
+                        }
+                        <div class="d-flex justify-content-end">
+                            @if(Model.Event.NewsUrl != null)
+                            {
+                                <a class="btn btn-primary" style="margin-right: 4px;" target="_blank" href="@Model.Event.NewsUrl">
+                                    <i class="fa-solid fa-info"></i>
+                                    &nbsp; Info
+                                </a>
+                            }
+                            @if(Model.Event.VideoUrl != null)
+                            {
+                                <a class="btn btn-primary" target="_blank" href="@Model.Event.VideoUrl">
+                                    <i class="fa-brands fa-youtube"></i>
+                                    &nbsp; Watch
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var date = @Model.Event.DateJsMilliseconds;
+
+    var countdown = setInterval(function() {
+        var now = new Date().getTime();
+        var diff = date - now;
+
+        var days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        var hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        var minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        var seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+
+        $("#countdownTimer").html(days + ":" + hours + ":" + minutes + ":" + seconds);
+
+        if(diff < 0) {
+            clearInterval(countdown);
+            $("#countdownTimer").html("00:00:00:00");
+        }
+    }, 1000);
+</script>

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Models
+﻿namespace Web.ViewModels
 {
-    public record Event
+    public class EventViewModel
     {
         public int ApiId { get; init; }
         public string Name { get; init; }
@@ -16,8 +10,8 @@ namespace Library.Models
         public string? NewsUrl { get; init; }
         public string? VideoUrl { get; init; }
         public string ImageUrl { get; init; }
-        public DateTime? Date { get; init; }
-        public List<Launch> Launches { get; init; }
-        public List<SpaceProgram> Programs { get; init; }
+        public string Date { get; init; }
+        public long DateJsMilliseconds { get; init; }
+        public bool Upcoming { get; init; }
     }
 }

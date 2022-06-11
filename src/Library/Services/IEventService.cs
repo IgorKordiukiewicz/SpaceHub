@@ -12,5 +12,7 @@ namespace Library.Services
         Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber = 1);
 
         Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber = 1);
+
+        Task<Event> GetEventAsync(int id);
     }
 }

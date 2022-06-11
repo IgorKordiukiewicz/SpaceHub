@@ -33,5 +33,8 @@ namespace Library.Api
 
         [Get("/event/previous/?search={searchValue}&limit={limit}&offset={offset}")]
         Task<EventsResponse> GetPreviousEventsAsync(string? searchValue, int limit, int offset = 0);
+
+        [Get("/event/{id}/")]
+        Task<EventResponse> GetEventAsync(int id);
     }
 }

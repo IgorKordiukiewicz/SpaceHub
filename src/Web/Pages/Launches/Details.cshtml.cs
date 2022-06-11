@@ -9,14 +9,12 @@ namespace Web.Pages.Launches
     public class DetailsModel : PageModel
     {
         private readonly ILaunchService _launchService;
-        private readonly IRocketService _rocketService;
 
         public LaunchViewModel Launch { get; set; }
 
-        public DetailsModel(ILaunchService launchService, IRocketService rocketService)
+        public DetailsModel(ILaunchService launchService)
         {
             _launchService = launchService;
-            _rocketService = rocketService;
         }
 
         public async Task OnGet(string id)

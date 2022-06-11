@@ -52,7 +52,7 @@ namespace UnitTests.Library.Services
 
             var (itemsCount, result) = await _eventService.GetUpcomingEventsAsync(searchValue, pageNumber);
 
-            result.Should().Equal(expected);
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Launch>>().ComparingByValue<List<SpaceProgram>>());
         }
 
         [Theory]
@@ -73,7 +73,21 @@ namespace UnitTests.Library.Services
 
             var (itemsCount, result) = await _eventService.GetPreviousEventsAsync(searchValue, pageNumber);
 
-            result.Should().Equal(expected);
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Launch>>().ComparingByValue<List<SpaceProgram>>());
+        }
+
+        [Fact]
+        public async Task GetEventAsync_ShouldReturnEvent()
+        {
+            var expectedResponse = _fixture.Create<EventResponse>();
+            var expected = expectedResponse.ToModel();
+
+            int eventId = 1;
+            _launchApi.Setup(l => l.GetEventAsync(eventId)).Returns(Task.FromResult(expectedResponse));
+
+            var result = await _eventService.GetEventAsync(eventId);
+
+            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Launch>>().ComparingByValue<List<SpaceProgram>>());
         }
     }
 }

@@ -83,6 +83,7 @@ namespace UnitTests.Library.Services
                 .With(l => l.Rocket, _fixture.Build<RocketDetailResponse>()
                 .With(r => r.Configuration, rocketResponse).Create()).Create();
             var expected = expectedResponse.ToModel();
+
             string launchId = "test";
             _launchApi.Setup(l => l.GetLaunchAsync(launchId)).Returns(Task.FromResult(expectedResponse));
             _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(new RocketsDetailResponse()

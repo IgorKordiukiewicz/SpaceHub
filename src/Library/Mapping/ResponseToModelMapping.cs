@@ -207,6 +207,8 @@ namespace Library.Mapping
                 VideoUrl = response.VideoUrl,
                 ImageUrl = response.ImageUrl,
                 Date = response.Date,
+                Launches = response.Launches.Select(l => l.ToModel()).ToList(),
+                Programs = response.Programs.Select(p => p.ToModel()).ToList()
             };
         }
 

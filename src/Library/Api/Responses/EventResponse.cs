@@ -35,5 +35,11 @@ namespace Library.Api.Responses
 
         [JsonPropertyName("date")]
         public DateTime? Date { get; init; }
+
+        [JsonPropertyName("launches")]
+        public IEnumerable<LaunchResponse> Launches { get; init; }
+
+        [JsonPropertyName("program")]
+        public IEnumerable<ProgramResponse> Programs { get; init; }
     }
 }

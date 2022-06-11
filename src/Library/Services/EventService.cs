@@ -53,5 +53,15 @@ namespace Library.Services
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }
+
+        public async Task<Event> GetEventAsync(int id)
+        {
+            var result = await _cache.GetOrCreate("event" + id.ToString(), async entry =>
+            {
+                return await _launchApi.GetEventAsync(id);
+            });
+
+            return result.ToModel();
+        }
     }
 }

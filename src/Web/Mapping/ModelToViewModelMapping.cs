@@ -149,5 +149,23 @@ namespace Web.Mapping
                 Date = Utils.DateToString(event_.Date) ?? "-"
             };
         }
+
+        public static EventViewModel ToEventViewModel(this Event event_)
+        {
+            return new()
+            {
+                ApiId = event_.ApiId,
+                Name = event_.Name,
+                Type = event_.Type,
+                Description = event_.Description,
+                Location = event_.Location ?? "-",
+                ImageUrl = event_.ImageUrl,
+                NewsUrl = event_.NewsUrl,
+                VideoUrl = event_.VideoUrl,
+                Date = Utils.DateToString(event_.Date) ?? "-",
+                DateJsMilliseconds = event_.Date != null ? Utils.DateToJsMilliseconds(event_.Date.Value) : 0,
+                Upcoming = event_.Date > DateTime.Now
+            };
+        }
     }
 }
