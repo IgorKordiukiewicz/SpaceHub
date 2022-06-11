@@ -12,7 +12,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public List<LaunchCardViewModel>? Launches { get; set; }
+        public List<LaunchIndexCardViewModel>? Launches { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
 
@@ -36,7 +36,7 @@ namespace Web.Pages.Launches
                 await _launchService.GetUpcomingLaunchesAsync(searchValue, pageNumber)
                 : await _launchService.GetPreviousLaunchesAsync(searchValue, pageNumber);
 
-            Launches = result?.Select(l => l.ToLaunchCardViewModel()).ToList();
+            Launches = result?.Select(l => l.ToLaunchIndexCardViewModel()).ToList();
 
             Dictionary<string, string> paginationParameters = new()
             {

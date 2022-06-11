@@ -6,64 +6,7 @@
         Launch
     </h3>
     <hr />
-    <div class="col-12">
-        <div class="card mb-4">
-            <div class="row">
-                <div class="col-lg-3">
-                    <img src="@Model.Launch.ImageUrl" class="img-fluid rounded-start card-img-left-cover"/>
-                </div>
-                <div class="col-lg-9">
-                    <div class="card-body text-center">
-                        <h2 class="card-title">
-                            @Model.Launch.Name
-                        </h2>
-                        @if(Model.Launch.Mission != null)
-                        {
-                            <hr />
-                            <h5 class="text-muted">
-                                @Model.Launch.Mission
-                            </h5>
-                        }
-                        <hr />
-                        <h3 class="@if(Model.Launch.StatusName == "Go for Launch" || Model.Launch.StatusName == "Launch Successful")
-                        {
-                            <text>text-success</text>
-                        }
-                        else 
-                        {
-                            <text>text-warning</text>
-                        }">
-                        @Model.Launch.StatusName
-                        </h3>
-                        <h5 class="text-muted">
-                            @Model.Launch.StatusDescription
-                        </h5>
-                        @if(Model.Launch.Upcoming)
-                        {
-                            <h1 id="countdownTimer">
-                                00:00:00:00
-                            </h1>
-                            <h4>
-                                @Model.Launch.Date
-                            </h4>
-                        }
-                        else
-                        {
-                            <h3>
-                                @Model.Launch.Date
-                            </h3>
-                        }
-                        @if(Model.Launch.WindowStart != null && Model.Launch.WindowEnd != null)
-                        {
-                            <h5 class="text-muted">
-                                @Model.Launch.WindowStart - @Model.Launch.WindowEnd
-                            </h5>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial name="_LaunchDetails" model="@Model.Launch.Launch" />
     <h3>
         Agency
     </h3>
@@ -97,24 +40,3 @@
     <hr />
     <partial name="_Pad" model="@Model.Launch.Pad" />
 </div>
-
-<script type="text/javascript">
-    var date = @Model.Launch.DateJsMilliseconds;
-
-    var countdown = setInterval(function() {
-        var now = new Date().getTime();
-        var diff = date - now;
-
-        var days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
-        var hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-        var minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-        var seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
-
-        $("#countdownTimer").html(days + ":" + hours + ":" + minutes + ":" + seconds);
-
-        if(diff < 0) {
-            clearInterval(countdown);
-            $("#countdownTimer").html("00:00:00:00");
-        }
-    }, 1000);
-</script>

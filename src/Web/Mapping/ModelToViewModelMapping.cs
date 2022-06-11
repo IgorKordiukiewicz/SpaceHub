@@ -18,7 +18,7 @@ namespace Web.Mapping
             };
         }
 
-        public static LaunchCardViewModel ToLaunchCardViewModel(this Launch launch)
+        public static LaunchIndexCardViewModel ToLaunchIndexCardViewModel(this Launch launch)
         {
             return new()
             { 
@@ -32,7 +32,7 @@ namespace Web.Mapping
             };
         }
 
-        public static LaunchViewModel ToLaunchViewModel(this Launch launch)
+        public static LaunchDetailsCardViewModel ToLaunchDetailsCardViewModel(this Launch launch)
         {
             return new()
             {
@@ -46,11 +46,17 @@ namespace Web.Mapping
                 Upcoming = launch.Date > DateTime.Now,
                 WindowStart = Utils.DateToString(launch.WindowStart),
                 WindowEnd = Utils.DateToString(launch.WindowEnd),
+            };
+        }
 
+        public static LaunchViewModel ToLaunchViewModel(this Launch launch)
+        {
+            return new()
+            {
+                Launch = launch.ToLaunchDetailsCardViewModel(),
                 Agency = launch.Agency.ToAgencyCardViewModel(),
                 Rocket = launch.Rocket.ToRocketDetailsCardViewModel(),
                 Pad = launch.Pad.ToPadCardViewModel(),
-
                 Programs = launch.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
             };
         }
@@ -164,7 +170,8 @@ namespace Web.Mapping
                 VideoUrl = event_.VideoUrl,
                 Date = Utils.DateToString(event_.Date) ?? "-",
                 DateJsMilliseconds = event_.Date != null ? Utils.DateToJsMilliseconds(event_.Date.Value) : 0,
-                Upcoming = event_.Date > DateTime.Now
+                Upcoming = event_.Date > DateTime.Now,
+                Launches = event_.Launches.Select(l => l.ToLaunchDetailsCardViewModel()).ToList()
             };
         }
     }

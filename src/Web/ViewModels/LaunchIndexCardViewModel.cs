@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Web.ViewModels
 {
-    public record LaunchCardViewModel
+    public record LaunchIndexCardViewModel
     {
         public string ApiId { get; init; }
         public string Name { get; init; }

@@ -13,5 +13,6 @@
         public string Date { get; init; }
         public long DateJsMilliseconds { get; init; }
         public bool Upcoming { get; init; }
+        public List<LaunchDetailsCardViewModel> Launches { get; init; }
     }
 }
