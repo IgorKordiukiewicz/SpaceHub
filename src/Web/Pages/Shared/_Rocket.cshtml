@@ -156,9 +156,25 @@
                         </div>
                     </div>
                     <hr />
-                    <div class="form-check form-switch float-end text-end">
-                        <input class="form-check-input" type="checkbox" id="showPropertyRankToggle">
-                        <label class="form-check-label" for="showPropertyRankToggle">Show Properties Ranks</label>
+                    <div class="d-flex">
+                        <div class="form-check form-switch me-auto">
+                            <input class="form-check-input" type="checkbox" id="showPropertyRankToggle">
+                            <label class="form-check-label" for="showPropertyRankToggle">Show Properties Ranks</label>
+                        </div>
+                        @if(Model.InfoUrl != null)
+                        {
+                            <a class="btn btn-primary" style="margin-right: 4px;" target="_blank" href="@Model.InfoUrl">
+                                <i class="fa-solid fa-info"></i>
+                                &nbsp; Info
+                            </a>
+                        }
+                        @if(Model.WikiUrl != null)
+                        {
+                            <a class="btn btn-primary" target="_blank" href="@Model.WikiUrl">
+                                <i class="fa-brands fa-wikipedia-w"></i>
+                                &nbsp; Wiki
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

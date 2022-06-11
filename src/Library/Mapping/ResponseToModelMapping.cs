@@ -128,6 +128,7 @@ namespace Library.Mapping
                 LiftoffThrust = response.ThrustAtLiftoff,
                 Apogee = response.Apogee,
                 ImageUrl = response.ImageUrl,
+                InfoUrl = response.InfoUrl,
                 WikiUrl = response.WikiUrl,
                 TotalLaunchCount = response.TotalLaunchCount,
                 ConsecutiveSuccessfulLaunches = response.ConsecutiveSuccessfulLaunches,

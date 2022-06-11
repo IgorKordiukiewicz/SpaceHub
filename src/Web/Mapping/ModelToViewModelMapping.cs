@@ -62,6 +62,8 @@ namespace Web.Mapping
                 CountryCode = agency.Details.CountryCode,
                 ImageUrl = agency.Details.LogoUrl,
                 Description = agency.Details.Description,
+                InfoUrl = agency.Details.InfoUrl,
+                WikiUrl = agency.Details.WikiUrl
             };
         }
 
@@ -72,30 +74,20 @@ namespace Web.Mapping
                 Name = pad.Name,
                 LocationName = pad.Location.Name,
                 MapImageUrl = pad.MapImageUrl,
+                InfoUrl = pad.InfoUrl,
+                WikiUrl = pad.WikiUrl
             };
         }
 
         public static RocketCardViewModel ToRocketCardViewModel(this Rocket rocket)
         {
-            Func<Rocket, string> getSuccessfulLaunches = rocket =>
-            {
-                var totalLaunches = rocket.Details.TotalLaunchCount;
-                if (totalLaunches > 0)
-                {
-                    return rocket.Details.SuccessfulLaunches.ToString() + "/" + totalLaunches.ToString()
-                        + " (" + rocket.Details.LaunchSuccessPercent.ToString() + "%)";
-                }
-                else
-                {
-                    return "0/0";
-                }
-            };
-
             return new()
             {
                 Name = rocket.Name,
                 Description = rocket.Details.Description,
                 ImageUrl = rocket.Details.ImageUrl,
+                InfoUrl = rocket.Details.InfoUrl,
+                WikiUrl = rocket.Details.WikiUrl,
                 Family = rocket.Family ?? "-",
                 Variant = rocket.Variant ?? "-",
                 Length = Utils.ValueToStringWithSymbol(rocket.Details.Length, "m"),
@@ -135,7 +127,9 @@ namespace Web.Mapping
                 Description = program.Description,
                 ImageUrl = program.ImageUrl,
                 StartDate = Utils.DateToString(program.StartDate, true),
-                EndDate = Utils.DateToString(program.EndDate, true)
+                EndDate = Utils.DateToString(program.EndDate, true),
+                InfoUrl = program.InfoUrl,
+                WikiUrl = program.WikiUrl
             };
         }
     }

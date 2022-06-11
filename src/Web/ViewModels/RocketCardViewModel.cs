@@ -9,6 +9,8 @@ namespace Web.ViewModels
         public string Name { get; init; }
         public string Description { get; init; }
         public string? ImageUrl { get; init; }
+        public string? InfoUrl { get; init; }
+        public string? WikiUrl { get; init; }
         public string Family { get; init; }
         public string Variant { get; init; }
         public string Length { get; init; }

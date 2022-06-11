@@ -31,6 +31,7 @@ namespace Library.Models
             public int? LiftoffThrust { get; init; }
             public int? Apogee { get; init; }
             public string? ImageUrl { get; init; }
+            public string? InfoUrl { get; init; }
             public string? WikiUrl { get; init; }
             public int TotalLaunchCount { get; init; }
             public int ConsecutiveSuccessfulLaunches { get; init; }
