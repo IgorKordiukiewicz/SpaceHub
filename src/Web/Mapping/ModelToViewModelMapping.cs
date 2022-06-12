@@ -171,7 +171,7 @@ namespace Web.Mapping
                 Date = Helpers.DateToString(event_.Date) ?? "-",
                 DateJsMilliseconds = event_.Date != null ? Helpers.DateToJsMilliseconds(event_.Date.Value) : 0,
                 Upcoming = event_.Date > DateTime.Now,
-                Launches = event_.Launches.Select(l => l.ToLaunchDetailsCardViewModel()).ToList(),
+                Launch = event_.Launches.Count > 0 ? event_.Launches.First().ToLaunchDetailsCardViewModel() : null,
                 Programs = event_.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
             };
         }

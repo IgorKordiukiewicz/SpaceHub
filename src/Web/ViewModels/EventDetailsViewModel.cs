@@ -13,7 +13,7 @@
         public string Date { get; init; }
         public long DateJsMilliseconds { get; init; }
         public bool Upcoming { get; init; }
-        public List<LaunchDetailsCardViewModel> Launches { get; init; }
+        public LaunchDetailsCardViewModel? Launch { get; init; }
         public List<SpaceProgramCardViewModel> Programs { get; init; }
     }
 }

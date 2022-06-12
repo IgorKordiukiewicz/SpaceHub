@@ -60,22 +60,22 @@
 </div>
 
 <script type="text/javascript">
-    var date = @Model.DateJsMilliseconds;
+    var dateLaunch = @Model.DateJsMilliseconds;
 
-    var countdown = setInterval(function() {
-        var now = new Date().getTime();
-        var diff = date - now;
+    var countdownLaunch = setInterval(function() {
+        var nowLaunch = new Date().getTime();
+        var diffLaunch = dateLaunch - nowLaunch;
 
-        var days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
-        var hours = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-        var minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-        var seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+        var daysLaunch = String(Math.floor(diffLaunch / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        var hoursLaunch = String(Math.floor((diffLaunch % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        var minutesLaunch = String(Math.floor((diffLaunch % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        var secondsLaunch = String(Math.floor((diffLaunch % (1000 * 60)) / 1000)).padStart(2, '0');
 
-        $("#countdownTimerLaunch").html(days + ":" + hours + ":" + minutes + ":" + seconds);
+        $("#countdownTimerLaunch").html(daysLaunch + ":" + hoursLaunch + ":" + minutesLaunch + ":" + secondsLaunch);
 
-        if(diff < 0) {
-            clearInterval(countdown);
-            $("#countdownTimer").html("00:00:00:00");
+        if(diffLaunch < 0) {
+            clearInterval(countdownLaunch);
+            $("#countdownTimerLaunch").html("00:00:00:00");
         }
     }, 1000);
 </script>
