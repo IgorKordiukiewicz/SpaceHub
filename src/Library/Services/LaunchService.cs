@@ -16,9 +16,10 @@ namespace Library.Services
     public class LaunchService : ILaunchService
     {
         private readonly ILaunchApi _launchApi;
-        private readonly Pagination _pagination = new() { ItemsPerPage = 12 };
         private readonly IRocketService _rocketService;
         private readonly IMemoryCache _cache;
+
+        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
 
         public LaunchService(ILaunchApi launchApi, IRocketService rocketService, IMemoryCache cache)
         {
@@ -30,7 +31,7 @@ namespace Library.Services
         public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingLaunches", _launchApi.GetUpcomingLaunchesAsync, 
-                searchValue, pageNumber, _pagination, _cache);
+                searchValue, pageNumber, Pagination, _cache);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }
@@ -38,7 +39,7 @@ namespace Library.Services
         public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousLaunches", _launchApi.GetPreviousLaunchesAsync, 
-                searchValue, pageNumber, _pagination, _cache);
+                searchValue, pageNumber, Pagination, _cache);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }

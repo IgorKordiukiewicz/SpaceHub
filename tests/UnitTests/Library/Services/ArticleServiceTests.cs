@@ -15,6 +15,7 @@ using Library.Models;
 using Library.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
+using FluentAssertions.Execution;
 
 namespace UnitTests.Library.Services
 {
@@ -35,41 +36,29 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
-        public async Task GetArticlesAsync_ShouldReturnArticlesList_WhenRequestIsValid()
+        public async Task GetArticlesAsync_ShouldReturnDifferentArticles_DependingOnPageNumber()
         {
-            List<ArticleResponse> expectedResponse = new()
-            {
-                _fixture.Create<ArticleResponse>()
-            };
+            List<ArticleResponse> expectedResponse1 = new() {_fixture.Create<ArticleResponse>() };
+            List<ArticleResponse> expectedResponse2 = new() {_fixture.Create<ArticleResponse>() };
 
-            List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+            List<Article> expected1 = expectedResponse1.Select(a => a.ToModel()).ToList();
+            List<Article> expected2 = expectedResponse2.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, 0)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse));
+            int itemsPerPage = _articleService.Pagination.ItemsPerPage;
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse1));
+            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse2));
 
-            var result = await _articleService.GetArticlesAsync(searchValue, 1);
+            var result1 = await _articleService.GetArticlesAsync(searchValue, 1);
+            var result2 = await _articleService.GetArticlesAsync(searchValue, 2);
 
-            result.Should().Equal(expected);
-        }
-
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 10)]
-        public async Task GetArticlesAsync_ShouldReturnDifferentArticles_DependingOnPageNumber(int pageNumber, int start)
-        {
-            List<ArticleResponse> expectedResponse = new()
+            using (new AssertionScope())
             {
-                _fixture.Create<ArticleResponse>()
-            };
+                result1.Should().Equal(expected1);
+                result2.Should().Equal(expected2);
 
-            List<Article> expected = expectedResponse.Select(a => a.ToModel()).ToList();
-
-            string searchValue = "search";
-            _articleApi.Setup(a => a.GetArticlesAsync(searchValue, 10, start)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse));
-
-            var result = await _articleService.GetArticlesAsync(searchValue, pageNumber);
-
-            result.Should().Equal(expected);
+                result1.Should().NotEqual(result2);
+            }
         }
     }
 }

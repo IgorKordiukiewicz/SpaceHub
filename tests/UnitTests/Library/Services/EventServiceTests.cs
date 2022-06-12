@@ -15,6 +15,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Library.Models;
 using Library.Mapping;
+using FluentAssertions.Execution;
 
 namespace UnitTests.Library.Services
 {
@@ -35,45 +36,44 @@ namespace UnitTests.Library.Services
         }
 
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 12)]
-        public async Task GetUpcomingEventsAsync_ShouldReturnDifferentEvents_DependingOnPageNumber(int pageNumber, int offset)
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task GetEventsAsync_ShouldReturnDifferentEvents_DependingOnPageNumber(bool upcoming)
         {
-            List<EventResponse> expectedResponse = new()
-            {
-                _fixture.Create<EventResponse>()
-            };
+            List<EventResponse> eventResponses1 = new() { _fixture.Create<EventResponse>() };
+            List<EventResponse> eventResponses2 = new() { _fixture.Create<EventResponse>() };
 
-            List<Event> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+            List<Event> expected1 = eventResponses1.Select(a => a.ToModel()).ToList();
+            List<Event> expected2 = eventResponses2.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            var eventsResponse = _fixture.Build<EventsResponse>().With(a => a.Events, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetUpcomingEventsAsync(searchValue, 12, offset)).Returns(Task.FromResult(eventsResponse));
+            var expectedResponse1 = _fixture.Build<EventsResponse>().With(a => a.Events, eventResponses1).Create();
+            var expectedResponse2 = _fixture.Build<EventsResponse>().With(a => a.Events, eventResponses2).Create();
 
-            var (itemsCount, result) = await _eventService.GetUpcomingEventsAsync(searchValue, pageNumber);
-
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Launch>>().ComparingByValue<List<SpaceProgram>>());
-        }
-
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 12)]
-        public async Task GetPreviousEventsAsync_ShouldReturnDifferentEvents_DependingOnPageNumber(int pageNumber, int offset)
-        {
-            List<EventResponse> expectedResponse = new()
+            int itemsPerPage = _eventService.Pagination.ItemsPerPage;
+            if(upcoming)
             {
-                _fixture.Create<EventResponse>()
-            };
+                _launchApi.Setup(l => l.GetUpcomingEventsAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
+                _launchApi.Setup(l => l.GetUpcomingEventsAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
+            }
+            else
+            {
+                _launchApi.Setup(l => l.GetPreviousEventsAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
+                _launchApi.Setup(l => l.GetPreviousEventsAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
+            }
 
-            List<Event> expected = expectedResponse.Select(a => a.ToModel()).ToList();
+            var (itemsCount1, result1) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 1)
+                : await _eventService.GetPreviousEventsAsync(searchValue, 1);
+            var (itemsCount2, result2) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 2)
+                : await _eventService.GetPreviousEventsAsync(searchValue, 2);
 
-            string searchValue = "search";
-            var eventsResponse = _fixture.Build<EventsResponse>().With(a => a.Events, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetPreviousEventsAsync(searchValue, 12, offset)).Returns(Task.FromResult(eventsResponse));
+            using (new AssertionScope())
+            {
+                result1.Should().BeEquivalentTo(expected1, options => options.ComparingByValue<List<SpaceProgram>>().ComparingByValue<List<Launch>>());
+                result2.Should().BeEquivalentTo(expected2, options => options.ComparingByValue<List<SpaceProgram>>().ComparingByValue<List<Launch>>());
 
-            var (itemsCount, result) = await _eventService.GetPreviousEventsAsync(searchValue, pageNumber);
-
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<Launch>>().ComparingByValue<List<SpaceProgram>>());
+                result1.Should().NotBeEquivalentTo(result2, options => options.ComparingByValue<List<SpaceProgram>>().ComparingByValue<List<Launch>>());
+            }
         }
 
         [Fact]

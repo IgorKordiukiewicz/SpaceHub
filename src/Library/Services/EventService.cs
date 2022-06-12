@@ -14,8 +14,9 @@ namespace Library.Services
     public class EventService : IEventService
     {
         private readonly ILaunchApi _launchApi;
-        private readonly Pagination _pagination = new() { ItemsPerPage = 12 };
         private readonly IMemoryCache _cache;
+
+        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
 
         public EventService(ILaunchApi launchApi, IMemoryCache cache)
         {
@@ -26,7 +27,7 @@ namespace Library.Services
         public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingEvents", _launchApi.GetUpcomingEventsAsync, 
-                searchValue, pageNumber, _pagination, _cache);
+                searchValue, pageNumber, Pagination, _cache);
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }
@@ -34,7 +35,7 @@ namespace Library.Services
         public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousEvents", _launchApi.GetPreviousEventsAsync, 
-                searchValue, pageNumber, _pagination, _cache);
+                searchValue, pageNumber, Pagination, _cache);
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }

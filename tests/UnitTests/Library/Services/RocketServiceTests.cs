@@ -38,25 +38,33 @@ namespace UnitTests.Library.Services
             _rocketRankedPropertyTestHelper = new(_rocketService, _launchApi, _fixture);
         }
 
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 12)]
-        public async Task GetRocketsAsync_ShouldReturnDifferentRockets_DependingOnPageNumber(int pageNumber, int offset)
+        [Fact]
+        public async Task GetRocketsAsync_ShouldReturnDifferentRockets_DependingOnPageNumber()
         {
-            List<RocketConfigResponse> expectedResponse = new()
-            {
-                _fixture.Create<RocketConfigResponse>()
-            };
+            List<RocketConfigResponse> rocketResponses1 = new() { _fixture.Create<RocketConfigResponse>() };
+            List<RocketConfigResponse> rocketResponses2 = new() { _fixture.Create<RocketConfigResponse>() };
 
-            List<Rocket> expected = expectedResponse.Select(r => r.ToModel()).ToList();
+            List<Rocket> expected1 = rocketResponses1.Select(r => r.ToModel()).ToList();
+            List<Rocket> expected2 = rocketResponses2.Select(r => r.ToModel()).ToList();
 
             string searchValue = "search";
-            var rocketsResponse = _fixture.Build<RocketsResponse>().With(r => r.Rockets, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, 12, offset)).Returns(Task.FromResult(rocketsResponse));
+            var expectedResponse1 = _fixture.Build<RocketsResponse>().With(r => r.Rockets, rocketResponses1).Create();
+            var expectedResponse2 = _fixture.Build<RocketsResponse>().With(r => r.Rockets, rocketResponses2).Create();
 
-            var (itemsCount, result) = await _rocketService.GetRocketsAsync(searchValue, pageNumber);
+            int itemsPerPage = _rocketService.Pagination.ItemsPerPage;
+            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
+            _launchApi.Setup(l => l.GetRocketsAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
 
-            result.Should().Equal(expected);
+            var (itemsCount1, result1) = await _rocketService.GetRocketsAsync(searchValue, 1);
+            var (itemsCount2, result2) = await _rocketService.GetRocketsAsync(searchValue, 2);
+
+            using (new AssertionScope())
+            {
+                result1.Should().Equal(expected1);
+                result2.Should().Equal(expected2);
+
+                result1.Should().NotEqual(result2);
+            }
         }
 
         [Fact]

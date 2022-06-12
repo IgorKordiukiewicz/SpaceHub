@@ -17,9 +17,10 @@ namespace Library.Services
     public class RocketService : IRocketService
     {
         private readonly ILaunchApi _launchApi;
-        private readonly Pagination _pagination = new() { ItemsPerPage = 12 };
         private readonly IMemoryCache _cache;
         private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
+
+        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
 
         public RocketService(ILaunchApi launchApi, IMemoryCache cachce)
         {
@@ -30,7 +31,7 @@ namespace Library.Services
         public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("rockets", _launchApi.GetRocketsAsync, 
-                searchValue, pageNumber, _pagination, _cache);
+                searchValue, pageNumber, Pagination, _cache);
 
             return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());
         }

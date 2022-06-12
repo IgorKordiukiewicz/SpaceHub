@@ -14,6 +14,7 @@ using Library.Models;
 using Library.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
+using FluentAssertions.Execution;
 
 namespace UnitTests.Library.Services
 {
@@ -34,45 +35,44 @@ namespace UnitTests.Library.Services
         }
 
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 12)]
-        public async Task GetUpcomingLaunchesAsync_ShouldReturnDifferentLaunches_DependingOnPageNumber(int pageNumber, int offset)
-        { 
-            List<LaunchResponse> expectedResponse = new()
-            {
-                _fixture.Create<LaunchResponse>()
-            };
-
-            List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
-
-            string searchValue = "search";
-            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();  
-            _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(searchValue, 12, offset)).Returns(Task.FromResult(launchesResponse));
-
-            var (itemsCount, result) = await _launchService.GetUpcomingLaunchesAsync(searchValue, pageNumber);
-
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
-        }
-
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(2, 12)]
-        public async Task GetPreviousLaunchesAsync_ShouldReturnDifferentLaunches_DependingOnPageNumber(int pageNumber, int offset)
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task GetLaunchesAsync_ShouldReturnDifferentLaunches_DependingOnPageNumber(bool upcoming)
         {
-            List<LaunchResponse> expectedResponse = new()
-            {
-                _fixture.Create<LaunchResponse>()
-            };
+            List<LaunchResponse> launchResponses1 = new() { _fixture.Create<LaunchResponse>() };
+            List<LaunchResponse> launchResponses2 = new() { _fixture.Create<LaunchResponse>() };
 
-            List<Launch> expected = expectedResponse.Select(l => l.ToModel()).ToList();
+            List<Launch> expected1 = launchResponses1.Select(l => l.ToModel()).ToList();
+            List<Launch> expected2 = launchResponses2.Select(l => l.ToModel()).ToList();
 
             string searchValue = "search";
-            var launchesResponse = _fixture.Build<LaunchesResponse>().With(l => l.Launches, expectedResponse).Create();
-            _launchApi.Setup(l => l.GetPreviousLaunchesAsync(searchValue, 12, offset)).Returns(Task.FromResult(launchesResponse));
+            var expectedResponse1 = _fixture.Build<LaunchesResponse>().With(l => l.Launches, launchResponses1).Create();
+            var expectedResponse2 = _fixture.Build<LaunchesResponse>().With(l => l.Launches, launchResponses2).Create();
 
-            var (itemsCount, result) = await _launchService.GetPreviousLaunchesAsync(searchValue, pageNumber);
+            int itemsPerPage = _launchService.Pagination.ItemsPerPage;
+            if(upcoming)
+            {
+                _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
+                _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
+            }
+            else
+            {
+                _launchApi.Setup(l => l.GetPreviousLaunchesAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
+                _launchApi.Setup(l => l.GetPreviousLaunchesAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
+            }
 
-            result.Should().BeEquivalentTo(expected, options => options.ComparingByValue<List<SpaceProgram>>());
+            var (itemsCount1, result1) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 1)
+                : await _launchService.GetPreviousLaunchesAsync(searchValue, 1);
+            var (itemsCount2, result2) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 2)
+                : await _launchService.GetPreviousLaunchesAsync(searchValue, 2);
+
+            using (new AssertionScope())
+            {
+                result1.Should().BeEquivalentTo(expected1, options => options.ComparingByValue<List<SpaceProgram>>());
+                result2.Should().BeEquivalentTo(expected2, options => options.ComparingByValue<List<SpaceProgram>>());
+
+                result1.Should().NotBeEquivalentTo(result2, options => options.ComparingByValue<List<SpaceProgram>>());
+            }
         }
 
         [Fact]
