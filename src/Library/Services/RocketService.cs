@@ -29,12 +29,8 @@ namespace Library.Services
 
         public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber)
         {
-            var offset = _pagination.GetOffset(pageNumber);
-            var result = await _cache.GetOrCreateAsync("rockets" + searchValue + pageNumber.ToString(), async entry =>
-            {
-                return await _launchApi.GetRocketsAsync(searchValue, _pagination.ItemsPerPage, offset);
-            });
-            var pagesCount = _pagination.GetPagesCount(result.Count);
+            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("rockets", _launchApi.GetRocketsAsync, 
+                searchValue, pageNumber, _pagination, _cache);
 
             return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());
         }

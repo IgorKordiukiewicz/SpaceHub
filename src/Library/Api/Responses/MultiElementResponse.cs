@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Library.Api.Responses
 {
-    public record EventsResponse : MultiElementResponse
+    public record MultiElementResponse
     {
-        [JsonPropertyName("results")]
-        public IEnumerable<EventResponse> Events { get; init; }
+        [JsonPropertyName("count")]
+        public int Count { get; init; }
     }
 }

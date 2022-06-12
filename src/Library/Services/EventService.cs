@@ -25,31 +25,16 @@ namespace Library.Services
 
         public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber)
         {
-            var result = await _cache.GetOrCreateAsync("upcomingEvents" + searchValue + pageNumber.ToString(), async entry =>
-            {
-                return await GetEventsAsync(searchValue, pageNumber, true);
-            });
+            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingEvents", _launchApi.GetUpcomingEventsAsync, 
+                searchValue, pageNumber, _pagination, _cache);
 
-            return result;
+            return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }
 
         public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber)
         {
-            var result = await _cache.GetOrCreateAsync("previousEvents" + searchValue + pageNumber.ToString(), async entry =>
-            {
-                return await GetEventsAsync(searchValue, pageNumber, false);
-            });
-
-            return result;
-        }
-
-        private async Task<(int, List<Event>)> GetEventsAsync(string? searchValue, int pageNumber, bool upcoming)
-        {
-            var offset = _pagination.GetOffset(pageNumber);
-            var result = upcoming ?
-                await _launchApi.GetUpcomingEventsAsync(searchValue, _pagination.ItemsPerPage, offset)
-                : await _launchApi.GetPreviousEventsAsync(searchValue, _pagination.ItemsPerPage, offset);
-            var pagesCount = _pagination.GetPagesCount(result.Count);
+            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousEvents", _launchApi.GetPreviousEventsAsync, 
+                searchValue, pageNumber, _pagination, _cache);
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }

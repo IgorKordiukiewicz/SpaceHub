@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace Library.Api.Responses
 {
-    public record RocketsResponse
+    public record RocketsResponse : MultiElementResponse
     {
-        [JsonPropertyName("count")]
-        public int Count { get; init; }
-
         [JsonPropertyName("results")]
         public IEnumerable<RocketConfigResponse> Rockets { get; init; }
     }

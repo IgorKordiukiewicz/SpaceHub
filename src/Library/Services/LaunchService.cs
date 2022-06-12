@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Library.Utils;
 using Microsoft.Extensions.Caching.Memory;
+using System.Linq.Expressions;
+using Library.Api.Responses;
 
 namespace Library.Services
 {
@@ -27,31 +29,16 @@ namespace Library.Services
         
         public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber)
         {
-            var result = await _cache.GetOrCreateAsync("upcomingLaunches" + searchValue + pageNumber.ToString(), async entry =>
-            {
-                return await GetLaunchesAsync(searchValue, pageNumber, true);
-            });
+            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingLaunches", _launchApi.GetUpcomingLaunchesAsync, 
+                searchValue, pageNumber, _pagination, _cache);
 
-            return result;
+            return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }
 
         public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber)
         {
-            var result = await _cache.GetOrCreateAsync("upcomingLaunches" + searchValue + pageNumber.ToString(), async entry =>
-            {
-                return await GetLaunchesAsync(searchValue, pageNumber, false);
-            });
-
-            return result;
-        }
-
-        private async Task<(int, List<Launch>)> GetLaunchesAsync(string? searchValue, int pageNumber, bool upcoming)
-        {
-            var offset = _pagination.GetOffset(pageNumber);
-            var result = upcoming ? 
-                await _launchApi.GetUpcomingLaunchesAsync(searchValue, _pagination.ItemsPerPage, offset)
-                : await _launchApi.GetPreviousLaunchesAsync(searchValue, _pagination.ItemsPerPage, offset);
-            var pagesCount = _pagination.GetPagesCount(result.Count);
+            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousLaunches", _launchApi.GetPreviousLaunchesAsync, 
+                searchValue, pageNumber, _pagination, _cache);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }
