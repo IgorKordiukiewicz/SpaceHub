@@ -36,3 +36,19 @@ body {
     padding-left: 5%;
     padding-right: 5%;
 }
+
+.article-title {
+    text-decoration: none;
+}
+
+.trophy-gold {
+    color: #D6AF36;
+}
+
+.trophy-silver {
+    color: #A7A7AD;
+}
+
+.trophy-bronze {
+    color: #A77044;
+}

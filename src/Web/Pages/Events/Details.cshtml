@@ -54,23 +54,26 @@
                                 @Model.Event.Date
                             </h3>
                         }
-                        <hr />
-                        <div class="d-flex justify-content-end">
-                            @if(Model.Event.NewsUrl != null)
-                            {
-                                <a class="btn btn-primary" style="margin-right: 4px;" target="_blank" href="@Model.Event.NewsUrl">
-                                    <i class="fa-solid fa-info"></i>
-                                    &nbsp; Info
-                                </a>
-                            }
-                            @if(Model.Event.VideoUrl != null)
-                            {
-                                <a class="btn btn-primary" target="_blank" href="@Model.Event.VideoUrl">
-                                    <i class="fa-brands fa-youtube"></i>
-                                    &nbsp; Watch
-                                </a>
-                            }
-                        </div>
+                        @if(Model.Event.NewsUrl != null || Model.Event.VideoUrl != null)
+                        {
+                            <hr />
+                            <div class="d-flex gap-2">
+                                @if(Model.Event.NewsUrl != null)
+                                {
+                                    <a class="btn btn-outline-light flex-fill" target="_blank" href="@Model.Event.NewsUrl">
+                                        <i class="bi bi-info-circle"></i>
+                                        &nbsp; News
+                                    </a>
+                                }
+                                @if(Model.Event.VideoUrl != null)
+                                {
+                                    <a class="btn btn-outline-danger flex-fill" target="_blank" href="@Model.Event.VideoUrl">
+                                        <i class="fa-brands fa-youtube"></i>
+                                        &nbsp; Watch
+                                    </a>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

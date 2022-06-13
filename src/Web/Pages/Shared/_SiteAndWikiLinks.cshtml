@@ -1,0 +1,22 @@
+﻿@model Tuple<string, string>
+
+@if(Model.Item1 != null || Model.Item2 != null)
+{
+    <hr />
+    <div class="d-flex gap-2">
+        @if(Model.Item1 != null)
+        {
+            <a class="btn btn-outline-light flex-fill" target="_blank" href="@Model.Item1">
+                <i class="bi bi-globe"></i>
+                &nbsp; Website
+            </a>
+        }
+        @if(Model.Item2 != null)
+        {
+            <a class="btn btn-outline-light flex-fill" target="_blank" href="@Model.Item2">
+                <i class="fa-brands fa-wikipedia-w"></i>
+                &nbsp; Wikipedia
+            </a>
+        }
+    </div>
+}

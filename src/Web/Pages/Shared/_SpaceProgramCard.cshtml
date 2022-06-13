@@ -1,7 +1,7 @@
 ﻿@model SpaceProgramCardViewModel
 
 <div class="col-12">
-    <div class="card mb-4 border-5">
+    <div class="card mb-4">
         <div class="row">
             <div class="col-lg-3">
                 <img src="@Model.ImageUrl" class="img-fluid rounded-start card-img-left-scale"/>
@@ -11,7 +11,6 @@
                     <h2 class="card-title">
                         @Model.Name
                     </h2>
-                    <hr />
                     @if(Model.Description != null)
                     {
                         <h5 class="text-muted">
@@ -32,22 +31,7 @@
                             }
                         </h4>
                     }
-                    <div class="d-flex justify-content-end">
-                        @if(Model.InfoUrl != null)
-                        {
-                            <a class="btn btn-primary" style="margin-right: 4px;" target="_blank" href="@Model.InfoUrl">
-                                <i class="fa-solid fa-info"></i>
-                                &nbsp; Info
-                            </a>
-                        }
-                        @if(Model.WikiUrl != null)
-                        {
-                            <a class="btn btn-primary" target="_blank" href="@Model.WikiUrl">
-                                <i class="fa-brands fa-wikipedia-w"></i>
-                                &nbsp; Wiki
-                            </a>
-                        }
-                    </div>
+                    <partial name="_SiteAndWikiLinks" model="@Tuple.Create(Model.InfoUrl, Model.WikiUrl)" />
                 </div>
             </div>
         </div>

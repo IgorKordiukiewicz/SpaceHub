@@ -18,22 +18,7 @@
                             @Model.Description
                         </h5>
                     }
-                    <div class="d-flex justify-content-end">
-                        @if(Model.InfoUrl != null)
-                        {
-                            <a class="btn btn-primary" style="margin-right: 4px;" target="_blank" href="@Model.InfoUrl">
-                                <i class="fa-solid fa-info"></i>
-                                &nbsp; Info
-                            </a>
-                        }
-                        @if(Model.WikiUrl != null)
-                        {
-                            <a class="btn btn-primary" target="_blank" href="@Model.WikiUrl">
-                                <i class="fa-brands fa-wikipedia-w"></i>
-                                &nbsp; Wiki
-                            </a>
-                        }
-                    </div>
+                    <partial name="_SiteAndWikiLinks" model="@Tuple.Create(Model.InfoUrl, Model.WikiUrl)" />
                 </div>
             </div>
         </div>
