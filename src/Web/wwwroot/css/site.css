@@ -25,13 +25,13 @@ body {
 
 .card-img-left-cover {
     width: 100%;
-    height: 30vw;
+    height: 100%;
     object-fit: cover;
 }
 
 .card-img-left-scale {
     width: 100%;
-    height: 20vw;
+    height: 100%;
     object-fit: scale-down;
     padding-left: 5%;
     padding-right: 5%;
