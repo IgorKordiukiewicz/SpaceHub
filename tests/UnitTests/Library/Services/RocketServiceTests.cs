@@ -89,6 +89,36 @@ namespace UnitTests.Library.Services
         }
 
         [Fact]
+        public async Task GetRocketRankedPropertiesRankingsAsync_ShouldReturnRankings_WithLimitedNumberOfRankings()
+        {
+            var rocket1Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).With(r => r.Length, 40).Create();
+            var rocket2Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 2).With(r => r.Length, 50).Create();
+            var rocket3Response = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 3).With(r => r.Length, 20).Create();
+
+            RocketsDetailResponse expectedResponse = new()
+            {
+                Count = 3,
+                Rockets = new List<RocketConfigDetailResponse>()
+                {
+                    rocket1Response, rocket2Response, rocket3Response
+                }
+            };
+            _launchApi.Setup(l => l.GetRocketsDetailAsync(100, 0)).Returns(Task.FromResult(expectedResponse));
+            _launchApi.Setup(l => l.GetRocketAsync(1)).Returns(Task.FromResult(rocket1Response));
+            _launchApi.Setup(l => l.GetRocketAsync(2)).Returns(Task.FromResult(rocket2Response));
+            _launchApi.Setup(l => l.GetRocketAsync(3)).Returns(Task.FromResult(rocket3Response));
+
+            var result = (await _rocketService.GetRocketRankedPropertiesRankingsAsync(2))[RocketRankedPropertyType.Length];
+
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(2);
+                result[0].Rocket.ApiId.Should().Be(2);
+                result[1].Rocket.ApiId.Should().Be(1);
+            }
+        }
+
+        [Fact]
         public async Task SetRocketRankedProperties_ShouldSetToNull_WhenIdIsNotFound()
         {
             var rocketResponse = _fixture.Build<RocketConfigDetailResponse>().With(r => r.Id, 1).Create();

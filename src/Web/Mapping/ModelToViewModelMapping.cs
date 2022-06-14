@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library.Extensions;
+using Library.Models;
 using Web.ViewModels;
 
 namespace Web.Mapping
@@ -173,6 +174,16 @@ namespace Web.Mapping
                 Upcoming = event_.Date > DateTime.Now,
                 Launch = event_.Launches.Count > 0 ? event_.Launches.First().ToLaunchDetailsCardViewModel() : null,
                 Programs = event_.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
+            };
+        }
+
+        public static RocketRankedPropertyViewModel ToRocketRankedPropertyViewModel(this RocketRankedProperty rocketRankedProperty)
+        {
+            return new()
+            {
+                ApiId = rocketRankedProperty.Rocket.ApiId,
+                RocketName = rocketRankedProperty.Rocket.FullName,
+                Value = rocketRankedProperty.Value.ToString() + " " + rocketRankedProperty.Type.GetSymbol(), 
             };
         }
     }

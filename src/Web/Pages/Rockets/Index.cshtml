@@ -6,7 +6,7 @@
         <input asp-for="SearchValue" class="form-control" placeholder="Search" />
         <button class="btn btn-success" type="submit">Search</button>
     </form>
-    <a class="btn btn-success">Rankings</a>
+    <a class="btn btn-success" asp-page="/Rockets/Rankings">Rankings</a>
 </div>
 
 @if(Model.Rockets != null)

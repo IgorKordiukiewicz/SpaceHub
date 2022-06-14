@@ -19,6 +19,7 @@ namespace Library.Services
         private readonly ILaunchApi _launchApi;
         private readonly IMemoryCache _cache;
         private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
+        private Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>>? _rankedPropertiesRankings;
 
         public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
 
@@ -59,15 +60,30 @@ namespace Library.Services
             rocket.Details.RankedProperties = _rocketRankedProperties.GetValueOrDefault(rocket.ApiId);
         }
 
+        public async Task<Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>>> GetRocketRankedPropertiesRankingsAsync(int limit)
+        {
+            if(_rankedPropertiesRankings == null)
+            {
+                await InitializeRocketRankedPropertiesAsync();
+            }
+
+            Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> result = new();
+            foreach(var (propertyType, properties) in _rankedPropertiesRankings)
+            {
+                result.Add(propertyType, properties.Take(limit).ToList());
+            }
+            return result;
+        }
+
         private async Task InitializeRocketRankedPropertiesAsync()
         {
             _rocketRankedProperties = new();
 
             var rockets = await GetAllRocketsDetailAsync();
-            var propertiesByType = InitializeRankedPropertiesByType(rockets);
+            _rankedPropertiesRankings = InitializeRankedPropertiesRankings(rockets);
 
-            RankProperties(propertiesByType);
-            AssignRankedPropertiesToRockets(propertiesByType);
+            RankProperties();
+            AssignRankedPropertiesToRockets();
         }
 
         private async Task<List<RocketConfigDetailResponse>> GetAllRocketsDetailAsync()
@@ -94,7 +110,7 @@ namespace Library.Services
             return rockets;
         }
 
-        private static Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> InitializeRankedPropertiesByType(List<RocketConfigDetailResponse> rockets)
+        private static Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> InitializeRankedPropertiesRankings(List<RocketConfigDetailResponse> rockets)
         {
             Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType = new();
             foreach (var propertyType in Enum.GetValues<RocketRankedPropertyType>())
@@ -104,68 +120,71 @@ namespace Library.Services
 
             foreach (var rocketResponse in rockets)
             {
-                var rocketDetails = rocketResponse.ToModel().Details;
-                var id = rocketResponse.Id;
+                var rocket = rocketResponse.ToModel();
 
-                propertiesByType[RocketRankedPropertyType.Length].Add(new() { RocketId = id, Value = rocketDetails.Length });
-                propertiesByType[RocketRankedPropertyType.Diameter].Add(new() { RocketId = id, Value = rocketDetails.Diameter });
-                propertiesByType[RocketRankedPropertyType.LaunchCost].Add(new() { RocketId = id, Value = rocketDetails.LaunchCost });
-                propertiesByType[RocketRankedPropertyType.LiftoffMass].Add(new() { RocketId = id, Value = rocketDetails.LiftoffMass });
-                propertiesByType[RocketRankedPropertyType.LiftoffThrust].Add(new() { RocketId = id, Value = rocketDetails.LiftoffThrust });
-                propertiesByType[RocketRankedPropertyType.LeoCapacity].Add(new() { RocketId = id, Value = rocketDetails.LeoCapacity });
-                propertiesByType[RocketRankedPropertyType.GeoCapacity].Add(new() { RocketId = id, Value = rocketDetails.GeoCapacity });
-                propertiesByType[RocketRankedPropertyType.CostPerKgToLeo].Add(new() { RocketId = id, Value = rocketDetails.CostPerKgToLeo });
-                propertiesByType[RocketRankedPropertyType.CostPerKgToGeo].Add(new() { RocketId = id, Value = rocketDetails.CostPerKgToGeo });
-                propertiesByType[RocketRankedPropertyType.SuccessfulLaunches].Add(new() { RocketId = id, Value = rocketDetails.SuccessfulLaunches });
-                propertiesByType[RocketRankedPropertyType.TotalLaunches].Add(new() { RocketId = id, Value = rocketDetails.TotalLaunchCount });
-                propertiesByType[RocketRankedPropertyType.LaunchSuccessPercent].Add(new() { RocketId = id, Value = rocketDetails.LaunchSuccessPercent, 
-                    SecondaryValue = rocketDetails.SuccessfulLaunches });
+                propertiesByType[RocketRankedPropertyType.Length].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.Length, 
+                    Value = rocket.Details.Length });
+                propertiesByType[RocketRankedPropertyType.Diameter].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.Diameter, 
+                    Value = rocket.Details.Diameter });
+                propertiesByType[RocketRankedPropertyType.LaunchCost].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.LaunchCost, 
+                    Value = rocket.Details.LaunchCost });
+                propertiesByType[RocketRankedPropertyType.LiftoffMass].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.LiftoffMass, 
+                    Value = rocket.Details.LiftoffMass });
+                propertiesByType[RocketRankedPropertyType.LiftoffThrust].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.LiftoffThrust, 
+                    Value = rocket.Details.LiftoffThrust });
+                propertiesByType[RocketRankedPropertyType.LeoCapacity].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.LeoCapacity, 
+                    Value = rocket.Details.LeoCapacity });
+                propertiesByType[RocketRankedPropertyType.GeoCapacity].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.GeoCapacity, 
+                    Value = rocket.Details.GeoCapacity });
+                propertiesByType[RocketRankedPropertyType.CostPerKgToLeo].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.CostPerKgToLeo, 
+                    Value = rocket.Details.CostPerKgToLeo });
+                propertiesByType[RocketRankedPropertyType.CostPerKgToGeo].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.CostPerKgToGeo, 
+                    Value = rocket.Details.CostPerKgToGeo });
+                propertiesByType[RocketRankedPropertyType.SuccessfulLaunches].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.SuccessfulLaunches, 
+                    Value = rocket.Details.SuccessfulLaunches });
+                propertiesByType[RocketRankedPropertyType.TotalLaunches].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.TotalLaunches, 
+                    Value = rocket.Details.TotalLaunchCount });
+                propertiesByType[RocketRankedPropertyType.LaunchSuccessPercent].Add(new() { Rocket = rocket, Type = RocketRankedPropertyType.LaunchSuccessPercent, 
+                    Value = rocket.Details.LaunchSuccessPercent, SecondaryValue = rocket.Details.SuccessfulLaunches });
             }
 
             return propertiesByType;
         }
 
-        private static void RankProperties(Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType)
+        private void RankProperties()
         {
             AscendingComparer<int> ascendingIntComparer = new();
             DescendingComparer<double> descendingDoubleComparer = new();
             DescendingComparer<int> descendingIntComparer = new();
 
-            propertiesByType[RocketRankedPropertyType.Length].Sort(descendingDoubleComparer);
-            propertiesByType[RocketRankedPropertyType.Diameter].Sort(descendingDoubleComparer);
-            propertiesByType[RocketRankedPropertyType.LaunchCost].Sort(ascendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.LiftoffMass].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.LiftoffThrust].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.LeoCapacity].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.GeoCapacity].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.CostPerKgToLeo].Sort(ascendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.CostPerKgToGeo].Sort(ascendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.SuccessfulLaunches].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.TotalLaunches].Sort(descendingIntComparer);
-            propertiesByType[RocketRankedPropertyType.LaunchSuccessPercent].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.Length].Sort(descendingDoubleComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.Diameter].Sort(descendingDoubleComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.LaunchCost].Sort(ascendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.LiftoffMass].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.LiftoffThrust].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.LeoCapacity].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.GeoCapacity].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.CostPerKgToLeo].Sort(ascendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.CostPerKgToGeo].Sort(ascendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.SuccessfulLaunches].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.TotalLaunches].Sort(descendingIntComparer);
+            _rankedPropertiesRankings[RocketRankedPropertyType.LaunchSuccessPercent].Sort(descendingIntComparer);
         }
 
-        private void AssignRankedPropertiesToRockets(Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>> propertiesByType)
+        private void AssignRankedPropertiesToRockets()
         {
-            foreach (var (type, properties) in propertiesByType)
+            foreach (var (type, properties) in _rankedPropertiesRankings)
             {
                 for (int i = 0; i < properties.Count; ++i)
                 {
-                    if (!_rocketRankedProperties.ContainsKey(properties[i].RocketId))
+                    if (!_rocketRankedProperties.ContainsKey(properties[i].Rocket.ApiId))
                     {
-                        _rocketRankedProperties[properties[i].RocketId] = new();
+                        _rocketRankedProperties[properties[i].Rocket.ApiId] = new();
                     }
 
-                    _rocketRankedProperties[properties[i].RocketId].Add(type, properties[i].Value != null ? i + 1 : null);
+                    _rocketRankedProperties[properties[i].Rocket.ApiId].Add(type, properties[i].Value != null ? i + 1 : null);
                 }
             }
-        }
-
-        private class RocketRankedProperty
-        {
-            public int RocketId { get; set; }
-            public object? Value { get; set; }
-            public object? SecondaryValue { get; set; }
         }
 
         private class AscendingComparer<T> : IComparer<RocketRankedProperty> where T : IComparable<T>

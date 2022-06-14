@@ -15,5 +15,7 @@ namespace Library.Services
         Task<Rocket> GetRocketAsync(int id);
 
         Task SetRocketRankedPropertiesAsync(Rocket rocket);
+
+        Task<Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>>> GetRocketRankedPropertiesRankingsAsync(int limit);
     }
 }
