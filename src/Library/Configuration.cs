@@ -8,7 +8,7 @@ using Library.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
-using FluentValidation;
+using Library.Identity;
 
 namespace Library
 {
