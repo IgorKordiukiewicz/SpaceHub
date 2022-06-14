@@ -183,7 +183,8 @@ namespace Web.Mapping
             {
                 ApiId = rocketRankedProperty.Rocket.ApiId,
                 RocketName = rocketRankedProperty.Rocket.FullName,
-                Value = rocketRankedProperty.Value.ToString() + " " + rocketRankedProperty.Type.GetSymbol(), 
+                Value = rocketRankedProperty.Value.ToString() + " " + rocketRankedProperty.Type.GetSymbol(),
+                SecondaryValue = rocketRankedProperty.SecondaryValue?.ToString()
             };
         }
     }

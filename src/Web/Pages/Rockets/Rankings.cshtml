@@ -47,23 +47,39 @@
                                     {
                                         <h3>
                                             @properties[i].Value
+                                            @if(properties[i].SecondaryValue != null)
+                                            {
+                                                <text> (@properties[i].SecondaryValue)</text>
+                                            }
                                         </h3>
                                     }
                                     else if(i == 1)
                                     {
                                         <h4>
                                             @properties[i].Value
+                                            @if(properties[i].SecondaryValue != null)
+                                            {
+                                                <text> (@properties[i].SecondaryValue)</text>
+                                            }
                                         </h4>
                                     }
                                     else if(i == 2)
                                     {
                                         <h5>
                                             @properties[i].Value
+                                            @if(properties[i].SecondaryValue != null)
+                                            {
+                                                <text> (@properties[i].SecondaryValue)</text>
+                                            }
                                         </h5>
                                     }
                                     else
                                     {
                                         @properties[i].Value
+                                        if(properties[i].SecondaryValue != null)
+                                        {
+                                            <text> (@properties[i].SecondaryValue)</text>
+                                        }
                                     }
                                 </td>
                             </tr>
