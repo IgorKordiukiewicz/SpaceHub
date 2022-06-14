@@ -12,4 +12,21 @@
     </h3>
     <hr />
     <partial name="_AgencyCard" model="@Model.Manufacturer" />
+    @if(Model.Programs.Count > 0)
+    {
+        <h3>
+            Programs
+        </h3>
+        <hr />
+        <div class="col-12">
+            <div class="card mb-4 p-4 pb-0">
+                <div class="row">
+                    @foreach(var program in Model.Programs)
+                    {
+                        <partial name="_SpaceProgramCard" model="@program"/>
+                    }
+                </div>
+            </div>
+        </div>
+    }
 </div>

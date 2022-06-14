@@ -115,6 +115,7 @@ namespace Library.Mapping
             {
                 Description = response.Description,
                 Manufacturer = response.Manufacturer.ToModel(),
+                Programs = response.Programs.Select(p => p.ToModel()).ToList(),
                 Alias = response.Alias,
                 MinStages = response.MinStage,
                 MaxStages = response.MaxStage,

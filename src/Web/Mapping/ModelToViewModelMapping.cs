@@ -50,17 +50,6 @@ namespace Web.Mapping
             };
         }
 
-        public static LaunchDetailsViewModel ToLaunchDetailsViewModel(this Launch launch)
-        {
-            return new()
-            {
-                Launch = launch.ToLaunchDetailsCardViewModel(),
-                Agency = launch.Agency.ToAgencyCardViewModel(),
-                Rocket = launch.Rocket.ToRocketDetailsCardViewModel(),
-                Pad = launch.Pad.ToPadCardViewModel(),
-                Programs = launch.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList(),
-            };
-        }
         public static AgencyCardViewModel ToAgencyCardViewModel(this Agency agency)
         {
             return new()

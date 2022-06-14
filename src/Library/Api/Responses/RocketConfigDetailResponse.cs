@@ -9,7 +9,10 @@ namespace Library.Api.Responses
         
         [JsonPropertyName("manufacturer")]
         public AgencyDetailResponse Manufacturer { get; init; }
-        
+
+        [JsonPropertyName("program")]
+        public IEnumerable<ProgramResponse> Programs { get; init; }
+
         [JsonPropertyName("alias")]
         public string Alias { get; init; }
 

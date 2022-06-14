@@ -12,6 +12,7 @@ namespace Web.Pages.Rockets
 
         public RocketDetailsCardViewModel Rocket { get; set; }
         public AgencyCardViewModel Manufacturer { get; set; }
+        public List<SpaceProgramCardViewModel> Programs { get; set; }
 
         public DetailsModel(IRocketService rocketService)
         {
@@ -24,6 +25,7 @@ namespace Web.Pages.Rockets
 
             Rocket = result.ToRocketDetailsCardViewModel();
             Manufacturer = result.Details.Manufacturer.ToAgencyCardViewModel();
+            Programs = result.Details.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList();
         }
     }
 }

@@ -10,7 +10,11 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public LaunchDetailsViewModel Launch { get; set; }
+        public LaunchDetailsCardViewModel Launch { get; set; }
+        public AgencyCardViewModel Agency { get; set; }
+        public RocketDetailsCardViewModel Rocket { get; set; }
+        public PadCardViewModel Pad { get; set; }
+        public List<SpaceProgramCardViewModel> Programs { get; set; }
 
         public DetailsModel(ILaunchService launchService)
         {
@@ -20,7 +24,12 @@ namespace Web.Pages.Launches
         public async Task OnGet(string id)
         {
             var result = await _launchService.GetLaunchAsync(id);
-            Launch = result.ToLaunchDetailsViewModel();
+
+            Launch = result.ToLaunchDetailsCardViewModel();
+            Agency = result.Agency.ToAgencyCardViewModel();
+            Rocket = result.Rocket.ToRocketDetailsCardViewModel();
+            Pad = result.Pad.ToPadCardViewModel();
+            Programs = result.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList();
         }
     }
 }

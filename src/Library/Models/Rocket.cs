@@ -21,6 +21,7 @@ namespace Library.Models
         {
             public string Description { get; init; }
             public Agency Manufacturer { get; init; }
+            public List<SpaceProgram> Programs { get; init; }
             public string Alias { get; init; }
             public int? MinStages { get; init; }
             public int? MaxStages { get; init; }

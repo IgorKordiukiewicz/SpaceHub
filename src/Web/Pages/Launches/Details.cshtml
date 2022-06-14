@@ -6,18 +6,18 @@
         Launch
     </h3>
     <hr />
-    <partial name="_LaunchDetailsCard" model="@Model.Launch.Launch" />
+    <partial name="_LaunchDetailsCard" model="@Model.Launch" />
     <h3>
         Agency
     </h3>
     <hr />
-    <partial name="_AgencyCard" model="@Model.Launch.Agency" />
+    <partial name="_AgencyCard" model="@Model.Agency" />
     <h3>
         Rocket
     </h3>
     <hr />
-    <partial name="_RocketDetailsCard" model="@Model.Launch.Rocket" />
-    @if(Model.Launch.Programs.Count > 0)
+    <partial name="_RocketDetailsCard" model="@Model.Rocket" />
+    @if(Model.Programs.Count > 0)
     {
         <h3>
             Programs
@@ -26,7 +26,7 @@
         <div class="col-12">
             <div class="card mb-4 p-4 pb-0">
                 <div class="row">
-                    @foreach(var program in Model.Launch.Programs)
+                    @foreach(var program in Model.Programs)
                     {
                         <partial name="_SpaceProgramCard" model="@program"/>
                     }
@@ -38,5 +38,5 @@
         Pad
     </h3>
     <hr />
-    <partial name="_PadCard" model="@Model.Launch.Pad" />
+    <partial name="_PadCard" model="@Model.Pad" />
 </div>
