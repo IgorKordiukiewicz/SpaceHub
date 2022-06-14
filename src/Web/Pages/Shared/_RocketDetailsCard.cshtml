@@ -156,24 +156,25 @@
                         </div>
                     </div>
                     <partial name="_SiteAndWikiLinks" model="@Tuple.Create(Model.InfoUrl, Model.WikiUrl)" />
-                    <div class="form-check form-switch me-auto">
-                        <input class="form-check-input" type="checkbox" id="showPropertyRankToggle">
-                        <label class="form-check-label" for="showPropertyRankToggle">Show Properties Ranks</label>
-                    </div>
                 </div>
             </div>
         </div>
+        <span class="position-absolute top-0 start-100 translate-middle badge p-2 rounded-pill bg-white" id="toggle">
+            <i class="bi bi-trophy-fill text-success fa-lg" id="toggle-icon"></i>
+        </span>
     </div>
 </div>
 
 <script type="text/javascript">
-    var toggle = document.getElementById("showPropertyRankToggle");
     var goldTrophy = "<i class=\"bi bi-trophy-fill trophy-gold\"></i> ";
     var silverTrophy = "<i class=\"bi bi-trophy-fill trophy-silver\"></i> ";
     var bronzeTrophy = "<i class=\"bi bi-trophy-fill trophy-bronze\"></i> ";
 
-    toggle.addEventListener("change", function() {
-        if(toggle.checked) {
+    var toggle = document.getElementById("toggle");
+    var toggleValue = false;
+    toggle.addEventListener("click", function() {
+        toggleValue = !toggleValue;
+        if(toggleValue) {
             @{
                 foreach(var propertyType in Enum.GetValues<RocketRankedPropertyType>())
                 {
@@ -189,6 +190,10 @@
                     
                 }
             }
+
+            $("#toggle").removeClass("bg-white");
+            $("#toggle").addClass("bg-success");
+            $("#toggle-icon").removeClass("text-success");
         }
         else {
             @{
@@ -200,6 +205,10 @@
                     </text>
                 }
             }
+
+            $("#toggle").removeClass("bg-success");
+            $("#toggle").addClass("bg-white");
+            $("#toggle-icon").addClass("text-success");
         }
     });
 </script>

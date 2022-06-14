@@ -52,3 +52,7 @@ body {
 .trophy-bronze {
     color: #A77044;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
