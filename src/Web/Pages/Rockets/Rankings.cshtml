@@ -22,24 +22,35 @@
                                     @if(i == 0)
                                     {
                                         <h3>
-                                            <i class="bi bi-trophy-fill trophy-gold"></i>&nbsp; @properties[i].RocketName
+                                            <i class="bi bi-trophy-fill trophy-gold"></i>&nbsp; 
+                                            <a class="article-title text-white" asp-page="/Rockets/Details" asp-route-id="@properties[i].ApiId">
+                                                @properties[i].RocketName
+                                            </a>
                                         </h3>
                                     }
                                     else if(i == 1)
                                     {
                                         <h4>
-                                            <i class="bi bi-trophy-fill trophy-silver"></i>&nbsp; @properties[i].RocketName
+                                            <i class="bi bi-trophy-fill trophy-silver"></i>&nbsp;
+                                            <a class="article-title text-white" asp-page="/Rockets/Details" asp-route-id="@properties[i].ApiId">
+                                                @properties[i].RocketName
+                                            </a>
                                         </h4>
                                     }
                                     else if(i == 2)
                                     {
                                         <h5>
-                                            <i class="bi bi-trophy-fill trophy-bronze"></i>&nbsp; @properties[i].RocketName
+                                            <i class="bi bi-trophy-fill trophy-bronze"></i>&nbsp;
+                                            <a class="article-title text-white" asp-page="/Rockets/Details" asp-route-id="@properties[i].ApiId">
+                                                @properties[i].RocketName
+                                            </a>
                                         </h5>
                                     }
                                     else
                                     {
-                                        @properties[i].RocketName
+                                        <a class="article-title text-white" asp-page="/Rockets/Details" asp-route-id="@properties[i].ApiId">
+                                            @properties[i].RocketName
+                                        </a>
                                     }
                                 </td>
                                 <td class="text-end">
