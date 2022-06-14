@@ -1,4 +1,5 @@
-﻿using Library.Extensions;
+﻿using Library.Enums;
+using Library.Extensions;
 using Library.Models;
 using Web.ViewModels;
 
@@ -86,20 +87,20 @@ namespace Web.Mapping
                 WikiUrl = rocket.WikiUrl,
                 Family = rocket.Family ?? "-",
                 Variant = rocket.Variant ?? "-",
-                Length = Helpers.ValueToStringWithSymbol(rocket.Details.Length, "m"),
-                Diameter = Helpers.ValueToStringWithSymbol(rocket.Details.Diameter, "m"),
+                Length = Helpers.ValueToStringWithSymbol(rocket.Details.Length, RocketRankedPropertyType.Length.GetSymbol()),
+                Diameter = Helpers.ValueToStringWithSymbol(rocket.Details.Diameter, RocketRankedPropertyType.Diameter.GetSymbol()),
                 MaxStages = Helpers.ValueToStringWithSymbol(rocket.Details.MaxStages, ""),
-                LaunchCost = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchCost, "$"),
-                LiftoffMass = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffMass, "T"),
-                LiftoffThrust = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffThrust, "kN"),
-                GeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.GeoCapacity, "kg"),
-                LeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.LeoCapacity, "kg"),
+                LaunchCost = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchCost, RocketRankedPropertyType.LaunchCost.GetSymbol()),
+                LiftoffMass = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffMass, RocketRankedPropertyType.LiftoffMass.GetSymbol()),
+                LiftoffThrust = Helpers.ValueToStringWithSymbol(rocket.Details.LiftoffThrust, RocketRankedPropertyType.LiftoffThrust.GetSymbol()),
+                GeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.GeoCapacity, RocketRankedPropertyType.GeoCapacity.GetSymbol()),
+                LeoCapacity = Helpers.ValueToStringWithSymbol(rocket.Details.LeoCapacity, RocketRankedPropertyType.LeoCapacity.GetSymbol()),
                 SuccessfulLaunches = Helpers.ValueToStringWithSymbol(rocket.Details.SuccessfulLaunches, ""),
                 TotalLaunches = Helpers.ValueToStringWithSymbol(rocket.Details.TotalLaunchCount, ""),
                 FirstLaunch = Helpers.DateToString(rocket.Details.FirstFlight) ?? "-",
-                LaunchSuccessPercent = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchSuccessPercent, "%"),
-                CostPerKgToLeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, "$"),
-                CostPerKgToGeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, "$"),
+                LaunchSuccessPercent = Helpers.ValueToStringWithSymbol(rocket.Details.LaunchSuccessPercent, RocketRankedPropertyType.LaunchSuccessPercent.GetSymbol()),
+                CostPerKgToLeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToLeo, RocketRankedPropertyType.CostPerKgToLeo.GetSymbol()),
+                CostPerKgToGeo = Helpers.ValueToStringWithSymbol(rocket.Details.CostPerKgToGeo, RocketRankedPropertyType.CostPerKgToGeo.GetSymbol()),
                 RankedProperties = rocket.Details.RankedProperties ?? new()
             };
         }
@@ -172,7 +173,7 @@ namespace Web.Mapping
             {
                 ApiId = rocketRankedProperty.Rocket.ApiId,
                 RocketName = rocketRankedProperty.Rocket.FullName,
-                Value = rocketRankedProperty.Value.ToString() + " " + rocketRankedProperty.Type.GetSymbol(),
+                Value = Helpers.ValueToStringWithSymbol(rocketRankedProperty.Value, rocketRankedProperty.Type.GetSymbol()),
                 SecondaryValue = rocketRankedProperty.SecondaryValue?.ToString()
             };
         }
