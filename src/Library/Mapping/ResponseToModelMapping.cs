@@ -14,6 +14,7 @@ namespace Library.Mapping
         {
             return new()
             {
+                ApiId = response.Id,
                 Title = response.Title,
                 Summary = response.Summary,
                 Url = response.Url,

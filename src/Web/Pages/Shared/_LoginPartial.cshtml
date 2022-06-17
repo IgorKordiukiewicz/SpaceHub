@@ -1,8 +1,13 @@
 ﻿<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownSaved" data-bs-toggle="dropdown" role="button" expanded="false">
+            @User.Identity.Name
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownSaved">
+            <li><a class="dropdown-item" asp-page="/Saved/Index">Saved</a></li>
+        </ul>
     </li>
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

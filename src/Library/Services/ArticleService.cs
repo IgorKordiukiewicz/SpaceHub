@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using Library.Api;
+using Library.Data;
 using Library.Mapping;
 using Library.Models;
 using Library.Utils;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using OneOf;
 using Refit;
 using System;
@@ -36,6 +38,16 @@ namespace Library.Services
             });
 
             return result.Select(a => a.ToModel()).ToList();
+        }
+
+        public async Task<Article> GetArticleAsync(int id)
+        {
+            var result = await _cache.GetOrCreateAsync("article" + id.ToString(), async entry =>
+            {
+                return await _articleApi.GetArticleAsync(id);
+            });
+
+            return result.ToModel();
         }
 
         public async Task<int> GetPagesCountAsync(string? searchValue)

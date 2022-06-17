@@ -16,6 +16,7 @@ using Library.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using FluentAssertions.Execution;
+using Library.Data;
 
 namespace UnitTests.Library.Services
 {
@@ -30,7 +31,8 @@ namespace UnitTests.Library.Services
             var services = new ServiceCollection();
             services.AddMemoryCache();
             var serviceProvider = services.BuildServiceProvider();
-            var memoryCache = serviceProvider.GetService<IMemoryCache>();
+
+            var memoryCache = serviceProvider.GetRequiredService<IMemoryCache>();
 
             _articleService = new ArticleService(_articleApi.Object, memoryCache);
         }
@@ -59,6 +61,18 @@ namespace UnitTests.Library.Services
 
                 result1.Should().NotEqual(result2);
             }
+        }
+
+        [Fact]
+        public async Task GetArticleAsync_ShouldReturnArticle()
+        {
+            ArticleResponse expectedResponse = _fixture.Create<ArticleResponse>();
+            var expected = expectedResponse.ToModel();
+
+            _articleApi.Setup(a => a.GetArticleAsync(1)).Returns(Task.FromResult(expectedResponse));
+
+            var result = await _articleService.GetArticleAsync(1);
+            result.Should().Be(expected);
         }
     }
 }

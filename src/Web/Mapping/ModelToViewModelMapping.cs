@@ -11,6 +11,7 @@ namespace Web.Mapping
         {
             return new()
             {
+                ApiId = article.ApiId,
                 Title = article.Title,
                 Summary = article.Summary,
                 Url = article.Url,

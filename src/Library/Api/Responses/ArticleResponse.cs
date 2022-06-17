@@ -10,7 +10,7 @@ namespace Library.Api.Responses
     public record ArticleResponse
     {
         [JsonPropertyName("id")]
-        public int ArticleId { get; init; }
+        public int Id { get; init; }
         
         [JsonPropertyName("title")]
         public string Title { get; init; }

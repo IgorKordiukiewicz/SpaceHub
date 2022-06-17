@@ -27,6 +27,18 @@
                             <h6>
                                 @article.NewsSite
                             </h6>
+                            <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggle@{<text>@article.ApiId</text>}" asp-page-handler="ToggleSave" asp-route-articleId="@article.ApiId">
+                                <button id="saveToggle@{<text>@article.ApiId</text>}" type="submit" class="btn btn-outline-light btn-sm">
+                                    @if(article.IsSaved)
+                                    {
+                                        <i class="bi bi-bookmark-dash"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-bookmark-plus"></i> 
+                                    }
+                                </button>
+                            </form>
                             <h6>
                                 @article.PublishDate
                             </h6>
@@ -40,5 +52,4 @@
 
     <partial name="_Pagination" model="@Model.Pagination"/>
 }
-
 
