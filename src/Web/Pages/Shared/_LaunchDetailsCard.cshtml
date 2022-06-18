@@ -53,6 +53,14 @@
                             @Model.WindowStart - @Model.WindowEnd
                         </h5>
                     }
+                    @if(Model.VideoUrl != null)
+                    {
+                        <hr />
+                        <a class="btn btn-outline-danger w-100" target="_blank" href="@Model.VideoUrl">
+                            <i class="fa-brands fa-youtube"></i>
+                            &nbsp; Watch
+                        </a>
+                    }
                 </div>
             </div>
         </div>

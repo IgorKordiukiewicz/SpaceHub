@@ -18,6 +18,9 @@ namespace Library.Api.Responses
         [JsonPropertyName("rocket")]
         public new RocketDetailResponse Rocket { get; init; }
 
+        [JsonPropertyName("vidURLs")]
+        public List<VideoUrlResponse>? Videos { get; init; }
+
         [JsonPropertyName("orbital_launch_attempt_count")]
         public int? OrbitalLaunchAttemptCount { get; init; }
 

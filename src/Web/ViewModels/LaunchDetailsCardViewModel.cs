@@ -12,5 +12,6 @@
         public string? WindowEnd { get; init; }
         public string StatusName { get; init; }
         public string StatusDescription { get; init; }
+        public string? VideoUrl { get; init; }
     }
 }

@@ -49,6 +49,7 @@ namespace Web.Mapping
                 Upcoming = launch.Date > DateTime.Now,
                 WindowStart = Helpers.DateToString(launch.WindowStart),
                 WindowEnd = Helpers.DateToString(launch.WindowEnd),
+                VideoUrl = launch.VideoUrl,
             };
         }
 

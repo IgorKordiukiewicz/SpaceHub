@@ -22,5 +22,6 @@ namespace Library.Models
         public Pad Pad { get; init; }
         public List<SpaceProgram> Programs { get; init; }
         public string ImageUrl { get; init; }
+        public string? VideoUrl { get; init; }
     }
 }

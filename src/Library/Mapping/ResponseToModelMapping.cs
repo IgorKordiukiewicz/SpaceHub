@@ -64,6 +64,7 @@ namespace Library.Mapping
                 Mission = response.Mission?.ToModel(),
                 Programs = response.Programs.Select(p => p.ToModel()).ToList(),
                 ImageUrl = response.ImageUrl,
+                VideoUrl = response.Videos?.FirstOrDefault()?.Url
             };
         }
 
