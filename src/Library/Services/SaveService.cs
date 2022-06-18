@@ -1,6 +1,7 @@
 ﻿using Library.Data;
 using Library.Mapping;
 using Library.Models;
+using Library.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace Library.Services
     public class SaveService : ISaveService
     {
         private readonly AppDbContext _context;
+
+        public Pagination Pagination { get; set; } = new() { ItemsPerPage = 10 };
 
         public SaveService(AppDbContext context)
         {
@@ -40,6 +43,17 @@ namespace Library.Services
         {
             var result = await _context.Articles.FindAsync(articleId);
             return result != null;
+        }
+
+        public List<Article> GetSavedArticles(int pageNumber)
+        {
+            int offset = Pagination.GetOffset(pageNumber);
+            return _context.Articles.Select(a => a.ToModel()).Skip(offset).Take(Pagination.ItemsPerPage).ToList();
+        }
+
+        public int GetSavedArticlesPagesCount()
+        {
+            return Pagination.GetPagesCount(_context.Articles.Count());
         }
     }
 }

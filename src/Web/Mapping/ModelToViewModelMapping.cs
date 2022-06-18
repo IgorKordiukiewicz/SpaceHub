@@ -7,7 +7,7 @@ namespace Web.Mapping
 {
     public static class ModelToViewModelMapping
     {
-        public static ArticleViewModel ToArticleViewModel(this Article article)
+        public static ArticleCardViewModel ToArticleCardViewModel(this Article article)
         {
             return new()
             {

@@ -14,7 +14,7 @@ namespace Web.Pages.News
         private readonly IArticleService _articleService;
         private readonly ISaveService _saveService;
 
-        public List<ArticleViewModel> Articles { get; set; }
+        public List<ArticleCardViewModel> Articles { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
 
@@ -32,7 +32,7 @@ namespace Web.Pages.News
             SearchValue = searchValue;
 
             var result = await _articleService.GetArticlesAsync(SearchValue, pageNumber);
-            Articles = result.Select(a => a.ToArticleViewModel()).ToList();
+            Articles = result.Select(a => a.ToArticleCardViewModel()).ToList();
 
             foreach(var article in Articles)
             {

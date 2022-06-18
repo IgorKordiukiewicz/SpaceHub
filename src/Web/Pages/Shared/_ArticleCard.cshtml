@@ -1,0 +1,38 @@
+﻿@model (ArticleCardViewModel, string)
+
+<div class="col-md-6 d-flex align-items-stretch pb-4">
+    <div class="card w-100">
+        <img class="card-img-top" src="@Model.Item1.ImageUrl"/>
+        <div class="card-body d-flex flex-column">
+            <h4 class="card-title text-center">
+                <a href="@Model.Item1.Url" target="_blank" class="link-no-decor">@Model.Item1.Title</a>
+            </h4>
+            <p class="text-center">
+                @Model.Item1.Summary
+            </p>
+            <div class="mt-auto">
+                <hr/>
+                <div class="d-flex justify-content-between text-muted">
+                    <h6>
+                        @Model.Item1.NewsSite
+                    </h6>
+                    <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggle@{<text>@Model.Item1.ApiId</text>}" asp-page="@Model.Item2" asp-page-handler="ToggleSave" asp-route-articleId="@Model.Item1.ApiId">
+                        <button id="saveToggle@{<text>@Model.Item1.ApiId</text>}" type="submit" class="btn btn-outline-light btn-sm">
+                            @if(Model.Item1.IsSaved)
+                            {
+                                <i class="bi bi-bookmark-dash"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-bookmark-plus"></i> 
+                            }
+                        </button>
+                    </form>
+                    <h6>
+                        @Model.Item1.PublishDate
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

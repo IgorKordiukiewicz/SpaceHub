@@ -1,5 +1,14 @@
 ﻿@page
 @model Web.Pages.Saved.IndexModel
 
-Save items
-@User.Identity.Name
+@if(Model.Articles != null)
+{
+    <div class="row">
+        @foreach(var article in Model.Articles)
+        {
+            <partial name="_ArticleCard" model="@ValueTuple.Create(article, "/Saved/Index")"/>
+        }
+    </div>
+
+    <partial name="_Pagination" model="@Model.Pagination" />
+}

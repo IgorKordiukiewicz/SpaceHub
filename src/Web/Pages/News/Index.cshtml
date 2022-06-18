@@ -11,42 +11,7 @@
     <div class="row">
     @foreach(var article in Model.Articles)
     {
-        <div class="col-md-6 d-flex align-items-stretch pb-4">
-            <div class="card w-100">
-                <img class="card-img-top" src="@article.ImageUrl"/>
-                <div class="card-body d-flex flex-column">
-                    <h4 class="card-title text-center">
-                        <a href="@article.Url" target="_blank" class="link-no-decor">@article.Title</a>
-                    </h4>
-                    <p class="text-center">
-                        @article.Summary
-                    </p>
-                    <div class="mt-auto">
-                        <hr/>
-                        <div class="d-flex justify-content-between text-muted">
-                            <h6>
-                                @article.NewsSite
-                            </h6>
-                            <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggle@{<text>@article.ApiId</text>}" asp-page-handler="ToggleSave" asp-route-articleId="@article.ApiId">
-                                <button id="saveToggle@{<text>@article.ApiId</text>}" type="submit" class="btn btn-outline-light btn-sm">
-                                    @if(article.IsSaved)
-                                    {
-                                        <i class="bi bi-bookmark-dash"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-bookmark-plus"></i> 
-                                    }
-                                </button>
-                            </form>
-                            <h6>
-                                @article.PublishDate
-                            </h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <partial name="_ArticleCard" model="@ValueTuple.Create(article, "/News/Index")"/>
     }
     </div>
 
