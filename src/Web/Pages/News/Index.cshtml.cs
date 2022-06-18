@@ -36,7 +36,7 @@ namespace Web.Pages.News
 
             foreach(var article in Articles)
             {
-                article.IsSaved = await _saveService.IsArticleSavedAsync(article.ApiId);
+                article.IsSaved = _saveService.IsArticleSaved(article.ApiId);
             }
 
             var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
@@ -50,7 +50,7 @@ namespace Web.Pages.News
 
         public async Task<IActionResult> OnPostToggleSave(int articleId)
         {
-            if(await _saveService.IsArticleSavedAsync(articleId))
+            if(_saveService.IsArticleSaved(articleId))
             {
                 await _saveService.UnsaveArticleAsync(articleId);
                 return Partial("_SaveToggle", false);

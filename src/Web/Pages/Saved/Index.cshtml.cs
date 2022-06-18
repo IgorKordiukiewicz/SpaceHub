@@ -36,7 +36,7 @@ namespace Web.Pages.Saved
 
         public async Task<IActionResult> OnPostToggleSave(int articleId)
         {
-            if (await _saveService.IsArticleSavedAsync(articleId))
+            if (_saveService.IsArticleSaved(articleId))
             {
                 await _saveService.UnsaveArticleAsync(articleId);
                 return Partial("_SaveToggle", false);

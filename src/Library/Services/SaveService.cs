@@ -39,10 +39,9 @@ namespace Library.Services
             }
         }
 
-        public async Task<bool> IsArticleSavedAsync(int articleId)
+        public bool IsArticleSaved(int articleId)
         {
-            var result = await _context.Articles.FindAsync(articleId);
-            return result != null;
+            return _context.Articles.Any(a => a.ApiId == articleId);
         }
 
         public List<Article> GetSavedArticles(int pageNumber)
