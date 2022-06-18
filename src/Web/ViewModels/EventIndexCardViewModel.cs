@@ -1,6 +1,6 @@
 ﻿namespace Web.ViewModels
 {
-    public record EventCardViewModel
+    public record EventIndexCardViewModel
     {
         public int ApiId { get; init; }
         public string Name { get; init; }

@@ -11,7 +11,7 @@ namespace Web.Pages.Events
     {
         private readonly IEventService _eventService;
         
-        public List<EventCardViewModel>? Events { get; set; }
+        public List<EventIndexCardViewModel> Events { get; set; }
         
         public PaginationViewModel Pagination { get; set; }
 
@@ -35,7 +35,7 @@ namespace Web.Pages.Events
                 await _eventService.GetUpcomingEventsAsync(searchValue, pageNumber)
                 : await _eventService.GetPreviousEventsAsync(searchValue, pageNumber);
 
-            Events = result?.Select(e => e.ToEventCardViewModel()).ToList();
+            Events = result?.Select(e => e.ToEventIndexCardViewModel()).ToList();
 
             Dictionary<string, string> paginationParameters = new()
             {

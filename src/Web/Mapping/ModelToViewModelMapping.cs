@@ -133,7 +133,7 @@ namespace Web.Mapping
             };
         }
 
-        public static EventCardViewModel ToEventCardViewModel(this Event event_)
+        public static EventIndexCardViewModel ToEventIndexCardViewModel(this Event event_)
         {
             return new()
             {
@@ -149,7 +149,7 @@ namespace Web.Mapping
             };
         }
 
-        public static EventDetailsViewModel ToEventDetailsViewModel(this Event event_)
+        public static EventDetailsCardViewModel ToEventDetailsCardViewModel(this Event event_)
         {
             return new()
             {

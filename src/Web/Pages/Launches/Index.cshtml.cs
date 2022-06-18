@@ -12,7 +12,7 @@ namespace Web.Pages.Launches
     {
         private readonly ILaunchService _launchService;
 
-        public List<LaunchIndexCardViewModel>? Launches { get; set; }
+        public List<LaunchIndexCardViewModel> Launches { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
 

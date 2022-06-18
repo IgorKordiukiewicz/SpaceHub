@@ -10,7 +10,7 @@ namespace Web.Pages.Events
     {
         private readonly IEventService _eventService;
 
-        public EventDetailsViewModel Event { get; set; }
+        public EventDetailsCardViewModel Event { get; set; }
 
         public DetailsModel(IEventService eventService)
         {
@@ -20,7 +20,7 @@ namespace Web.Pages.Events
         public async Task OnGet(int id)
         {
             var result = await _eventService.GetEventAsync(id);
-            Event = result.ToEventDetailsViewModel();
+            Event = result.ToEventDetailsCardViewModel();
         }
     }
 }

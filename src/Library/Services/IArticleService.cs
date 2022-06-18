@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utils;
 using OneOf;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace Library.Services
 {
     public interface IArticleService
     {
+        public Pagination Pagination { get; }
+
         Task<List<Article>> GetArticlesAsync(string? searchValue, int pageNumber = 1);
 
         Task<Article> GetArticleAsync(int id);
