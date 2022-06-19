@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-6">
+    <h2 class="text-center">
+        Account
+    </h2>
+    <hr />
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link @if((string)ViewData["ActivePage"] == "ChangePassword"){<text>active</text>}" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Password</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @if((string)ViewData["ActivePage"] == "DeleteAccount"){<text>active</text>}" asp-area="Identity" asp-page="/Account/Manage/DeleteAccount">Delete</a>
+        </li>
+    </ul>
+    @RenderBody()
+    </div>
+
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

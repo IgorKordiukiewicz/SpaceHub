@@ -56,3 +56,7 @@ body {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.dropdown-menu > li > a:hover {
+    background-color: #00bc8c;
+}
