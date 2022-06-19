@@ -11,12 +11,10 @@ namespace Library.Services
 {
     public interface IArticleService
     {
-        public Pagination Pagination { get; }
-
-        Task<List<Article>> GetArticlesAsync(string? searchValue, int pageNumber = 1);
+        Task<List<Article>> GetArticlesAsync(string? searchValue, int pageNumber = 1, int itemsPerPage = 10);
 
         Task<Article> GetArticleAsync(int id);
 
-        Task<int> GetPagesCountAsync(string? searchValue);
+        Task<int> GetPagesCountAsync(string? searchValue, int itemsPerPage = 10);
     }
 }

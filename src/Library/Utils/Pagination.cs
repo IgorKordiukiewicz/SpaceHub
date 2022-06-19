@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace Library.Utils
 {
-    public class Pagination
+    public static class Pagination
     {
-        public int ItemsPerPage { get; set; } = 10;
-
-        public int GetOffset(int pageNumber)
+        public static int GetOffset(int pageNumber, int itemsPerPage)
         {
-            return (pageNumber - 1) * ItemsPerPage;
+            return (pageNumber - 1) * itemsPerPage;
         }
 
-        public int GetPagesCount(int itemsCount)
+        public static int GetPagesCount(int itemsCount, int itemsPerPage)
         {
-            return (itemsCount - 1) / ItemsPerPage + 1;
+            return (itemsCount - 1) / itemsPerPage + 1;
         }
     }
 }

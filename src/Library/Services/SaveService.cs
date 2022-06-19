@@ -14,8 +14,6 @@ namespace Library.Services
     {
         private readonly AppDbContext _context;
 
-        public Pagination Pagination { get; set; } = new() { ItemsPerPage = 10 };
-
         public SaveService(AppDbContext context)
         {
             _context = context;
@@ -44,15 +42,15 @@ namespace Library.Services
             return _context.Articles.Any(a => a.ApiId == articleId);
         }
 
-        public List<Article> GetSavedArticles(int pageNumber)
+        public List<Article> GetSavedArticles(int pageNumber, int itemsPerPage)
         {
-            int offset = Pagination.GetOffset(pageNumber);
-            return _context.Articles.Select(a => a.ToModel()).Skip(offset).Take(Pagination.ItemsPerPage).ToList();
+            int offset = Pagination.GetOffset(pageNumber, itemsPerPage);
+            return _context.Articles.Select(a => a.ToModel()).Skip(offset).Take(itemsPerPage).ToList();
         }
 
-        public int GetSavedArticlesPagesCount()
+        public int GetSavedArticlesPagesCount(int itemsPerPage)
         {
-            return Pagination.GetPagesCount(_context.Articles.Count());
+            return Pagination.GetPagesCount(_context.Articles.Count(), itemsPerPage);
         }
     }
 }

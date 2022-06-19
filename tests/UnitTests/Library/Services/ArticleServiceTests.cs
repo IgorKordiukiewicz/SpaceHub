@@ -47,12 +47,12 @@ namespace UnitTests.Library.Services
             List<Article> expected2 = expectedResponse2.Select(a => a.ToModel()).ToList();
 
             string searchValue = "search";
-            int itemsPerPage = _articleService.Pagination.ItemsPerPage;
+            int itemsPerPage = 10;
             _articleApi.Setup(a => a.GetArticlesAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse1));
             _articleApi.Setup(a => a.GetArticlesAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult<IEnumerable<ArticleResponse>>(expectedResponse2));
 
-            var result1 = await _articleService.GetArticlesAsync(searchValue, 1);
-            var result2 = await _articleService.GetArticlesAsync(searchValue, 2);
+            var result1 = await _articleService.GetArticlesAsync(searchValue, 1, itemsPerPage);
+            var result2 = await _articleService.GetArticlesAsync(searchValue, 2, itemsPerPage);
 
             using (new AssertionScope())
             {

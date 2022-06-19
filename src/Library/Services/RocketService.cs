@@ -21,18 +21,16 @@ namespace Library.Services
         private Dictionary<int, Dictionary<RocketRankedPropertyType, int?>>? _rocketRankedProperties;
         private Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>>? _rankedPropertiesRankings;
 
-        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
-
         public RocketService(ILaunchApi launchApi, IMemoryCache cachce)
         {
             _launchApi = launchApi;
             _cache = cachce;
         }
 
-        public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber)
+        public async Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber, int itemsPerPage)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("rockets", _launchApi.GetRocketsAsync, 
-                searchValue, pageNumber, Pagination, _cache);
+                searchValue, pageNumber, itemsPerPage, _cache);
 
             return (pagesCount, result.Rockets.Select(r => r.ToModel()).ToList());
         }

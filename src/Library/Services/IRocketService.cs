@@ -10,7 +10,7 @@ namespace Library.Services
 {
     public interface IRocketService
     {
-        Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber = 1);
+        Task<(int, List<Rocket>)> GetRocketsAsync(string? searchValue, int pageNumber = 1, int itemsPerPage = 12);
 
         Task<Rocket> GetRocketAsync(int id);
 

@@ -12,7 +12,7 @@ namespace Library.Services
         Task SaveArticleAsync(Article article);
         Task UnsaveArticleAsync(int articleId);
         bool IsArticleSaved(int articleId);
-        List<Article> GetSavedArticles(int pageNumber = 1);
-        int GetSavedArticlesPagesCount();
+        List<Article> GetSavedArticles(int pageNumber = 1, int itemsPerPage = 10);
+        int GetSavedArticlesPagesCount(int itemsPerPage = 10);
     }
 }

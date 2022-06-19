@@ -16,26 +16,24 @@ namespace Library.Services
         private readonly ILaunchApi _launchApi;
         private readonly IMemoryCache _cache;
 
-        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
-
         public EventService(ILaunchApi launchApi, IMemoryCache cache)
         {
             _launchApi = launchApi;
             _cache = cache;
         }
 
-        public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber)
+        public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingEvents", _launchApi.GetUpcomingEventsAsync, 
-                searchValue, pageNumber, Pagination, _cache);
+                searchValue, pageNumber, itemsPerPage, _cache);
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }
 
-        public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber)
+        public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousEvents", _launchApi.GetPreviousEventsAsync, 
-                searchValue, pageNumber, Pagination, _cache);
+                searchValue, pageNumber, itemsPerPage, _cache);
 
             return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
         }

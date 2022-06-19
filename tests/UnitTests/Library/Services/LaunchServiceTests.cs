@@ -49,7 +49,7 @@ namespace UnitTests.Library.Services
             var expectedResponse1 = _fixture.Build<LaunchesResponse>().With(l => l.Launches, launchResponses1).Create();
             var expectedResponse2 = _fixture.Build<LaunchesResponse>().With(l => l.Launches, launchResponses2).Create();
 
-            int itemsPerPage = _launchService.Pagination.ItemsPerPage;
+            int itemsPerPage = 12;
             if(upcoming)
             {
                 _launchApi.Setup(l => l.GetUpcomingLaunchesAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
@@ -61,10 +61,10 @@ namespace UnitTests.Library.Services
                 _launchApi.Setup(l => l.GetPreviousLaunchesAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
             }
 
-            var (itemsCount1, result1) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 1)
-                : await _launchService.GetPreviousLaunchesAsync(searchValue, 1);
-            var (itemsCount2, result2) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 2)
-                : await _launchService.GetPreviousLaunchesAsync(searchValue, 2);
+            var (itemsCount1, result1) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 1, itemsPerPage)
+                : await _launchService.GetPreviousLaunchesAsync(searchValue, 1, itemsPerPage);
+            var (itemsCount2, result2) = upcoming ? await _launchService.GetUpcomingLaunchesAsync(searchValue, 2, itemsPerPage)
+                : await _launchService.GetPreviousLaunchesAsync(searchValue, 2, itemsPerPage);
 
             using (new AssertionScope())
             {

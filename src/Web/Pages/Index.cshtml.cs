@@ -20,20 +20,14 @@ namespace Web.Pages
         public IndexModel(IArticleService articleService, ILaunchService launchService, IEventService eventService, ISaveService saveService)
         {
             _articleService = articleService;
-            _articleService.Pagination.ItemsPerPage = 2;
-
             _launchService = launchService;
-            _launchService.Pagination.ItemsPerPage = 3;
-
             _eventService = eventService;
-            _eventService.Pagination.ItemsPerPage = 3;
-
             _saveService = saveService;
         }
 
         public async Task OnGet()
         {
-            var articlesResult = await _articleService.GetArticlesAsync(null);
+            var articlesResult = await _articleService.GetArticlesAsync(null, 1, 2);
             Articles = articlesResult.Select(a => a.ToArticleCardViewModel()).ToList();
 
             foreach(var article in Articles)
@@ -41,10 +35,10 @@ namespace Web.Pages
                 article.IsSaved = _saveService.IsArticleSaved(article.ApiId);
             }
             
-            var (_, launchesResult) = await _launchService.GetUpcomingLaunchesAsync(null);
+            var (_, launchesResult) = await _launchService.GetUpcomingLaunchesAsync(null, 1, 3);
             Launches = launchesResult.Select(l => l.ToLaunchIndexCardViewModel()).ToList();
             
-            var (_, eventsResult) = await _eventService.GetUpcomingEventsAsync(null);
+            var (_, eventsResult) = await _eventService.GetUpcomingEventsAsync(null, 1, 3);
             Events = eventsResult.Select(e => e.ToEventIndexCardViewModel()).ToList();
         }
 

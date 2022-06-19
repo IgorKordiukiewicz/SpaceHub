@@ -11,16 +11,12 @@ namespace UnitTests.Library.Utils
 {
     public class PaginationTests
     {
-        private readonly Pagination _pagination = new();
-
         [Theory]
         [InlineData(10, 1, 0)]
         [InlineData(10, 2, 10)]
         public void GetOffset_ShouldCalculateOffsetProperly(int itemsPerPage, int pageNumber, int expected)
         {
-            _pagination.ItemsPerPage = itemsPerPage;
-
-            var result = _pagination.GetOffset(pageNumber);
+            var result = Pagination.GetOffset(pageNumber, itemsPerPage);
 
             result.Should().Be(expected);
         }
@@ -32,9 +28,7 @@ namespace UnitTests.Library.Utils
         [InlineData(10, 11, 2)]
         public void GetPagesCount_ShouldCalculatePagesCountProperly(int itemsPerPage, int itemsCount, int expected)
         {
-            _pagination.ItemsPerPage = itemsPerPage;
-
-            var result = _pagination.GetPagesCount(itemsCount);
+            var result = Pagination.GetPagesCount(itemsCount, itemsPerPage);
 
             result.Should().Be(expected);
         }

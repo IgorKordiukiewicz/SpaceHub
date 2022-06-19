@@ -51,12 +51,12 @@ namespace UnitTests.Library.Services
             var expectedResponse1 = _fixture.Build<RocketsResponse>().With(r => r.Rockets, rocketResponses1).Create();
             var expectedResponse2 = _fixture.Build<RocketsResponse>().With(r => r.Rockets, rocketResponses2).Create();
 
-            int itemsPerPage = _rocketService.Pagination.ItemsPerPage;
+            int itemsPerPage = 12;
             _launchApi.Setup(l => l.GetRocketsAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
             _launchApi.Setup(l => l.GetRocketsAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
 
-            var (itemsCount1, result1) = await _rocketService.GetRocketsAsync(searchValue, 1);
-            var (itemsCount2, result2) = await _rocketService.GetRocketsAsync(searchValue, 2);
+            var (itemsCount1, result1) = await _rocketService.GetRocketsAsync(searchValue, 1, itemsPerPage);
+            var (itemsCount2, result2) = await _rocketService.GetRocketsAsync(searchValue, 2, itemsPerPage);
 
             using (new AssertionScope())
             {

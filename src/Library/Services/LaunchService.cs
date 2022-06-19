@@ -19,8 +19,6 @@ namespace Library.Services
         private readonly IRocketService _rocketService;
         private readonly IMemoryCache _cache;
 
-        public Pagination Pagination { get; } = new() { ItemsPerPage = 12 };
-
         public LaunchService(ILaunchApi launchApi, IRocketService rocketService, IMemoryCache cache)
         {
             _launchApi = launchApi;
@@ -28,18 +26,18 @@ namespace Library.Services
             _cache = cache;
         }
         
-        public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber)
+        public async Task<(int, List<Launch>)> GetUpcomingLaunchesAsync(string? searchValue, int pageNumber, int itemsPerPage)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingLaunches", _launchApi.GetUpcomingLaunchesAsync, 
-                searchValue, pageNumber, Pagination, _cache);
+                searchValue, pageNumber, itemsPerPage, _cache);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }
 
-        public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber)
+        public async Task<(int, List<Launch>)> GetPreviousLaunchesAsync(string? searchValue, int pageNumber, int itemsPerPage)
         {
             var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousLaunches", _launchApi.GetPreviousLaunchesAsync, 
-                searchValue, pageNumber, Pagination, _cache);
+                searchValue, pageNumber, itemsPerPage, _cache);
 
             return (pagesCount, result.Launches.Select(l => l.ToModel()).ToList());
         }

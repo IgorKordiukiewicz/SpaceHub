@@ -50,7 +50,7 @@ namespace UnitTests.Library.Services
             var expectedResponse1 = _fixture.Build<EventsResponse>().With(a => a.Events, eventResponses1).Create();
             var expectedResponse2 = _fixture.Build<EventsResponse>().With(a => a.Events, eventResponses2).Create();
 
-            int itemsPerPage = _eventService.Pagination.ItemsPerPage;
+            int itemsPerPage = 12;
             if(upcoming)
             {
                 _launchApi.Setup(l => l.GetUpcomingEventsAsync(searchValue, itemsPerPage, 0)).Returns(Task.FromResult(expectedResponse1));
@@ -62,10 +62,10 @@ namespace UnitTests.Library.Services
                 _launchApi.Setup(l => l.GetPreviousEventsAsync(searchValue, itemsPerPage, itemsPerPage)).Returns(Task.FromResult(expectedResponse2));
             }
 
-            var (itemsCount1, result1) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 1)
-                : await _eventService.GetPreviousEventsAsync(searchValue, 1);
-            var (itemsCount2, result2) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 2)
-                : await _eventService.GetPreviousEventsAsync(searchValue, 2);
+            var (itemsCount1, result1) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 1, itemsPerPage)
+                : await _eventService.GetPreviousEventsAsync(searchValue, 1, itemsPerPage);
+            var (itemsCount2, result2) = upcoming ? await _eventService.GetUpcomingEventsAsync(searchValue, 2, itemsPerPage)
+                : await _eventService.GetPreviousEventsAsync(searchValue, 2, itemsPerPage);
 
             using (new AssertionScope())
             {
