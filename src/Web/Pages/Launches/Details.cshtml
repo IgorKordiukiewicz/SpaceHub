@@ -6,7 +6,7 @@
         Launch
     </h3>
     <hr />
-    <partial name="_LaunchDetailsCard" model="@Model.Launch" />
+    <partial name="_LaunchDetailsCard" model="@ValueTuple.Create(Model.Launch, "/Launches/Details")" />
     <h3>
         Agency
     </h3>

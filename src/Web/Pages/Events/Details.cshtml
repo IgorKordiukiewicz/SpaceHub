@@ -85,7 +85,7 @@
             Launch
         </h3>
         <hr />
-        <partial name="_LaunchDetailsCard" model="@Model.Event.Launch"/>
+        <partial name="_LaunchDetailsCard" model="@ValueTuple.Create(Model.Event.Launch, "/Events/Details")"/>
     }
     @if(Model.Event.Programs.Count > 0)
     {

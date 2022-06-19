@@ -24,5 +24,19 @@ namespace Library.Mapping
                 UpdateDate = article.UpdateDate
             };
         }
+
+        public static LaunchEntity ToEntity(this Launch launch)
+        {
+            return new()
+            {
+                ApiId = launch.ApiId,
+                Name = launch.Name,
+                ImageUrl = launch.ImageUrl,
+                AgencyName = launch.Agency.Name,
+                PadName = launch.Pad.Name,
+                Status = launch.StatusName,
+                Date = launch.Date,
+            };
+        }
     }
 }

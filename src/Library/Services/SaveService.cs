@@ -52,5 +52,28 @@ namespace Library.Services
         {
             return Pagination.GetPagesCount(_context.Articles.Count(), itemsPerPage);
         }
+
+        public async Task SaveLaunchAsync(Launch launch)
+        {
+            var launchEntity = launch.ToEntity();
+
+            await _context.Launches.AddAsync(launchEntity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UnsaveLaunchAsync(string launchId)
+        {
+            var launchEntity = await _context.Launches.FindAsync(launchId);
+            if(launchEntity != null)
+            {
+                _context.Launches.Remove(launchEntity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public bool IsLaunchSaved(string launchId)
+        {
+            return _context.Launches.Any(l => l.ApiId == launchId);
+        }
     }
 }

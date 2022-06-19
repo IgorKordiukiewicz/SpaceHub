@@ -14,5 +14,9 @@ namespace Library.Services
         bool IsArticleSaved(int articleId);
         List<Article> GetSavedArticles(int pageNumber = 1, int itemsPerPage = 10);
         int GetSavedArticlesPagesCount(int itemsPerPage = 10);
+
+        Task SaveLaunchAsync(Launch launch);
+        Task UnsaveLaunchAsync(string launchId);
+        bool IsLaunchSaved(string launchId);
     }
 }

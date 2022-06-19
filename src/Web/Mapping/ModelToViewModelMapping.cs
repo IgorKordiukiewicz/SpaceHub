@@ -39,6 +39,7 @@ namespace Web.Mapping
         {
             return new()
             {
+                ApiId = launch.ApiId,
                 Name = launch.Name,
                 ImageUrl = launch.ImageUrl,
                 Mission = launch.Mission?.Description,

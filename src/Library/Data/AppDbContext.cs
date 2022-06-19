@@ -13,5 +13,6 @@ namespace Library.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<ArticleEntity> Articles { get; set; }
+        public DbSet<LaunchEntity> Launches { get; set; }
     }
 }
