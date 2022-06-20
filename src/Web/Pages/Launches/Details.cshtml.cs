@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;
 using Web.Mapping;
+using System.Security.Claims;
 
 namespace Web.Pages.Launches
 {
@@ -28,7 +29,8 @@ namespace Web.Pages.Launches
             var result = await _launchService.GetLaunchAsync(id);
 
             Launch = result.ToLaunchDetailsCardViewModel();
-            Launch.IsSaved = _saveService.IsLaunchSaved(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Launch.IsSaved = userId != null && _saveService.IsLaunchSaved(userId, id);
 
             Agency = result.Agency.ToAgencyCardViewModel();
             Rocket = result.Rocket.ToRocketDetailsCardViewModel();
@@ -38,15 +40,16 @@ namespace Web.Pages.Launches
 
         public async Task<IActionResult> OnPostToggleSave(string launchId)
         {
-            if(_saveService.IsLaunchSaved(launchId))
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (_saveService.IsLaunchSaved(userId, launchId))
             {
-                await _saveService.UnsaveLaunchAsync(launchId);
+                await _saveService.UnsaveLaunchAsync(userId, launchId);
                 return Partial("_SaveToggle", false);
             }
             else
             {
                 var launch = await _launchService.GetLaunchAsync(launchId);
-                await _saveService.SaveLaunchAsync(launch);
+                await _saveService.SaveLaunchAsync(userId, launch);
                 return Partial("_SaveToggle", true);
             }
         }

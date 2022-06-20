@@ -11,7 +11,9 @@ namespace Library.Data.Entities
     public record ArticleEntity
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; init; }
+
+        [Required]
         public int ApiId { get; init; }
 
         [Required]
@@ -39,5 +41,9 @@ namespace Library.Data.Entities
 
         [Required]
         public DateTime UpdateDate { get; init; }
+
+        [Required]
+        [MaxLength(64)]
+        public string UserId { get; set; }
     }
 }

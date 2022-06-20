@@ -6,6 +6,7 @@ using Web.ViewModels;
 using Web.Mapping;
 using System.Diagnostics;
 using Library.Models;
+using System.Security.Claims;
 
 namespace Web.Pages.News
 {
@@ -34,9 +35,10 @@ namespace Web.Pages.News
             var result = await _articleService.GetArticlesAsync(SearchValue, pageNumber);
             Articles = result.Select(a => a.ToArticleCardViewModel()).ToList();
 
-            foreach(var article in Articles)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            foreach (var article in Articles)
             {
-                article.IsSaved = _saveService.IsArticleSaved(article.ApiId);
+                article.IsSaved = userId != null && _saveService.IsArticleSaved(userId, article.ApiId);
             }
 
             var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);
@@ -50,15 +52,16 @@ namespace Web.Pages.News
 
         public async Task<IActionResult> OnPostToggleSave(int articleId)
         {
-            if(_saveService.IsArticleSaved(articleId))
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (_saveService.IsArticleSaved(userId, articleId))
             {
-                await _saveService.UnsaveArticleAsync(articleId);
+                await _saveService.UnsaveArticleAsync(userId, articleId);
                 return Partial("_SaveToggle", false);
             }
             else
             {
                 var article = await _articleService.GetArticleAsync(articleId);
-                await _saveService.SaveArticleAsync(article);
+                await _saveService.SaveArticleAsync(userId, article);
                 return Partial("_SaveToggle", true);
             }
         }

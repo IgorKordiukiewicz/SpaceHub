@@ -1,6 +1,7 @@
 ﻿using Library.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 using Web.Mapping;
 using Web.ViewModels;
 
@@ -30,9 +31,10 @@ namespace Web.Pages
             var articlesResult = await _articleService.GetArticlesAsync(null, 1, 2);
             Articles = articlesResult.Select(a => a.ToArticleCardViewModel()).ToList();
 
-            foreach(var article in Articles)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            foreach (var article in Articles)
             {
-                article.IsSaved = _saveService.IsArticleSaved(article.ApiId);
+                article.IsSaved = userId != null && _saveService.IsArticleSaved(userId, article.ApiId);
             }
             
             var (_, launchesResult) = await _launchService.GetUpcomingLaunchesAsync(null, 1, 3);
@@ -44,15 +46,16 @@ namespace Web.Pages
 
         public async Task<IActionResult> OnPostToggleSave(int articleId)
         {
-            if (_saveService.IsArticleSaved(articleId))
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (_saveService.IsArticleSaved(userId, articleId))
             {
-                await _saveService.UnsaveArticleAsync(articleId);
+                await _saveService.UnsaveArticleAsync(userId, articleId);
                 return Partial("_SaveToggle", false);
             }
             else
             {
                 var article = await _articleService.GetArticleAsync(articleId);
-                await _saveService.SaveArticleAsync(article);
+                await _saveService.SaveArticleAsync(userId, article);
                 return Partial("_SaveToggle", true);
             }
         }

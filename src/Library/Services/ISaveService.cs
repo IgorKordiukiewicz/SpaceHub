@@ -9,16 +9,16 @@ namespace Library.Services
 {
     public interface ISaveService
     {
-        Task SaveArticleAsync(Article article);
-        Task UnsaveArticleAsync(int articleId);
-        bool IsArticleSaved(int articleId);
-        List<Article> GetSavedArticles(int pageNumber = 1, int itemsPerPage = 10);
-        int GetSavedArticlesPagesCount(int itemsPerPage = 10);
+        Task SaveArticleAsync(string userId, Article article);
+        Task UnsaveArticleAsync(string userId, int articleId);
+        bool IsArticleSaved(string userId, int articleId);
+        List<Article> GetSavedArticles(string userId, int pageNumber = 1, int itemsPerPage = 10);
+        int GetSavedArticlesPagesCount(string userId, int itemsPerPage = 10);
 
-        Task SaveLaunchAsync(Launch launch);
-        Task UnsaveLaunchAsync(string launchId);
-        bool IsLaunchSaved(string launchId);
-        List<Launch> GetSavedLaunches(int pageNumber = 1, int itemsPerPage = 12);
-        int GetSavedLaunchesPagesCount(int itemsPerPage = 12);
+        Task SaveLaunchAsync(string userId, Launch launch);
+        Task UnsaveLaunchAsync(string userId, string launchId);
+        bool IsLaunchSaved(string userId, string launchId);
+        List<Launch> GetSavedLaunches(string userId, int pageNumber = 1, int itemsPerPage = 12);
+        int GetSavedLaunchesPagesCount(string userId, int itemsPerPage = 12);
     }
 }

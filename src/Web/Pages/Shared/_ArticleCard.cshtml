@@ -16,18 +16,21 @@
                     <h6>
                         @Model.Item1.NewsSite
                     </h6>
-                    <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggle@{<text>@Model.Item1.ApiId</text>}" asp-page="@Model.Item2" asp-page-handler="ToggleSave" asp-route-articleId="@Model.Item1.ApiId">
-                        <button id="saveToggle@{<text>@Model.Item1.ApiId</text>}" type="submit" class="btn btn-outline-light btn-sm">
-                            @if(Model.Item1.IsSaved)
-                            {
-                                <i class="bi bi-bookmark-dash"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-bookmark-plus"></i> 
-                            }
-                        </button>
-                    </form>
+                    @if(SignInManager.IsSignedIn(User))
+                    {
+                        <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggle@{<text>@Model.Item1.ApiId</text>}" asp-page="@Model.Item2" asp-page-handler="ToggleSave" asp-route-articleId="@Model.Item1.ApiId">
+                            <button id="saveToggle@{<text>@Model.Item1.ApiId</text>}" type="submit" class="btn btn-outline-light btn-sm">
+                                @if(Model.Item1.IsSaved)
+                                {
+                                    <i class="bi bi-bookmark-dash"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-bookmark-plus"></i> 
+                                }
+                            </button>
+                        </form>
+                    }
                     <h6>
                         @Model.Item1.PublishDate
                     </h6>

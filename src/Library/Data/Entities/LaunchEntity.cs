@@ -11,7 +11,10 @@ namespace Library.Data.Entities
     public record LaunchEntity
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; init; }
+
+        [Required]
+        [MaxLength(256)]
         public string ApiId { get; init; }
 
         [Required]
@@ -35,5 +38,9 @@ namespace Library.Data.Entities
         public string Status { get; init; }
 
         public DateTime? Date { get; init; }
+
+        [Required]
+        [MaxLength(64)]
+        public string UserId { get; set; }
     }
 }
