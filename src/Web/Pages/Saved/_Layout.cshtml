@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<h3>
+    Saved
+</h3>
+<hr />
+<ul class="nav nav-tabs mb-2">
+    <li class="nav-item">
+        <a class="nav-link @if((string)ViewData["ActiveSavedTab"] == "News"){<text>active</text>}" asp-page="/Saved/News">News</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @if((string)ViewData["ActiveSavedTab"] == "Launches"){<text>active</text>}" asp-page="/Saved/Launches">Launches</a>
+    </li>
+</ul>
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

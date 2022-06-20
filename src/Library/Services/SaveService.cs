@@ -75,5 +75,16 @@ namespace Library.Services
         {
             return _context.Launches.Any(l => l.ApiId == launchId);
         }
+
+        public List<Launch> GetSavedLaunches(int pageNumber, int itemsPerPage)
+        {
+            int offset = Pagination.GetOffset(pageNumber, itemsPerPage);
+            return _context.Launches.Select(l => l.ToModel()).Skip(offset).Take(itemsPerPage).ToList();
+        }
+
+        public int GetSavedLaunchesPagesCount(int itemsPerPage)
+        {
+            return Pagination.GetPagesCount(_context.Launches.Count(), itemsPerPage);
+        }
     }
 }

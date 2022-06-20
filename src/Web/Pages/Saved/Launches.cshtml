@@ -1,0 +1,18 @@
+﻿@page
+@model Web.Pages.Saved.LaunchesModel
+
+@{
+    ViewData["ActiveSavedTab"] = "Launches";
+}
+
+@if(Model.Launches != null && Model.Launches.Count > 0)
+{
+    <div class="row">
+        @foreach(var launch in Model.Launches)
+        {
+            <partial name="_LaunchIndexCard" model="@launch"/>
+        }
+    </div>
+
+    <partial name="_Pagination" model="@Model.Pagination" />
+}

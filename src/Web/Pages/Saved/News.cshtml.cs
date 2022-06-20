@@ -6,7 +6,7 @@ using Web.ViewModels;
 
 namespace Web.Pages.Saved
 {
-    public class IndexModel : PageModel
+    public class NewsModel : PageModel
     {
         private readonly IArticleService _articleService;
         private readonly ISaveService _saveService;
@@ -15,7 +15,7 @@ namespace Web.Pages.Saved
 
         public PaginationViewModel Pagination { get; set; }
 
-        public IndexModel(IArticleService articleService, ISaveService saveService)
+        public NewsModel(IArticleService articleService, ISaveService saveService)
         {
             _articleService = articleService;
             _saveService = saveService;
@@ -25,13 +25,13 @@ namespace Web.Pages.Saved
         {
             Articles = _saveService.GetSavedArticles(pageNumber).Select(a => a.ToArticleCardViewModel()).ToList();
 
-            foreach(var article in Articles)
+            foreach (var article in Articles)
             {
                 article.IsSaved = true;
             }
 
             var pagesCount = _saveService.GetSavedArticlesPagesCount();
-            Pagination = new(pageNumber, pagesCount, "/Saved/Index");
+            Pagination = new(pageNumber, pagesCount, "/Saved/News");
         }
 
         public async Task<IActionResult> OnPostToggleSave(int articleId)

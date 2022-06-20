@@ -18,5 +18,7 @@ namespace Library.Services
         Task SaveLaunchAsync(Launch launch);
         Task UnsaveLaunchAsync(string launchId);
         bool IsLaunchSaved(string launchId);
+        List<Launch> GetSavedLaunches(int pageNumber = 1, int itemsPerPage = 12);
+        int GetSavedLaunchesPagesCount(int itemsPerPage = 12);
     }
 }
