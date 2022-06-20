@@ -144,8 +144,6 @@ namespace Web.Mapping
                 Description = event_.Description,
                 Location = event_.Location ?? "-",
                 ImageUrl = event_.ImageUrl,
-                NewsUrl = event_.NewsUrl,
-                VideoUrl = event_.VideoUrl,
                 Date = Helpers.DateToString(event_.Date) ?? "-"
             };
         }

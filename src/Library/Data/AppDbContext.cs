@@ -14,5 +14,6 @@ namespace Library.Data
 
         public DbSet<ArticleEntity> Articles { get; set; }
         public DbSet<LaunchEntity> Launches { get; set; }
+        public DbSet<EventEntity> Events { get; set; }
     }
 }

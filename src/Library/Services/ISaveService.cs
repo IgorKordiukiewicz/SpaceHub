@@ -20,5 +20,11 @@ namespace Library.Services
         bool IsLaunchSaved(string userId, string launchId);
         List<Launch> GetSavedLaunches(string userId, int pageNumber = 1, int itemsPerPage = 12);
         int GetSavedLaunchesPagesCount(string userId, int itemsPerPage = 12);
+
+        Task SaveEventAsync(string userId, Event event_);
+        Task UnsaveEventAsync(string userId, int eventId);
+        bool IsEventSaved(string userId, int eventId);
+        List<Event> GetSavedEvents(string userId, int pageNumber = 1, int itemsPerPage = 12);
+        int GetSavedEventsPagesCount(string userId, int itemsPerPage = 12);
     }
 }

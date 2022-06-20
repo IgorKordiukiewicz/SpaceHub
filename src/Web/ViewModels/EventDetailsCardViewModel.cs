@@ -15,5 +15,6 @@
         public bool Upcoming { get; init; }
         public LaunchDetailsCardViewModel? Launch { get; init; }
         public List<SpaceProgramCardViewModel> Programs { get; init; }
+        public bool IsSaved { get; set; }
     }
 }

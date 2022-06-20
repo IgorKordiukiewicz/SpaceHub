@@ -77,6 +77,21 @@
                     </div>
                 </div>
             </div>
+            @if(SignInManager.IsSignedIn(User))
+            {
+                <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#saveToggleEvent" asp-page-handler="ToggleSaveEvent" asp-route-eventId="@Model.Event.ApiId">
+                    <button id="saveToggleEvent" type="submit" class="position-absolute top-100 start-100 translate-middle btn btn-secondary btn-sm">
+                        @if(Model.Event.IsSaved)
+                        {
+                            <i class="bi bi-bookmark-dash"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-bookmark-plus"></i> 
+                        }
+                    </button>
+                </form>            
+            }
         </div>
     </div>
     @if(Model.Event.Launch != null)

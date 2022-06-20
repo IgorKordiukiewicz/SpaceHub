@@ -38,7 +38,7 @@ namespace Web.Pages.Launches
             Programs = result.Programs.Select(p => p.ToSpaceProgramCardViewModel()).ToList();
         }
 
-        public async Task<IActionResult> OnPostToggleSave(string launchId)
+        public async Task<IActionResult> OnPostToggleSaveLaunch(string launchId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_saveService.IsLaunchSaved(userId, launchId))

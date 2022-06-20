@@ -98,5 +98,45 @@ namespace Library.Services
         {
             return Pagination.GetPagesCount(_context.Launches.Where(l => l.UserId == userId).Count(), itemsPerPage);
         }
+
+        public async Task SaveEventAsync(string userId, Event event_)
+        {
+            var eventEntity = event_.ToEntity();
+            eventEntity.UserId = userId;
+
+            await _context.Events.AddAsync(eventEntity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UnsaveEventAsync(string userId, int eventId)
+        {
+            var eventEntity = _context.Events.FirstOrDefault(e => e.UserId == userId && e.ApiId == eventId);
+            if (eventEntity != null)
+            {
+                _context.Events.Remove(eventEntity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public bool IsEventSaved(string userId, int eventId)
+        {
+            return _context.Events.Any(e => e.UserId == userId && e.ApiId == eventId);
+        }
+
+        public List<Event> GetSavedEvents(string userId, int pageNumber, int itemsPerPage)
+        {
+            int offset = Pagination.GetOffset(pageNumber, itemsPerPage);
+            return _context.Events
+                .Where(e => e.UserId == userId)
+                .Select(e => e.ToModel())
+                .Skip(offset)
+                .Take(itemsPerPage)
+                .ToList();
+        }
+
+        public int GetSavedEventsPagesCount(string userId, int itemsPerPage)
+        {
+            return Pagination.GetPagesCount(_context.Events.Where(l => l.UserId == userId).Count(), itemsPerPage);
+        }
     }
 }

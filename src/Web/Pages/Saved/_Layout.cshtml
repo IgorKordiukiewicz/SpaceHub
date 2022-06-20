@@ -13,6 +13,9 @@
     <li class="nav-item">
         <a class="nav-link @if((string)ViewData["ActiveSavedTab"] == "Launches"){<text>active</text>}" asp-page="/Saved/Launches">Launches</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link @if((string)ViewData["ActiveSavedTab"] == "Events"){<text>active</text>}" asp-page="/Saved/Events">Events</a>
+    </li>
 </ul>
 @RenderBody()
 

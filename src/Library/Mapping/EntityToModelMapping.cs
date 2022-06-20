@@ -44,5 +44,19 @@ namespace Library.Mapping
                 Date = launch.Date,
             };
         }
+
+        public static Event ToModel(this EventEntity event_)
+        {
+            return new()
+            {
+                ApiId = event_.ApiId,
+                Name = event_.Name,
+                Type = event_.Type,
+                Description = event_.Description,
+                Location = event_.Location,
+                ImageUrl = event_.ImageUrl,
+                Date = event_.Date,
+            };
+        }
     }
 }
