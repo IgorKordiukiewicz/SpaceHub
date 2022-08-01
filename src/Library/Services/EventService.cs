@@ -1,51 +1,44 @@
 ﻿using Library.Api;
 using Library.Mapping;
 using Library.Models;
-using Library.Utils;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Services
+namespace Library.Services;
+
+public class EventService : IEventService
 {
-    public class EventService : IEventService
+    private readonly ILaunchApi _launchApi;
+    private readonly IMemoryCache _cache;
+
+    public EventService(ILaunchApi launchApi, IMemoryCache cache)
     {
-        private readonly ILaunchApi _launchApi;
-        private readonly IMemoryCache _cache;
+        _launchApi = launchApi;
+        _cache = cache;
+    }
 
-        public EventService(ILaunchApi launchApi, IMemoryCache cache)
+    public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
+    {
+        var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingEvents", _launchApi.GetUpcomingEventsAsync, 
+            searchValue, pageNumber, itemsPerPage, _cache);
+
+        return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
+    }
+
+    public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
+    {
+        var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousEvents", _launchApi.GetPreviousEventsAsync, 
+            searchValue, pageNumber, itemsPerPage, _cache);
+
+        return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
+    }
+
+    public async Task<Event> GetEventAsync(int id)
+    {
+        var result = await _cache.GetOrCreate("event" + id.ToString(), async entry =>
         {
-            _launchApi = launchApi;
-            _cache = cache;
-        }
+            return await _launchApi.GetEventAsync(id);
+        });
 
-        public async Task<(int, List<Event>)> GetUpcomingEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
-        {
-            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("upcomingEvents", _launchApi.GetUpcomingEventsAsync, 
-                searchValue, pageNumber, itemsPerPage, _cache);
-
-            return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
-        }
-
-        public async Task<(int, List<Event>)> GetPreviousEventsAsync(string? searchValue, int pageNumber, int itemsPerPage)
-        {
-            var (pagesCount, result) = await Helpers.GetApiResponseWithSearchAndPagination("previousEvents", _launchApi.GetPreviousEventsAsync, 
-                searchValue, pageNumber, itemsPerPage, _cache);
-
-            return (pagesCount, result.Events.Select(e => e.ToModel()).ToList());
-        }
-
-        public async Task<Event> GetEventAsync(int id)
-        {
-            var result = await _cache.GetOrCreate("event" + id.ToString(), async entry =>
-            {
-                return await _launchApi.GetEventAsync(id);
-            });
-
-            return result.ToModel();
-        }
+        return result.ToModel();
     }
 }

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Library.Api.Responses
+namespace Library.Api.Responses;
+
+public record RocketsDetailResponse : RocketsResponse
 {
-    public record RocketsDetailResponse : RocketsResponse
-    {
-        [JsonPropertyName("results")]
-        public new IEnumerable<RocketConfigDetailResponse> Rockets { get; init; }
-    }
+    [JsonPropertyName("results")]
+    public new IEnumerable<RocketConfigDetailResponse> Rockets { get; init; }
 }

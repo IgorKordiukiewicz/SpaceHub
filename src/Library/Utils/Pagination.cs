@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Library.Utils;
 
-namespace Library.Utils
+public static class Pagination
 {
-    public static class Pagination
+    public static int GetOffset(int pageNumber, int itemsPerPage)
     {
-        public static int GetOffset(int pageNumber, int itemsPerPage)
-        {
-            return (pageNumber - 1) * itemsPerPage;
-        }
+        return (pageNumber - 1) * itemsPerPage;
+    }
 
-        public static int GetPagesCount(int itemsCount, int itemsPerPage)
-        {
-            return (itemsCount - 1) / itemsPerPage + 1;
-        }
+    public static int GetPagesCount(int itemsCount, int itemsPerPage)
+    {
+        return (itemsCount - 1) / itemsPerPage + 1;
     }
 }

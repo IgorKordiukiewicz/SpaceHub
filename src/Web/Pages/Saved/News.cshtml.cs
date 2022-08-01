@@ -6,52 +6,51 @@ using System.Security.Claims;
 using Web.Mapping;
 using Web.ViewModels;
 
-namespace Web.Pages.Saved
+namespace Web.Pages.Saved;
+
+[Authorize]
+public class NewsModel : PageModel
 {
-    [Authorize]
-    public class NewsModel : PageModel
+    private readonly IArticleService _articleService;
+    private readonly ISaveService _saveService;
+
+    public List<ArticleCardViewModel> Articles { get; set; }
+
+    public PaginationViewModel Pagination { get; set; }
+
+    public NewsModel(IArticleService articleService, ISaveService saveService)
     {
-        private readonly IArticleService _articleService;
-        private readonly ISaveService _saveService;
+        _articleService = articleService;
+        _saveService = saveService;
+    }
 
-        public List<ArticleCardViewModel> Articles { get; set; }
+    public void OnGet(int pageNumber = 1)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Articles = _saveService.GetSavedArticles(userId, pageNumber).Select(a => a.ToArticleCardViewModel()).ToList();
 
-        public PaginationViewModel Pagination { get; set; }
-
-        public NewsModel(IArticleService articleService, ISaveService saveService)
+        foreach (var article in Articles)
         {
-            _articleService = articleService;
-            _saveService = saveService;
+            article.IsSaved = true;
         }
 
-        public void OnGet(int pageNumber = 1)
+        var pagesCount = _saveService.GetSavedArticlesPagesCount(userId);
+        Pagination = new(pageNumber, pagesCount, "/Saved/News");
+    }
+
+    public async Task<IActionResult> OnPostToggleSave(int articleId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (_saveService.IsArticleSaved(userId, articleId))
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Articles = _saveService.GetSavedArticles(userId, pageNumber).Select(a => a.ToArticleCardViewModel()).ToList();
-
-            foreach (var article in Articles)
-            {
-                article.IsSaved = true;
-            }
-
-            var pagesCount = _saveService.GetSavedArticlesPagesCount(userId);
-            Pagination = new(pageNumber, pagesCount, "/Saved/News");
+            await _saveService.UnsaveArticleAsync(userId, articleId);
+            return Partial("_SaveToggle", false);
         }
-
-        public async Task<IActionResult> OnPostToggleSave(int articleId)
+        else
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (_saveService.IsArticleSaved(userId, articleId))
-            {
-                await _saveService.UnsaveArticleAsync(userId, articleId);
-                return Partial("_SaveToggle", false);
-            }
-            else
-            {
-                var article = await _articleService.GetArticleAsync(articleId);
-                await _saveService.SaveArticleAsync(userId, article);
-                return Partial("_SaveToggle", true);
-            }
+            var article = await _articleService.GetArticleAsync(articleId);
+            await _saveService.SaveArticleAsync(userId, article);
+            return Partial("_SaveToggle", true);
         }
     }
 }

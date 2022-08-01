@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Library.Api.Responses
+namespace Library.Api.Responses;
+
+public record VideoUrlResponse
 {
-    public record VideoUrlResponse
-    {
-        [JsonPropertyName("priority")]
-        public int Prority { get; init; }
+    [JsonPropertyName("priority")]
+    public int Prority { get; init; }
 
-        [JsonPropertyName("title")]
-        public string? Title { get; init; }
+    [JsonPropertyName("title")]
+    public string? Title { get; init; }
 
-        [JsonPropertyName("description")]
-        public string? Description { get; init; }
+    [JsonPropertyName("description")]
+    public string? Description { get; init; }
 
-        [JsonPropertyName("feature_image")]
-        public string? ImageUrl { get; init; }
+    [JsonPropertyName("feature_image")]
+    public string? ImageUrl { get; init; }
 
-        [JsonPropertyName("url")]
-        public string Url { get; init; }
-    }
+    [JsonPropertyName("url")]
+    public string Url { get; init; }
 }

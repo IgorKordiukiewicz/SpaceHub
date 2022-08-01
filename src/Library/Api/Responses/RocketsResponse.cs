@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Library.Api.Responses
+namespace Library.Api.Responses;
+
+public record RocketsResponse : MultiElementResponse
 {
-    public record RocketsResponse : MultiElementResponse
-    {
-        [JsonPropertyName("results")]
-        public IEnumerable<RocketConfigResponse> Rockets { get; init; }
-    }
+    [JsonPropertyName("results")]
+    public IEnumerable<RocketConfigResponse> Rockets { get; init; }
 }

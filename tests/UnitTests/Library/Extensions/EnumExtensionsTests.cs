@@ -1,53 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using FluentAssertions;
 using System.ComponentModel.DataAnnotations;
 using Library.Attributes;
 using Library.Extensions;
 
-namespace UnitTests.Library.Extensions
+namespace UnitTests.Library.Extensions;
+
+public class EnumExtensionsTests
 {
-    public class EnumExtensionsTests
+    public enum EnumType
     {
-        public enum EnumType
-        {
-            [Display(Name = "Name")]
-            [Symbol("s")]
-            EnumValue1,
+        [Display(Name = "Name")]
+        [Symbol("s")]
+        EnumValue1,
 
-            EnumValue2,
-        }
+        EnumValue2,
+    }
 
-        [Fact]
-        public void GetDisplayName_ShouldReturnDisplayName_WhenEnumHasAttribute()
-        {
-            var result = EnumType.EnumValue1.GetDisplayName();
-            result.Should().Be("Name");
-        }
+    [Fact]
+    public void GetDisplayName_ShouldReturnDisplayName_WhenEnumHasAttribute()
+    {
+        var result = EnumType.EnumValue1.GetDisplayName();
+        result.Should().Be("Name");
+    }
 
-        [Fact]
-        public void GetDisplayName_ShouldReturnNull_WhenEnumDoesntHaveAttribute()
-        {
-            var result = EnumType.EnumValue2.GetDisplayName();
-            result.Should().BeNull();
-        }
+    [Fact]
+    public void GetDisplayName_ShouldReturnNull_WhenEnumDoesntHaveAttribute()
+    {
+        var result = EnumType.EnumValue2.GetDisplayName();
+        result.Should().BeNull();
+    }
 
-        [Fact]
-        public void GetSymbol_ShouldReturnSymbol_WhenEnumHasAttribute()
-        {
-            var result = EnumType.EnumValue1.GetSymbol();
-            result.Should().Be("s");
-        }
+    [Fact]
+    public void GetSymbol_ShouldReturnSymbol_WhenEnumHasAttribute()
+    {
+        var result = EnumType.EnumValue1.GetSymbol();
+        result.Should().Be("s");
+    }
 
-        [Fact]
-        public void GetSymbol_ShouldReturnNull_WhenEnumDoesntHaveAttribute()
-        {
-            var result = EnumType.EnumValue2.GetSymbol();
-            result.Should().BeNull();
-        }
+    [Fact]
+    public void GetSymbol_ShouldReturnNull_WhenEnumDoesntHaveAttribute()
+    {
+        var result = EnumType.EnumValue2.GetSymbol();
+        result.Should().BeNull();
     }
 }

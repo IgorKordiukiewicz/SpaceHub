@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Library.Models;
 
-namespace Library.Models
+public record Pad
 {
-    public record Pad
-    {
-        public int? AgencyId { get; init; }
-        public string Name { get; init; }
-        public string? InfoUrl { get; init; }
-        public string? WikiUrl { get; init; }
-        public string? MapUrl { get; init; }
-        public string Latitude { get; init; }
-        public string Longitude { get; init; }
-        public PadLocation Location { get; init; }
-        public string MapImageUrl { get; init; }
-        public int TotalLaunches { get; init; }
-    }
+    public int? AgencyId { get; init; }
+    public string Name { get; init; }
+    public string? InfoUrl { get; init; }
+    public string? WikiUrl { get; init; }
+    public string? MapUrl { get; init; }
+    public string Latitude { get; init; }
+    public string Longitude { get; init; }
+    public PadLocation Location { get; init; }
+    public string MapImageUrl { get; init; }
+    public int TotalLaunches { get; init; }
 }
