@@ -12,7 +12,7 @@
                         @Model.Name (@Model.CountryCode)
                     </h2>
                     <hr />
-                    @if(Model.Description != null)
+                    @if(Model.Description is not null)
                     {
                         <h5 class="text-muted">
                             @Model.Description

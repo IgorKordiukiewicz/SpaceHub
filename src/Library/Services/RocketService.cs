@@ -43,7 +43,7 @@ public class RocketService : IRocketService
 
     public async Task SetRocketRankedPropertiesAsync(Rocket rocket)
     {
-        if (_rocketRankedProperties == null)
+        if (_rocketRankedProperties is null)
         {
             await InitializeRocketRankedPropertiesAsync();
         }
@@ -53,7 +53,7 @@ public class RocketService : IRocketService
 
     public async Task<Dictionary<RocketRankedPropertyType, List<RocketRankedProperty>>> GetRocketRankedPropertiesRankingsAsync(int limit)
     {
-        if(_rankedPropertiesRankings == null)
+        if(_rankedPropertiesRankings is null)
         {
             await InitializeRocketRankedPropertiesAsync();
         }
@@ -198,15 +198,15 @@ public class RocketService : IRocketService
     {
         public static int Compare<T>(RocketRankedProperty x, RocketRankedProperty y, bool reverseResult) where T : IComparable<T>
         {
-            if (x.Value != null && y.Value == null)
+            if (x.Value is not null && y.Value is null)
             {
                 return -1;
             }
-            else if (x.Value == null && y.Value != null)
+            else if (x.Value is null && y.Value is not null)
             {
                 return 1;
             }
-            else if (x.Value == null && y.Value == null)
+            else if (x.Value is null && y.Value is null)
             {
                 return 0;
             }
@@ -215,7 +215,7 @@ public class RocketService : IRocketService
                 var xValue = (T)x.Value;
                 var yValue = (T)y.Value;
                 var result = xValue.CompareTo(yValue);
-                if (result == 0 && x.SecondaryValue != null && y.SecondaryValue != null)
+                if (result == 0 && x.SecondaryValue is not null && y.SecondaryValue is not null)
                 {
                     var xSecondaryValue = (T)x.SecondaryValue;
                     var ySecondaryValue = (T)y.SecondaryValue;

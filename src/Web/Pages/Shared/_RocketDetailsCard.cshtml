@@ -179,7 +179,7 @@
                 foreach(var propertyType in Enum.GetValues<RocketRankedPropertyType>())
                 {
                     var rank = Model.RankedProperties[propertyType];
-                    if(rank != null)
+                    if(rank is not null)
                         {
                             var htmlId = propertyType.ToString() + "Property";
                             <text>

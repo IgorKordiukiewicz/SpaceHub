@@ -11,7 +11,7 @@
                     <h2 class="card-title">
                         @Model.Item1.Name
                     </h2>
-                    @if(Model.Item1.Mission != null)
+                    @if(Model.Item1.Mission is not null)
                     {
                         <hr />
                         <h5 class="text-muted">
@@ -47,13 +47,13 @@
                             @Model.Item1.Date
                         </h3>
                     }
-                    @if(Model.Item1.WindowStart != null && Model.Item1.WindowEnd != null)
+                    @if(Model.Item1.WindowStart is not null && Model.Item1.WindowEnd is not null)
                     {
                         <h5 class="text-muted">
                             @Model.Item1.WindowStart - @Model.Item1.WindowEnd
                         </h5>
                     }
-                    @if(Model.Item1.VideoUrl != null)
+                    @if(Model.Item1.VideoUrl is not null)
                     {
                         <hr />
                         <a class="btn btn-outline-danger w-100" target="_blank" href="@Model.Item1.VideoUrl">

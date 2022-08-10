@@ -30,7 +30,7 @@ public class DetailsModel : PageModel
 
         Launch = result.ToLaunchDetailsCardViewModel();
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        Launch.IsSaved = userId != null && _saveService.IsLaunchSaved(userId, id);
+        Launch.IsSaved = userId is not null && _saveService.IsLaunchSaved(userId, id);
 
         Agency = result.Agency.ToAgencyCardViewModel();
         Rocket = result.Rocket.ToRocketDetailsCardViewModel();

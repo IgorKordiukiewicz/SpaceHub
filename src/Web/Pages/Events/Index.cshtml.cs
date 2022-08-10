@@ -41,7 +41,7 @@ public class IndexModel : PageModel
         {
             { "eventDateType", EventDateType.ToString() }
         };
-        if(searchValue != null)
+        if(searchValue is not null)
         {
             paginationParameters.Add("searchValue", SearchValue);
         }

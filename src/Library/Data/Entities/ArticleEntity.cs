@@ -2,7 +2,7 @@
 
 namespace Library.Data.Entities;
 
-public record ArticleEntity
+public class ArticleEntity
 {
     [Key]
     public int Id { get; init; }

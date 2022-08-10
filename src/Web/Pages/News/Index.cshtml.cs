@@ -38,7 +38,7 @@ public class IndexModel : PageModel
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         foreach (var article in Articles)
         {
-            article.IsSaved = userId != null && _saveService.IsArticleSaved(userId, article.ApiId);
+            article.IsSaved = userId is not null && _saveService.IsArticleSaved(userId, article.ApiId);
         }
 
         var pagesCount = await _articleService.GetPagesCountAsync(SearchValue);

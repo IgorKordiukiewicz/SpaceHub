@@ -26,7 +26,7 @@ public class SaveService : ISaveService
     public async Task UnsaveArticleAsync(string userId, int articleId)
     {
         var articleEntity = _context.Articles.FirstOrDefault(a => a.UserId == userId && a.ApiId == articleId);
-        if(articleEntity != null)
+        if(articleEntity is not null)
         {
             _context.Articles.Remove(articleEntity);
             await _context.SaveChangesAsync();
@@ -66,7 +66,7 @@ public class SaveService : ISaveService
     public async Task UnsaveLaunchAsync(string userId, string launchId)
     {
         var launchEntity = _context.Launches.FirstOrDefault(l => l.UserId == userId && l.ApiId == launchId);
-        if(launchEntity != null)
+        if(launchEntity is not null)
         {
             _context.Launches.Remove(launchEntity);
             await _context.SaveChangesAsync();
@@ -106,7 +106,7 @@ public class SaveService : ISaveService
     public async Task UnsaveEventAsync(string userId, int eventId)
     {
         var eventEntity = _context.Events.FirstOrDefault(e => e.UserId == userId && e.ApiId == eventId);
-        if (eventEntity != null)
+        if (eventEntity is not null)
         {
             _context.Events.Remove(eventEntity);
             await _context.SaveChangesAsync();

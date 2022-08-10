@@ -2,7 +2,7 @@
 
 namespace Library.Data.Entities;
 
-public record EventEntity
+public class EventEntity
 {
     [Key]
     public int Id { get; init; }

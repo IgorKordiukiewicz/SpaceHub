@@ -8,7 +8,7 @@ public static class Helpers
 
     public static string? DateToString(DateTime? dateTime, bool onlyDate = false)
     {
-        if (dateTime != null)
+        if (dateTime is not null)
         {
             var date = dateTime.Value.ToLocalTime();
             if (date.Hour == 0 && date.Minute == 0 || onlyDate)
@@ -33,7 +33,7 @@ public static class Helpers
 
     public static string ValueToStringWithSymbol<T>(T? value, string symbol, bool spaceBetween = true, string placeholder = "-")
     {
-        if(value != null)
+        if(value is not null)
         {
             return value.ToString() + (spaceBetween ? " " : "") + symbol;
         }

@@ -2,7 +2,7 @@
 
 namespace Library.Data.Entities;
 
-public record LaunchEntity
+public class LaunchEntity
 {
     [Key]
     public int Id { get; init; }

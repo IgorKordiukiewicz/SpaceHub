@@ -42,7 +42,7 @@ public class IndexModel : PageModel
         {
             { "launchDateType", LaunchDateType.ToString() }
         };
-        if(SearchValue != null)
+        if(SearchValue is not null)
         {
             paginationParameters.Add("searchValue", SearchValue);
         }

@@ -28,10 +28,10 @@ public class DetailsModel : PageModel
         Event = result.ToEventDetailsCardViewModel();
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        Event.IsSaved = userId != null && _saveService.IsEventSaved(userId, id);
-        if(Event.Launch != null)
+        Event.IsSaved = userId is not null && _saveService.IsEventSaved(userId, id);
+        if(Event.Launch is not null)
         {
-            Event.Launch.IsSaved = userId != null && _saveService.IsLaunchSaved(userId, Event.Launch.ApiId);
+            Event.Launch.IsSaved = userId is not null && _saveService.IsLaunchSaved(userId, Event.Launch.ApiId);
         }
     }
 
