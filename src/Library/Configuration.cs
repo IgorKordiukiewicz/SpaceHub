@@ -1,5 +1,6 @@
 ﻿using Library.Api;
 using Library.Services;
+using Library.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;

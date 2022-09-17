@@ -1,6 +1,6 @@
 using Library.Api.Responses;
 using Library.Enums;
-using Library.Services;
+using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.ViewModels;

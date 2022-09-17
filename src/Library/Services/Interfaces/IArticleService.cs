@@ -1,6 +1,6 @@
 ﻿using Library.Models;
 
-namespace Library.Services;
+namespace Library.Services.Interfaces;
 
 public interface IArticleService
 {

@@ -1,5 +1,5 @@
 using Library.Enums;
-using Library.Services;
+using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Web.Mapping;
 using Web.ViewModels;
