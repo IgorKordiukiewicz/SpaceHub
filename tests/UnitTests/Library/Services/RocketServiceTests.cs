@@ -59,10 +59,10 @@ public class RocketServiceTests
 
         using (new AssertionScope())
         {
-            result1.Should().Equal(expected1);
-            result2.Should().Equal(expected2);
+            result1.Should().BeEquivalentTo(expected1);
+            result2.Should().BeEquivalentTo(expected2);
 
-            result1.Should().NotEqual(result2);
+            result1.Should().NotBeEquivalentTo(result2);
         }
     }
 

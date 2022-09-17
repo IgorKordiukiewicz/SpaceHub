@@ -35,7 +35,7 @@ public static class Helpers
     {
         if(value is not null)
         {
-            return value.ToString() + (spaceBetween ? " " : "") + symbol;
+            return string.Format("{0:#,0.##}", value) + (spaceBetween ? " " : "") + symbol;
         }
         else
         {
