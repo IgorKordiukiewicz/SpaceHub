@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Application;
+using Infrastructure;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+builder.Services.ConfigureApplicationServices();
 
 var app = builder.Build();
 

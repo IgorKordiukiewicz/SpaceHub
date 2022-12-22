@@ -7,7 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{21D0037C-03C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FC3357C6-17A2-49FF-8D91-A24A2F178A7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "src\WebUI\WebUI.csproj", "{999DBDF1-9521-4248-9C1E-A2668D8186E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "src\WebUI\WebUI.csproj", "{999DBDF1-9521-4248-9C1E-A2668D8186E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{014BA2A4-A4A6-4360-A34B-C610ABF57FEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,12 +23,22 @@ Global
 		{999DBDF1-9521-4248-9C1E-A2668D8186E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{999DBDF1-9521-4248-9C1E-A2668D8186E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{999DBDF1-9521-4248-9C1E-A2668D8186E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014BA2A4-A4A6-4360-A34B-C610ABF57FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014BA2A4-A4A6-4360-A34B-C610ABF57FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014BA2A4-A4A6-4360-A34B-C610ABF57FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014BA2A4-A4A6-4360-A34B-C610ABF57FEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{999DBDF1-9521-4248-9C1E-A2668D8186E6} = {21D0037C-03CC-45CE-A421-0A9582125F3C}
+		{AC9D3DC1-D0A2-4C48-BCE9-551EF215B86A} = {21D0037C-03CC-45CE-A421-0A9582125F3C}
+		{014BA2A4-A4A6-4360-A34B-C610ABF57FEC} = {21D0037C-03CC-45CE-A421-0A9582125F3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A8BC419D-779E-4A27-9F47-866A96E2DD67}
