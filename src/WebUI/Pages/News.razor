@@ -1,0 +1,76 @@
+﻿@page "/news"
+@using Application.Features.News;
+@using MediatR;
+@using MudBlazor
+
+@if(_viewModel is not null)
+{
+    <MudGrid Class="d-flex align-stretch">
+        <MudItem xs="12">
+            <MudTextField Label="Search" T="string" TextChanged="OnSearchChanged"
+            Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
+        </MudItem>
+
+        @foreach (var article in _viewModel.Articles)
+        {
+            <MudItem xs="6">
+                <MudPaper Height="100%">
+                    <MudLink Href="@article.Url" Underline="Underline.None" Target="_blank">
+                        <MudCard Height="100%" Class="d-flex flex-column">
+                            <MudCardMedia Image="@article.ImageUrl" />
+                            <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary" Class="py-2 px-4">@article.Title</MudText>
+                            <MudText Typo="Typo.body2" Align="Align.Center" Class="px-4">@article.Summary</MudText>
+                            <div class="mt-auto pt-4">
+                                <MudDivider />
+                                <MudContainer Class="d-flex justify-space-between py-2">
+                                    <MudText Typo="Typo.body2">@article.NewsSite</MudText>
+                                    <MudText Typo="Typo.body2">@article.PublishDate.ToString("D")</MudText>
+                                </MudContainer>
+                            </div>
+                        </MudCard>
+                    </MudLink>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+
+    <div class="d-flex flex-column align-center my-8">
+        <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged"/>
+    </div>
+}
+
+@code {
+    [Inject]
+    private IMediator _mediator { get; set; }
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; }
+
+    private GetAllNewsResult _viewModel;
+
+    private string? _searchValue = null;
+    private int _pageNumber = 1;
+    private int _itemsPerPage = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateArticles();
+    }
+
+    private async Task UpdateArticles()
+    {
+        _viewModel = await _mediator.Send(new GetAllNewsQuery(_searchValue, _pageNumber, _itemsPerPage));
+    }
+
+    private async Task OnPageChanged(int pageNumber)
+    {
+        _pageNumber = pageNumber;
+        await UpdateArticles();
+        await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+
+    private async Task OnSearchChanged(string searchValue)
+    {
+        _searchValue = searchValue;
+        await UpdateArticles();
+    }
+}

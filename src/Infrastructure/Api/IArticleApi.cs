@@ -1,37 +1,12 @@
 ﻿using Refit;
-using System.Text.Json.Serialization;
 
 namespace Infrastructure.Api;
 
 public interface IArticleApi
 {
-    [Get("/articles/?_limit=10")]
-    Task<IEnumerable<ArticleResponse>> GetArticlesAsync();
-}
+    [Get("/articles/?_title_contains={searchValue}&_limit={limit}&_start={start}")]
+    Task<IEnumerable<ArticleResponse>> GetArticlesAsync(string? searchValue, int limit, int start = 0);
 
-public record ArticleResponse
-{
-    [JsonPropertyName("id")]
-    public int Id { get; init; }
-
-    [JsonPropertyName("title")]
-    public string Title { get; init; }
-
-    [JsonPropertyName("summary")]
-    public string Summary { get; init; }
-
-    [JsonPropertyName("url")]
-    public string Url { get; init; }
-
-    [JsonPropertyName("imageUrl")]
-    public string ImageUrl { get; init; }
-
-    [JsonPropertyName("newsSite")]
-    public string NewsSite { get; init; }
-
-    [JsonPropertyName("publishedAt")]
-    public DateTime PublishDate { get; init; }
-
-    [JsonPropertyName("updatedAt")]
-    public DateTime UpdateDate { get; init; }
+    [Get("/articles/count/?_title_contains={searchValue}")]
+    Task<int> GetArticlesCountAsync(string? searchValue);
 }

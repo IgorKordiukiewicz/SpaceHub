@@ -1,7 +1,7 @@
 ﻿@using MudBlazor
 @inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider IsDarkMode="true" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -16,7 +16,9 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pt-8 px-8">
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 
