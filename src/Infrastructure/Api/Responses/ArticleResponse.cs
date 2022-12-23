@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Infrastructure.Api;
+namespace Infrastructure.Api.Responses;
 
 public record ArticleResponse
 {

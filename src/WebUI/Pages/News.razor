@@ -13,7 +13,7 @@
 
         @foreach (var article in _viewModel.Articles)
         {
-            <MudItem xs="6">
+            <MudItem md="6" xs="12">
                 <MudPaper Height="100%">
                     <MudLink Href="@article.Url" Underline="Underline.None" Target="_blank">
                         <MudCard Height="100%" Class="d-flex flex-column">
@@ -45,7 +45,7 @@
     [Inject]
     private IJSRuntime _jsRuntime { get; set; }
 
-    private GetAllNewsResult _viewModel;
+    private GetNewsResult _viewModel;
 
     private string? _searchValue = null;
     private int _pageNumber = 1;
@@ -58,7 +58,13 @@
 
     private async Task UpdateArticles()
     {
-        _viewModel = await _mediator.Send(new GetAllNewsQuery(_searchValue, _pageNumber, _itemsPerPage));
+        _viewModel = await _mediator.Send(new GetNewsQuery(_searchValue, _pageNumber, _itemsPerPage));
+    }
+
+    private async Task OnSearchChanged(string searchValue)
+    {
+        _searchValue = searchValue;
+        await UpdateArticles();
     }
 
     private async Task OnPageChanged(int pageNumber)
@@ -66,11 +72,5 @@
         _pageNumber = pageNumber;
         await UpdateArticles();
         await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
-    }
-
-    private async Task OnSearchChanged(string searchValue)
-    {
-        _searchValue = searchValue;
-        await UpdateArticles();
     }
 }

@@ -5,27 +5,27 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Features.News;
 
-public record GetAllNewsQuery(string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<GetAllNewsResult>;
-public record GetAllNewsResult(List<ArticleViewModel> Articles, int TotalPagesCount);
+public record GetNewsQuery(string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<GetNewsResult>;
+public record GetNewsResult(List<ArticleViewModel> Articles, int TotalPagesCount);
 
-public class GetAllNewsHandler : IRequestHandler<GetAllNewsQuery, GetAllNewsResult>
+public class GetNewsHandler : IRequestHandler<GetNewsQuery, GetNewsResult>
 {
     private readonly IArticleApi _articleApi;
     private readonly IMemoryCache _cache;
 
-    public GetAllNewsHandler(IArticleApi articleApi, IMemoryCache cache)
+    public GetNewsHandler(IArticleApi articleApi, IMemoryCache cache)
     {
         _articleApi = articleApi;
         _cache = cache;
     }
 
-    public async Task<GetAllNewsResult> Handle(GetAllNewsQuery request, CancellationToken cancellationToken)
+    public async Task<GetNewsResult> Handle(GetNewsQuery request, CancellationToken cancellationToken)
     {
-        int start = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
-        var cacheKey = Helpers.GetCacheKeyForRequestWithPages("articles", request.SearchValue, start, request.ItemsPerPage);
+        int offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
+        var cacheKey = CacheHelpers.GetCacheKeyForRequestWithPages("articles", request.SearchValue, offset, request.ItemsPerPage);
         var articles = await _cache.GetOrCreateAsync(cacheKey, async entry =>
         {
-            return (await _articleApi.GetArticlesAsync(request.SearchValue, request.ItemsPerPage, start)).Select(a => new ArticleViewModel
+            return (await _articleApi.GetArticlesAsync(request.SearchValue, request.ItemsPerPage, offset)).Select(a => new ArticleViewModel
             {
                 Title = a.Title,
                 Summary = a.Summary,
@@ -42,7 +42,7 @@ public class GetAllNewsHandler : IRequestHandler<GetAllNewsQuery, GetAllNewsResu
         });
         var totalPagesCount = Pagination.GetPagesCount(totalArticlesCount, request.ItemsPerPage);
 
-        return new GetAllNewsResult(articles, totalPagesCount);
+        return new GetNewsResult(articles, totalPagesCount);
     }
 }
 

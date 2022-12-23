@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using Infrastructure.Api.Responses;
+using Refit;
 
 namespace Infrastructure.Api;
 

@@ -1,6 +1,6 @@
 ﻿namespace Application.Common;
 
-public static class Helpers
+public static class CacheHelpers
 {
     public static string GetCacheKeyForRequestWithPages(string name, string? searchValue, int offset, int itemsPerPage)
     {

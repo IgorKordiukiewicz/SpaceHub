@@ -14,6 +14,11 @@ public static class Infrastructure
             x.BaseAddress = new Uri(configuration["Api:Article:BaseAddress"]);
         });
 
+        services.AddRefitClient<ILaunchApi>().ConfigureHttpClient(x =>
+        {
+            x.BaseAddress = new Uri(configuration["Api:Launch:BaseAddress"]);
+        });
+
         return services;
     }
 }
