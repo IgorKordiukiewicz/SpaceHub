@@ -1,7 +1,7 @@
-﻿using Infrastructure.Api.Responses;
-using Refit;
+﻿using Refit;
+using SpaceHub.Infrastructure.Api.Responses;
 
-namespace Infrastructure.Api;
+namespace SpaceHub.Infrastructure.Api;
 
 public interface ILaunchApi
 {

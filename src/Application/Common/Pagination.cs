@@ -1,4 +1,4 @@
-﻿namespace Application.Common;
+﻿namespace SpaceHub.Application.Common;
 
 public static class Pagination
 {

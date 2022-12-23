@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Application\SpaceHub.Application.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\SpaceHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\Client\SpaceHub.Web.Client.csproj" />
+    <ProjectReference Include="..\Shared\SpaceHub.Web.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

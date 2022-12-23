@@ -1,4 +1,4 @@
-﻿namespace Application.Enums;
+﻿namespace SpaceHub.Application.Enums;
 
 public enum ETimeFrame
 {

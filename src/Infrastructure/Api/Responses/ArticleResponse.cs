@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Infrastructure.Api.Responses;
+namespace SpaceHub.Infrastructure.Api.Responses;
 
 public record ArticleResponse
 {
