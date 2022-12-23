@@ -4,6 +4,7 @@
 @using Application.Features.Launches;
 @using MediatR;
 @using MudBlazor
+@using SpaceHub.Web.Shared;
 
 @if(_viewModel is not null)
 {
@@ -18,14 +19,13 @@
             <MudTextField Label="Search" T="string" TextChanged="OnSearchChanged"
                       Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
         </MudItem>
-
-        @foreach(var launch in _viewModel.Launches)
+        @foreach (var launch in _viewModel.Launches)
         {
             <MudItem xs="12" Class="mb-10">
                 <MudPaper>
                     <MudGrid>
                         <MudItem xs="3" Class="py-0">
-                            <MudImage Fluid="true" Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="rounded-start" Style="height: 100%; width: 100%;"/>
+                            <MudImage Fluid="true" Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="rounded-start" Style="height: 100%; width: 100%;" />
                         </MudItem>
                         <MudItem xs="9">
                             <MudText Typo="Typo.h3" Align="Align.Center">
@@ -45,7 +45,7 @@
                             <MudText Typo="Typo.h5" Align="Align.Center">
                                 @launch.Date
                             </MudText>
-                            @if(launch.WindowStart is not null && launch.WindowEnd is not null)
+                            @if (launch.WindowStart is not null && launch.WindowEnd is not null)
                             {
                                 <MudText Typo="Typo.body1" Align="Align.Center">
                                     @launch.WindowStart - @launch.WindowEnd
@@ -81,7 +81,12 @@
 
     private async Task UpdateLaunches()
     {
-        _viewModel = await _httpClient.GetFromJsonAsync<GetLaunchesResult>($"api/space/launches?timeFrame={_timeFrame}&searchValue={_searchValue}&pageNumber={_pageNumber}&itemsPerPage={_itemsPerPage}");
+        var url = new UrlBuilder("api/space/launches").AddParameter("timeFrame", _timeFrame)
+            .AddParameter("searchValue", _searchValue)
+            .AddParameter("pageNumber", _pageNumber)
+            .AddParameter("itemsPerPage", _itemsPerPage)
+            .Url;
+        _viewModel = await _httpClient.GetFromJsonAsync<GetLaunchesResult>(url);
     }
 
     private async Task OnTimeFrameChanged(ETimeFrame timeFrame)

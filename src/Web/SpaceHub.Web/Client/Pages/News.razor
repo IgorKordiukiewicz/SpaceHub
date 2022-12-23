@@ -2,6 +2,7 @@
 @inject HttpClient _httpClient
 @using Application.Features.News;
 @using MudBlazor
+@using SpaceHub.Web.Shared;
 
 @if(_viewModel is not null)
 {
@@ -56,7 +57,12 @@
 
     private async Task UpdateArticles()
     {
-        _viewModel = await _httpClient.GetFromJsonAsync<GetNewsResult>($"api/space/articles?searchValue={_searchValue}&pageNumber={_pageNumber}&itemsPerPage={_itemsPerPage}");
+        var url = new UrlBuilder("api/space/articles")
+            .AddParameter("searchValue", _searchValue)
+            .AddParameter("pageNumber", _pageNumber)
+            .AddParameter("itemsPerPage", _itemsPerPage)
+            .Url;
+        _viewModel = await _httpClient.GetFromJsonAsync<GetNewsResult>(url);
     }
 
     private async Task OnSearchChanged(string searchValue)
