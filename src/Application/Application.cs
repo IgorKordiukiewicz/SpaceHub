@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Application;
+namespace SpaceHub.Application;
 
 public static class Application
 {

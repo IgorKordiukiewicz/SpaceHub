@@ -1,9 +1,9 @@
-﻿using Infrastructure.Api;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
+using SpaceHub.Infrastructure.Api;
 
-namespace Infrastructure;
+namespace SpaceHub.Infrastructure;
 
 public static class Infrastructure
 {

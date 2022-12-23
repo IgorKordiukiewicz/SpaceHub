@@ -1,10 +1,10 @@
-﻿using Application.Common;
-using Application.Enums;
-using Infrastructure.Api;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using SpaceHub.Application.Common;
+using SpaceHub.Application.Enums;
+using SpaceHub.Infrastructure.Api;
 
-namespace Application.Features.Launches;
+namespace SpaceHub.Application.Features.Launches;
 
 public record GetLaunchesQuery(ETimeFrame TimeFrame, string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<GetLaunchesResult>;
 public record GetLaunchesResult(List<LaunchViewModel> Launches, int TotalPagesCount);
@@ -50,7 +50,7 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
     }
 }
 
-public record LaunchViewModel // TODO: Should these classes be called ViewModels or LaunchDto or Launch?
+public record LaunchViewModel
 {
     public string Name { get; init; }
     public string StatusName { get; init; }

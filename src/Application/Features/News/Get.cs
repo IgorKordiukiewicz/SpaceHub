@@ -1,9 +1,9 @@
-﻿using Application.Common;
-using Infrastructure.Api;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using SpaceHub.Application.Common;
+using SpaceHub.Infrastructure.Api;
 
-namespace Application.Features.News;
+namespace SpaceHub.Application.Features.News;
 
 public record GetNewsQuery(string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<GetNewsResult>;
 public record GetNewsResult(List<ArticleViewModel> Articles, int TotalPagesCount);
