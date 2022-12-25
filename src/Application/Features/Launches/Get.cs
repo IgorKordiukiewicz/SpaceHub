@@ -36,6 +36,7 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
 
         var launches = response.Launches.Select(x => new LaunchViewModel
         {
+            Id = x.Id,
             Name = x.Name,
             StatusName = x.Status.Name,
             StatusAbbrevation = x.Status.Abbrevation,
@@ -44,6 +45,11 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
             WindowStart= x.WindowStart,
             WindowEnd= x.WindowEnd,
             ImageUrl= x.ImageUrl,
+            MissionName = x.Mission?.Name,
+            MissionDescription = x.Mission?.Description,
+            AgencyName = x.Agency.Name,
+            PadName = x.Pad.Name,
+            PadLocationName = x.Pad.Location.Name,
         }).ToList();
 
         return new GetLaunchesResult(launches, response.Count);
@@ -52,6 +58,7 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
 
 public record LaunchViewModel
 {
+    public string Id { get; init; }
     public string Name { get; init; }
     public string StatusName { get; init; }
     public string StatusDescription { get; init; }
@@ -60,4 +67,14 @@ public record LaunchViewModel
     public DateTime? WindowStart { get; init; }
     public DateTime? WindowEnd { get; init; }
     public string ImageUrl { get; init; }
+    public string? MissionName { get; init; }
+    public string? MissionDescription { get; init; }
+    public string AgencyName { get; init; }
+    public string PadName { get; init; }
+    public string PadLocationName { get; init; }
+}
+
+public record LaunchExpandedViewModel
+{
+
 }

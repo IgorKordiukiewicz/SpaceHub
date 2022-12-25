@@ -19,43 +19,47 @@
             <MudTextField Label="Search" T="string" TextChanged="OnSearchChanged"
                       Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
         </MudItem>
-        @foreach (var launch in _viewModel.Launches)
-        {
-            <MudItem xs="12" Class="mb-10">
-                <MudPaper>
-                    <MudGrid>
-                        <MudItem xs="3" Class="py-0">
-                            <MudImage Fluid="true" Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="rounded-start" Style="height: 100%; width: 100%;" />
-                        </MudItem>
-                        <MudItem xs="9">
-                            <MudText Typo="Typo.h3" Align="Align.Center">
-                                @launch.Name
-                            </MudText>
-                            <MudDivider />
-                            <MudText Typo="Typo.body1" Align="Align.Center">
-                                Mission
-                            </MudText>
-                            <MudDivider />
-                            <MudText Typo="Typo.h4" Color="@StatusColor(launch.StatusAbbrevation)" Align="Align.Center">
-                                @launch.StatusName
-                            </MudText>
-                            <MudText Typo="Typo.body1" Align="Align.Center">
-                                @launch.StatusDescription
-                            </MudText>
-                            <MudText Typo="Typo.h5" Align="Align.Center">
-                                @launch.Date
-                            </MudText>
-                            @if (launch.WindowStart is not null && launch.WindowEnd is not null)
-                            {
-                                <MudText Typo="Typo.body1" Align="Align.Center">
-                                    @launch.WindowStart - @launch.WindowEnd
+            @foreach (var launch in _viewModel.Launches)
+            {
+                <MudItem xs="12" Class="mb-10">
+                <MudPaper Style="background-color: var(--mud-palette-primary);">
+                        <MudPaper>
+                            <MudGrid>
+                            <MudItem md="12" lg="3" Class="d-flex justify-center">
+                                <MudImage Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="rounded-circle" Width="250" Height="250"/>
+                            </MudItem>
+                            <MudItem md="12" lg="8">
+                                <MudText Typo="Typo.h4" Color="Color.Primary" Align="Align.Center">
+                                    @launch.Name
                                 </MudText>
-                            }
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
-            </MudItem>
-        }
+                                <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
+                                    @launch.AgencyName | @launch.PadLocationName | @launch.Date.Value.ToString("d")
+                                </MudText>
+                                <MudText Typo="Typo.body2" Align="Align.Center" Class="py-1">
+                                    @launch.MissionDescription
+                                </MudText>
+                                <MudDivider/>
+                                <MudText Typo="Typo.h3" Align="Align.Center" Class="pt-1">
+                                    00:00:00
+                                </MudText>
+                                <MudText Typo="Typo.h5" Align="Align.Center" Color="@StatusColor(launch.StatusAbbrevation)">
+                                    (@launch.StatusName)
+                                </MudText>
+                            </MudItem>
+                            <MudItem md="12" lg="1" Class="d-flex align-content-end flex-wrap justify-center">
+                                <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" OnClick="(e) => ToggleLaunchDetails(launch.Id)" />
+                            </MudItem>
+                        </MudGrid>
+                        </MudPaper>
+                        @if(_expandedLaunches.TryGetValue(launch.Id, out var details) && details.Visible)
+                        {
+                            <div class="d-flex justify-center flex-grow pt-8 pb-4">
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                            </div>
+                        }
+                    </MudPaper>
+                </MudItem>
+            }
 
         <div class="d-flex flex-column align-center my-8">
             <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged" />
@@ -74,6 +78,14 @@
     private int _pageNumber = 1;
     private int _itemsPerPage = 10;
 
+    private class LaunchDetailed
+    {
+        public LaunchExpandedViewModel Details { get; init; }
+        public bool Visible { get; set; } = false;
+    }
+
+    private Dictionary<string, LaunchDetailed> _expandedLaunches = new();
+
     protected override async Task OnInitializedAsync()
     {
         await UpdateLaunches();
@@ -81,7 +93,8 @@
 
     private async Task UpdateLaunches()
     {
-        var url = new UrlBuilder("api/space/launches").AddParameter("timeFrame", _timeFrame)
+        var url = new UrlBuilder("api/space/launches")
+            .AddParameter("timeFrame", _timeFrame)
             .AddParameter("searchValue", _searchValue)
             .AddParameter("pageNumber", _pageNumber)
             .AddParameter("itemsPerPage", _itemsPerPage)
@@ -114,4 +127,21 @@
         "tbc" or "tbd" => Color.Warning,
         _ => Color.Default
     };
+
+    private void ToggleLaunchDetails(string id)
+    {
+        if(!_expandedLaunches.TryGetValue(id, out var launchDetailed))
+        {
+            // GET from api
+            _expandedLaunches.Add(id, new LaunchDetailed() 
+            { 
+                Details = new(), 
+                Visible = true 
+            });
+        }
+        else
+        {
+            launchDetailed.Visible = !launchDetailed.Visible;
+        }
+    }
 }
