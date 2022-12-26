@@ -38,40 +38,32 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
         {
             Id = x.Id,
             Name = x.Name,
-            StatusName = x.Status.Name,
-            StatusAbbrevation = x.Status.Abbrevation,
-            StatusDescription = x.Status.Description,
-            Date= x.Date,
-            WindowStart= x.WindowStart,
-            WindowEnd= x.WindowEnd,
-            ImageUrl= x.ImageUrl,
-            MissionName = x.Mission?.Name,
+            Status = x.Status.Name,
+            Date = x.Date,
+            ImageUrl = x.ImageUrl,
             MissionDescription = x.Mission?.Description,
             AgencyName = x.Agency.Name,
-            PadName = x.Pad.Name,
             PadLocationName = x.Pad.Location.Name,
+            Upcoming = x.Date > DateTime.Now,
+            TimeToLaunch = x.Date - DateTime.Now
         }).ToList();
 
         return new GetLaunchesResult(launches, response.Count);
     }
 }
 
-public record LaunchViewModel
+public class LaunchViewModel
 {
     public string Id { get; init; }
     public string Name { get; init; }
-    public string StatusName { get; init; }
-    public string StatusDescription { get; init; }
-    public string StatusAbbrevation { get; init; }
+    public string Status { get; init; }
     public DateTime? Date { get; init; }
-    public DateTime? WindowStart { get; init; }
-    public DateTime? WindowEnd { get; init; }
     public string ImageUrl { get; init; }
-    public string? MissionName { get; init; }
     public string? MissionDescription { get; init; }
     public string AgencyName { get; init; }
-    public string PadName { get; init; }
     public string PadLocationName { get; init; }
+    public bool Upcoming { get; init; }
+    public TimeSpan? TimeToLaunch { get; set; }
 }
 
 public record LaunchExpandedViewModel
