@@ -28,4 +28,11 @@ public class SpaceController : ControllerBase
     {
         return await _mediator.Send(new GetLaunchesQuery(timeFrame, searchValue, pageNumber, itemsPerPage));
     }
+
+    [HttpGet("launches/{id}")]
+    public async Task<LaunchDetailsViewModel> GetLaunchDetails(string id)
+    {
+        var res = await _mediator.Send(new GetLaunchDetailsQuery(id));
+        return res;
+    }
 }

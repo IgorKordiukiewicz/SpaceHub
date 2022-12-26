@@ -65,8 +65,3 @@ public class LaunchViewModel
     public bool Upcoming { get; init; }
     public TimeSpan? TimeToLaunch { get; set; }
 }
-
-public record LaunchExpandedViewModel
-{
-
-}

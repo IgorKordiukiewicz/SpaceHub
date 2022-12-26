@@ -4,8 +4,36 @@
 @using Application.Features.Launches;
 @using MediatR;
 @using MudBlazor
-@using SpaceHub.Web.Shared;
+@using SpaceHub.Web.Client.Utils;
 @using System.Timers;
+@using Application.Extensions;
+
+<style>
+    @@media only screen and (max-width: 1280px) {
+        .launch_img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card_img_rounded {
+            border-top-left-radius: var(--mud-default-borderradius) !important;
+            border-top-right-radius: var(--mud-default-borderradius) !important;
+        }
+    }
+
+    @@media only screen and (min-width: 1280px) {
+        .launch_img {
+            width: 100%;
+            height: 100%;
+            max-height: 250px;
+        }
+
+        .card_img_rounded {
+            border-top-left-radius: var(--mud-default-borderradius) !important;
+            border-bottom-left-radius: var(--mud-default-borderradius) !important;
+        }
+    }
+</style>
 
 @if(_viewModel is not null)
 {
@@ -23,18 +51,18 @@
             @foreach (var launch in _viewModel.Launches)
             {
                 <MudItem xs="12" Class="mb-10">
-                <MudPaper Style="background-color: var(--mud-palette-primary);">
+                <MudPaper Style="background-color: var(--mud-palette-dark);">
                         <MudPaper>
-                            <MudGrid>
-                            <MudItem md="12" lg="3" Class="d-flex justify-center">
-                                <MudImage Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="rounded-circle" Width="250" Height="250"/>
+                        <MudGrid>
+                            <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
+                                <MudImage Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="card_img_rounded launch_img" />
                             </MudItem>
                             <MudItem md="12" lg="8">
                                 <MudText Typo="Typo.h4" Color="Color.Primary" Align="Align.Center">
                                     @launch.Name
                                 </MudText>
-                                <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
-                                    @launch.AgencyName | @launch.PadLocationName | @launch.Date.GetValueOrDefault().ToString("d")
+                                <MudText Typo="Typo.body1" Align="Align.Center">
+                                    <b>@launch.AgencyName | @launch.PadLocationName | @launch.Date.GetValueOrDefault().ToString("d")</b>
                                 </MudText>
                                 <MudText Typo="Typo.body2" Align="Align.Center" Class="py-1">
                                     @launch.MissionDescription
@@ -59,11 +87,70 @@
                             </MudItem>
                         </MudGrid>
                         </MudPaper>
-                        @if(_expandedLaunches.TryGetValue(launch.Id, out var details) && details.Visible)
+                        @if(_launchesDetails.TryGetValue(launch.Id, out var details) && details.Visible)
                         {
-                            <div class="d-flex justify-center flex-grow pt-8 pb-4">
-                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                            </div>
+                            if(details.Data is not null)
+                            {
+                                <MudGrid>
+                                    <MudItem xs="12" Class="mx-6 mt-8 mb-2">
+                                    <MudPaper>
+                                        <MudGrid>
+                                            <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
+                                                <MudImage Src="@details.Data.Agency.ImageUrl" ObjectFit="ObjectFit.ScaleDown" Fluid="true" Class="card_img_rounded" />
+                                            </MudItem>
+                                            <MudItem md="12" lg="9">
+                                                <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
+                                                    @details.Data.Agency.Name
+                                                </MudText>
+                                                <MudText Typo="Typo.body2" Align="Align.Center">
+                                                    @details.Data.Agency.Description
+                                                </MudText>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudPaper>
+                                    </MudItem>
+                                    <MudItem xs="12" Class="mx-6 mt-2 mb-4">
+                                        <MudPaper>
+                                        <MudGrid>
+                                            <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
+                                                <MudImage Src="@details.Data.Rocket.ImageUrl" ObjectFit="ObjectFit.Cover" Fluid="true" Class="card_img_rounded" />
+                                            </MudItem>
+                                            <MudItem md="12" lg="9">
+                                                <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
+                                                    @details.Data.Rocket.Name
+                                                </MudText>
+                                                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2">
+                                                    @details.Data.Rocket.Description
+                                                </MudText>
+                                                <MudDivider/>
+                                                <MudGrid Class="py-2 px-4">
+                                                    @foreach (var (name, value, symbol) in details.Data.Rocket.Properties)
+                                                    {
+                                                        <MudItem xs="3">
+                                                            <MudText Typo="Typo.body1">
+                                                                @name
+                                                            </MudText>
+                                                        </MudItem>
+                                                        <MudItem xs="3">
+                                                            <MudText Typo="Typo.body1" Align="Align.End">
+                                                                @GetPropertyValueDisplay(value, symbol)
+                                                            </MudText>
+                                                        </MudItem>
+                                                    }
+                                                </MudGrid>
+                                            </MudItem>
+                                            
+                                        </MudGrid>
+                                        </MudPaper>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-center flex-grow pt-8 pb-4">
+                                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                                </div>
+                            }
                         }
                     </MudPaper>
                 </MudItem>
@@ -86,21 +173,20 @@
     private int _pageNumber = 1;
     private int _itemsPerPage = 10;
 
-    private Timer _timer;
+    private Timer _timer = new(1000);
 
-    private class LaunchDetailed
+    private class LaunchDetails
     {
-        public LaunchExpandedViewModel Details { get; init; }
+        public LaunchDetailsViewModel? Data { get; set; }
         public bool Visible { get; set; } = false;
     }
 
-    private Dictionary<string, LaunchDetailed> _expandedLaunches = new();
+    private Dictionary<string, LaunchDetails> _launchesDetails = new();
 
     protected override async Task OnInitializedAsync()
     {
         await UpdateLaunches();
 
-        _timer = new(1000);
         _timer.Elapsed += UpdateCountdownTimers;
         _timer.Start();
     }
@@ -171,20 +257,29 @@
         _ => Color.Default
     };
 
-    private void ToggleLaunchDetails(string id)
+    private async Task ToggleLaunchDetails(string id)
     {
-        if(!_expandedLaunches.TryGetValue(id, out var launchDetailed))
+        if(!_launchesDetails.TryGetValue(id, out var launchDetails))
         {
-            // GET from api
-            _expandedLaunches.Add(id, new LaunchDetailed() 
-            { 
-                Details = new(), 
-                Visible = true 
+            _launchesDetails.Add(id, new LaunchDetails()
+            {
+                Data = null,
+                Visible = true
             });
+            StateHasChanged();
+
+            var url = new UrlBuilder("api/space/launches/" + id).Url;
+            var data = await _httpClient.GetFromJsonAsync<LaunchDetailsViewModel>(url);
+            _launchesDetails[id].Data = data;
         }
         else
         {
-            launchDetailed.Visible = !launchDetailed.Visible;
+            launchDetails.Visible = !launchDetails.Visible;
         }
+    }
+
+    private string GetPropertyValueDisplay(string value, string? symbol)
+    {
+        return value + (symbol is null ? "" : " " + symbol);
     }
 }
