@@ -1,7 +1,7 @@
 ﻿@page "/news"
 @inject HttpClient _httpClient
-@using Application.Features.News;
 @using MudBlazor
+@using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Utils;
 
 @if(_viewModel is not null)
@@ -44,7 +44,7 @@
     [Inject]
     private IJSRuntime _jsRuntime { get; set; }
 
-    private GetNewsResult _viewModel;
+    private ArticlesVM _viewModel;
 
     private string? _searchValue = null;
     private int _pageNumber = 1;
@@ -62,7 +62,7 @@
             .AddParameter("pageNumber", _pageNumber)
             .AddParameter("itemsPerPage", _itemsPerPage)
             .Url;
-        _viewModel = await _httpClient.GetFromJsonAsync<GetNewsResult>(url);
+        _viewModel = await _httpClient.GetFromJsonAsync<ArticlesVM>(url);
     }
 
     private async Task OnSearchChanged(string searchValue)

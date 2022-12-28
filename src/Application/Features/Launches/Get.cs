@@ -2,14 +2,15 @@
 using Microsoft.Extensions.Caching.Memory;
 using SpaceHub.Application.Common;
 using SpaceHub.Application.Enums;
+using SpaceHub.Contracts.Enums;
+using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Infrastructure.Api;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record GetLaunchesQuery(ETimeFrame TimeFrame, string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<GetLaunchesResult>;
-public record GetLaunchesResult(List<LaunchViewModel> Launches, int TotalPagesCount);
+public record GetLaunchesQuery(ETimeFrame TimeFrame, string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<LaunchesVM>;
 
-public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesResult>
+public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM>
 {
     private readonly IMemoryCache _cache;
     private readonly ILaunchApi _launchApi;
@@ -20,7 +21,7 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
         _launchApi = launchApi;
     }
 
-    public async Task<GetLaunchesResult> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
+    public async Task<LaunchesVM> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
         var timeFrameStr = request.TimeFrame.ToString().ToLower();
@@ -33,8 +34,7 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
             });
 
         // TODO: Add null checks, etc
-
-        var launches = response.Launches.Select(x => new LaunchViewModel
+        var launches = response.Launches.Select(x => new LaunchVM
         {
             Id = x.Id,
             Name = x.Name,
@@ -48,20 +48,6 @@ public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, GetLaunchesR
             TimeToLaunch = x.Date - DateTime.Now
         }).ToList();
 
-        return new GetLaunchesResult(launches, response.Count);
+        return new LaunchesVM(launches, response.Count);
     }
-}
-
-public class LaunchViewModel
-{
-    public string Id { get; init; }
-    public string Name { get; init; }
-    public string Status { get; init; }
-    public DateTime? Date { get; init; }
-    public string ImageUrl { get; init; }
-    public string? MissionDescription { get; init; }
-    public string AgencyName { get; init; }
-    public string PadLocationName { get; init; }
-    public bool Upcoming { get; init; }
-    public TimeSpan? TimeToLaunch { get; set; }
 }

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\SpaceHub.Application.csproj" />
+    <ProjectReference Include="..\..\..\SpaceHub.Contracts\SpaceHub.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

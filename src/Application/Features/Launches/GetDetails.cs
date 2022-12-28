@@ -2,37 +2,15 @@
 using Microsoft.Extensions.Caching.Memory;
 using SpaceHub.Application.Enums;
 using SpaceHub.Application.Extensions;
+using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Api;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record GetLaunchDetailsQuery(string Id) : IRequest<LaunchDetailsViewModel>;
+public record GetLaunchDetailsQuery(string Id) : IRequest<LaunchDetailsVM>;
 
-public record LaunchDetailsViewModel
-{
-    public AgencyViewModel Agency { get; init; }
-    public RocketViewModel Rocket { get; init; }
-}
-
-public record AgencyViewModel
-{
-    public string Name { get; init; }
-    public string Description { get; init; }
-    public string ImageUrl { get; init; }
-}
-
-public record RocketViewModel
-{
-    public string Name { get; init; }
-    public string Description { get; init; }
-    public string ImageUrl { get; init; }
-    public List<RocketProperty> Properties { get; init; }
-}
-
-public record RocketProperty(string Name, string Value, string? Symbol);
-
-public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, LaunchDetailsViewModel>
+public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, LaunchDetailsVM>
 {
     private readonly IMemoryCache _cache;
     private readonly ILaunchApi _launchApi;
@@ -43,7 +21,7 @@ public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, La
         _launchApi = launchApi;
     }
 
-    public async Task<LaunchDetailsViewModel> Handle(GetLaunchDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<LaunchDetailsVM> Handle(GetLaunchDetailsQuery request, CancellationToken cancellationToken)
     {
         var result = await _cache.GetOrCreateAsync("launch" + request.Id, async entry =>
         {
@@ -59,7 +37,7 @@ public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, La
 
         long? launchCost = long.TryParse(rocketConfig.LaunchCost, out var val) ? val : null;
 
-        var properties = new List<RocketProperty>()
+        var properties = new List<RocketPropertyVM>()
         {
             new(ERocketProperty.Length.GetDisplayName(), PropertyAsString(rocketConfig.Length), ERocketProperty.Length.GetSymbol()),
             new(ERocketProperty.Diameter.GetDisplayName(), PropertyAsString(rocketConfig.Diameter), ERocketProperty.Diameter.GetSymbol()),
@@ -78,15 +56,15 @@ public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, La
                 ERocketProperty.LaunchSuccessPercent.GetSymbol()),
         };
 
-        return new LaunchDetailsViewModel
+        return new LaunchDetailsVM
         {
-            Agency = new AgencyViewModel
+            Agency = new AgencyVM
             {
                 Name = result.Agency.Name,
                 Description = result.Agency.Description,
                 ImageUrl = result.Agency.LogoUrl
             },
-            Rocket = new RocketViewModel
+            Rocket = new RocketVM
             {
                 Name = result.Rocket.Configuration.Name,
                 Description = result.Rocket.Configuration.Description,

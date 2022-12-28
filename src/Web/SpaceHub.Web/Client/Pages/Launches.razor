@@ -1,12 +1,10 @@
 ﻿@page "/launches"
 @inject HttpClient _httpClient
-@using Application.Enums;
-@using Application.Features.Launches;
-@using MediatR;
 @using MudBlazor
+@using SpaceHub.Contracts.ViewModels;
+@using SpaceHub.Contracts.Enums;
 @using SpaceHub.Web.Client.Utils;
 @using System.Timers;
-@using Application.Extensions;
 
 <style>
     @@media only screen and (max-width: 1280px) {
@@ -166,7 +164,7 @@
     [Inject]
     private IJSRuntime _jsRuntime { get; set; }
 
-    private GetLaunchesResult _viewModel;
+    private LaunchesVM _viewModel;
 
     private ETimeFrame _timeFrame = ETimeFrame.Upcoming;
     private string? _searchValue = null;
@@ -177,7 +175,7 @@
 
     private class LaunchDetails
     {
-        public LaunchDetailsViewModel? Data { get; set; }
+        public LaunchDetailsVM? Data { get; set; }
         public bool Visible { get; set; } = false;
     }
 
@@ -227,7 +225,7 @@
             .AddParameter("pageNumber", _pageNumber)
             .AddParameter("itemsPerPage", _itemsPerPage)
             .Url;
-        _viewModel = await _httpClient.GetFromJsonAsync<GetLaunchesResult>(url);
+        _viewModel = await _httpClient.GetFromJsonAsync<LaunchesVM>(url);
     }
 
     private async Task OnTimeFrameChanged(ETimeFrame timeFrame)
@@ -269,7 +267,7 @@
             StateHasChanged();
 
             var url = new UrlBuilder("api/space/launches/" + id).Url;
-            var data = await _httpClient.GetFromJsonAsync<LaunchDetailsViewModel>(url);
+            var data = await _httpClient.GetFromJsonAsync<LaunchDetailsVM>(url);
             _launchesDetails[id].Data = data;
         }
         else
