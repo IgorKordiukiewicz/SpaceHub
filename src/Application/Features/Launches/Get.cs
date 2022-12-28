@@ -10,7 +10,7 @@ namespace SpaceHub.Application.Features.Launches;
 
 public record GetLaunchesQuery(ETimeFrame TimeFrame, string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<LaunchesVM>;
 
-public class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM>
+internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM>
 {
     private readonly IMemoryCache _cache;
     private readonly ILaunchApi _launchApi;

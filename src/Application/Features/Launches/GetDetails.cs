@@ -10,7 +10,7 @@ namespace SpaceHub.Application.Features.Launches;
 
 public record GetLaunchDetailsQuery(string Id) : IRequest<LaunchDetailsVM>;
 
-public class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, LaunchDetailsVM>
+internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, LaunchDetailsVM>
 {
     private readonly IMemoryCache _cache;
     private readonly ILaunchApi _launchApi;

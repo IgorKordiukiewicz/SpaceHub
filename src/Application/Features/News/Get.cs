@@ -8,7 +8,7 @@ namespace SpaceHub.Application.Features.News;
 
 public record GetNewsQuery(string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<ArticlesVM>;
 
-public class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
+internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
 {
     private readonly IArticleApi _articleApi;
     private readonly IMemoryCache _cache;
