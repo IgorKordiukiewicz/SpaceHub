@@ -6,11 +6,9 @@ namespace SpaceHub.Application.Enums;
 
 public enum ERocketProperty
 {
-    [Display(Name = "Length")]
     [Symbol("m")]
     Length,
 
-    [Display(Name = "Diameter")]
     [Symbol("m")]
     Diameter,
 

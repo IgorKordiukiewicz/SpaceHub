@@ -44,7 +44,7 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM
             MissionDescription = x.Mission?.Description,
             AgencyName = x.Agency.Name,
             PadLocationName = x.Pad.Location.Name,
-            Upcoming = x.Date > DateTime.Now,
+            Upcoming = x.Date > DateTime.Now, // TODO: Move to domain?
             TimeToLaunch = x.Date - DateTime.Now
         }).ToList();
 

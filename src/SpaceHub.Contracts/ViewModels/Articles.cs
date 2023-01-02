@@ -5,10 +5,10 @@ public record ArticlesVM(IReadOnlyCollection<ArticleVM> Articles, int TotalPages
 // TODO: Handle the nullable warnings
 public record ArticleVM
 {
-    public string Title { get; init; }
-    public string Summary { get; init; }
-    public string ImageUrl { get; init; }
-    public string NewsSite { get; init; }
-    public DateTime PublishDate { get; init; }
-    public string Url { get; init; }
+    public required string Title { get; init; }
+    public required string Summary { get; init; }
+    public required string ImageUrl { get; init; }
+    public required string NewsSite { get; init; }
+    public required DateTime PublishDate { get; init; }
+    public required string Url { get; init; }
 }
