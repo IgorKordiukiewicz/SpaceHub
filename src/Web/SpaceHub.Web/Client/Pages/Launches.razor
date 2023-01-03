@@ -219,7 +219,7 @@
 
     private async Task UpdateLaunches()
     {
-        var url = new UrlBuilder("api/space/launches")
+        var url = new UrlBuilder("api/launches")
             .AddParameter("timeFrame", _timeFrame)
             .AddParameter("searchValue", _searchValue)
             .AddParameter("pageNumber", _pageNumber)
@@ -266,7 +266,7 @@
             });
             StateHasChanged();
 
-            var url = new UrlBuilder("api/space/launches/" + id).Url;
+            var url = new UrlBuilder("api/launches/" + id).Url;
             var data = await _httpClient.GetFromJsonAsync<LaunchDetailsVM>(url);
             _launchesDetails[id].Data = data;
         }
