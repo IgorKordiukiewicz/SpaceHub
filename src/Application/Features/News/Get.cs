@@ -3,6 +3,8 @@ using Microsoft.Extensions.Caching.Memory;
 using SpaceHub.Application.Common;
 using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Infrastructure.Api;
+using SpaceHub.Infrastructure.Data;
+using SpaceHub.Infrastructure.Data.Models;
 
 namespace SpaceHub.Application.Features.News;
 
@@ -12,11 +14,13 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
 {
     private readonly IArticleApi _articleApi;
     private readonly IMemoryCache _cache;
+    private readonly DbContext _db;
 
-    public GetNewsHandler(IArticleApi articleApi, IMemoryCache cache)
+    public GetNewsHandler(IArticleApi articleApi, IMemoryCache cache, DbContext db)
     {
         _articleApi = articleApi;
         _cache = cache;
+        _db = db;
     }
 
     public async Task<ArticlesVM> Handle(GetNewsQuery request, CancellationToken cancellationToken)
