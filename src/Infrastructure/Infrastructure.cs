@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Refit;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
+using SpaceHub.Infrastructure.Services;
 
 namespace SpaceHub.Infrastructure;
 
@@ -22,6 +23,7 @@ public static class Infrastructure
 
         services.AddSingleton(x => new DbContext(configuration.GetConnectionString("MongoDB"), configuration["DatabaseName"]));
         //var connectionString = configuration.GetConnectionString("MongoDB") ?? throw new ArgumentNullException(); TODO ??? ConfigurationException?
+        services.AddScoped<IDataUpdateService, DataUpdateService>();
 
         return services;
     }

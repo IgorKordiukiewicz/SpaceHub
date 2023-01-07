@@ -10,4 +10,7 @@ public interface IArticleApi
 
     [Get("/articles/count/?_title_contains={searchValue}")]
     Task<int> GetArticlesCountAsync(string? searchValue);
+
+    [Get("/articles?_publishedAt_gt={startDate}&_publishedAt_lt={endDate}&_limit=1000")]
+    Task<IReadOnlyCollection<ArticleResponse>> GetArticlesPublishedBetweenAsync(string startDate, string endDate);
 }
