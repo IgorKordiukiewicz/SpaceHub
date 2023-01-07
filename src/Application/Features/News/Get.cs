@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
 using SpaceHub.Contracts.ViewModels;
+using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
@@ -38,7 +39,7 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
         var filteredArticles = new List<ArticleModel>();
         foreach (var article in articles)
         {
-            if(!ArticleMatchesSearchCriteria(request.SearchValue, article.Title, article.Summary))
+            if(!ArticleHelper.ArticleMatchesSearchCriteria(request.SearchValue, article.Title, article.Summary))
             {
                 continue;
             }
@@ -63,14 +64,5 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
             }).ToList();
 
         return new ArticlesVM(articlesViewModels, totalPagesCount);
-    }
-
-    // TODO: Move to domain
-    private bool ArticleMatchesSearchCriteria(string searchValue, string title, string summary)
-    {
-        // TODO: Improve search, because simple contains might include unwanted cases,
-        // e.g. if search = 'mars', and article contains word 'marshmallow' the article will be included
-        return title.Contains(searchValue, StringComparison.OrdinalIgnoreCase) 
-            || summary.Contains(searchValue, StringComparison.OrdinalIgnoreCase);
     }
 }
