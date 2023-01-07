@@ -56,4 +56,17 @@ public class NamesTests
 
         result.IsSuccessful.Should().BeTrue();
     }
+
+    [Fact]
+    public void DbModels_ShouldHaveModelSuffix()
+    {
+        var result = Types.InCurrentDomain()
+            .That()
+            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Infrastructure) + ".Data.Models")
+            .Should()
+            .HaveNameEndingWith("Model")
+            .GetResult();
+
+        result.IsSuccessful.Should().BeTrue();
+    }
 }
