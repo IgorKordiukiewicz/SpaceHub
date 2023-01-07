@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
@@ -24,10 +25,10 @@ public class DataUpdateService : IDataUpdateService
 
     public async Task UpdateArticles()
     {
-        var lastUpdateTime = _db.CollectionsLastUpdates.AsQueryable<CollectionLastUpdateModel>()
+        var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable<CollectionLastUpdateModel>()
             .Where(x => x.CollectionType == ECollection.Articles)
             .Select(x => x.LastUpdate)
-            .Single();
+            .SingleAsync();
 
         var now = DateTime.UtcNow; // TODO: Use some kind of interface for DateTime
         var articles = await _articleApi.GetArticlesPublishedBetweenAsync(lastUpdateTime.ToQueryParameter(), now.ToQueryParameter());
