@@ -7,7 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+var infrastructureSettingsSection = builder.Configuration.GetSection("InfrastructureSettings");
+builder.Services.Configure<InfrastructureSettings>(infrastructureSettingsSection);
+var infrastructureSettings = infrastructureSettingsSection.Get<InfrastructureSettings>();
+
+builder.Services.ConfigureInfrastructureServices(infrastructureSettings);
 builder.Services.ConfigureApplicationServices();
 
 var app = builder.Build();

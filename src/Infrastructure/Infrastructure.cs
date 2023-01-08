@@ -9,20 +9,22 @@ namespace SpaceHub.Infrastructure;
 
 public static class Infrastructure
 {
-    public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, InfrastructureSettings settings)
     {
+        ArgumentNullException.ThrowIfNull(settings, nameof(settings));
+        ArgumentException.ThrowIfNullOrEmpty(settings.DatabaseName, nameof(settings.DatabaseName));
+
         services.AddRefitClient<IArticleApi>().ConfigureHttpClient(x =>
         {
-            x.BaseAddress = new Uri(configuration["Api:Article:BaseAddress"]);
+            x.BaseAddress = new Uri(settings.Api.Article.BaseAddress);
         });
 
         services.AddRefitClient<ILaunchApi>().ConfigureHttpClient(x =>
         {
-            x.BaseAddress = new Uri(configuration["Api:Launch:BaseAddress"]);
+            x.BaseAddress = new Uri(settings.Api.Launch.BaseAddress);
         });
 
-        services.AddSingleton(x => new DbContext(configuration.GetConnectionString("MongoDB"), configuration["DatabaseName"]));
-        //var connectionString = configuration.GetConnectionString("MongoDB") ?? throw new ArgumentNullException(); TODO ??? ConfigurationException?
+        services.AddSingleton<DbContext>();
         services.AddScoped<IDataUpdateService, DataUpdateService>();
 
         return services;

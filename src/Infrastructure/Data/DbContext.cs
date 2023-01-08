@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using SpaceHub.Infrastructure.Data.Models;
 
 namespace SpaceHub.Infrastructure.Data;
@@ -11,11 +12,11 @@ public class DbContext
     public IMongoCollection<ArticleModel> Articles { get; set; }
     public IMongoCollection<CollectionLastUpdateModel> CollectionsLastUpdates { get; set; }
 
-    public DbContext(string connectionString, string dbName)
+    public DbContext(IOptions<InfrastructureSettings> settingsOptions)
     {
-        // Both connectionString and dbName can't be null
-        ArgumentNullException.ThrowIfNull(connectionString, nameof(connectionString));
-        ArgumentNullException.ThrowIfNull(dbName, nameof(dbName));
+        var settings = settingsOptions.Value;
+        var connectionString = settings.ConnectionStrings.MongoDB ?? throw new ArgumentNullException(nameof(settings.ConnectionStrings.MongoDB));
+        var dbName = settings.DatabaseName ?? throw new ArgumentNullException(nameof(settings.DatabaseName));
 
         _client = new MongoClient(connectionString);
         _db = _client.GetDatabase(dbName);
