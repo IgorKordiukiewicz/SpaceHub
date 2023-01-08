@@ -2,5 +2,8 @@
 
 public enum ECollection
 {
-    Articles
+    Articles,
+    Launches,
+    Rockets,
+    Agencies
 }

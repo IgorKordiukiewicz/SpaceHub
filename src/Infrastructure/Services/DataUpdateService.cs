@@ -2,10 +2,13 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using SpaceHub.Domain.Enums;
 using SpaceHub.Infrastructure.Api;
+using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
+using System.Globalization;
 
 namespace SpaceHub.Infrastructure.Services;
 
@@ -34,7 +37,7 @@ public class DataUpdateService : BackgroundService
 
     private async Task UpdateArticles()
     {
-        var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable<CollectionLastUpdateModel>()
+        var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
             .Where(x => x.CollectionType == ECollection.Articles)
             .Select(x => x.LastUpdate)
             .SingleAsync();

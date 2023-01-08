@@ -1,4 +1,4 @@
-﻿namespace SpaceHub.Application.Attributes;
+﻿namespace SpaceHub.Domain.Attributes;
 
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public class SymbolAttribute : Attribute

@@ -15,14 +15,10 @@ public record GetNewsQuery(string SearchValue, int PageNumber, int ItemsPerPage)
 
 internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
 {
-    private readonly IArticleApi _articleApi;
-    private readonly IMemoryCache _cache;
     private readonly DbContext _db;
 
-    public GetNewsHandler(IArticleApi articleApi, IMemoryCache cache, DbContext db)
+    public GetNewsHandler(DbContext db)
     {
-        _articleApi = articleApi;
-        _cache = cache;
         _db = db;
     }
 

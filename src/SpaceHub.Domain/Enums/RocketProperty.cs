@@ -1,18 +1,17 @@
-﻿using SpaceHub.Application.Attributes;
+﻿using SpaceHub.Domain.Attributes;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
-namespace SpaceHub.Application.Enums;
+namespace SpaceHub.Domain.Enums;
 
 public enum ERocketProperty
 {
     [Symbol("m")]
     Length,
 
-    [Symbol("m")]
+    [Symbol("m")] // TODO: maybe instead define another enum called EUnit -> Meter, Kilogram, Ton, kN, etc. and they will also have display attrbitues
     Diameter,
 
-    [Display(Name = "Max Stages")]
+    [Display(Name = "Max Stages")] // TODO: Should display attributes be in domain layer?
     MaxStages,
 
     [Display(Name = "Launch Cost")]

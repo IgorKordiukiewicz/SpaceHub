@@ -13,6 +13,12 @@ public record RocketConfigResponse
     [JsonPropertyName("name")]
     public string Name { get; init; }
 
+    [JsonPropertyName("active")]
+    public bool Active { get; init; }
+
+    [JsonPropertyName("reusable")]
+    public bool Reusable { get; init; }
+
     [JsonPropertyName("family")]
     public string Family { get; init; }
 

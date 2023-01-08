@@ -1,8 +1,8 @@
-﻿using SpaceHub.Application.Attributes;
+﻿using SpaceHub.Domain.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace SpaceHub.Application.Extensions;
+namespace SpaceHub.Domain.Extensions;
 
 public static class EnumExtensions
 {

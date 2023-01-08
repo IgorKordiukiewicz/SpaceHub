@@ -16,4 +16,8 @@
     <PackageReference Include="Refit.Newtonsoft.Json" Version="6.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SpaceHub.Domain\SpaceHub.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

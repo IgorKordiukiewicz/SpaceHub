@@ -1,7 +1,6 @@
-﻿using SpaceHub.Application.Attributes;
-using SpaceHub.Application.Extensions;
+﻿using SpaceHub.Domain.Attributes;
+using SpaceHub.Domain.Extensions;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
 namespace SpaceHub.UnitTests.Application.Extensions;
 

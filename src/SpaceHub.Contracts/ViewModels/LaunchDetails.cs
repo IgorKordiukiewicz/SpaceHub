@@ -9,15 +9,15 @@ public record LaunchDetailsVM
 public record AgencyVM
 {
     public required string Name { get; init; }
-    public string? Description { get; init; }
-    public string? ImageUrl { get; init; }
+    public string Description { get; init; } = string.Empty;
+    public string ImageUrl { get; init; } = string.Empty;
 }
 
 public record RocketVM
 {
     public required string Name { get; init; }
-    public required string Description { get; init; }
-    public string? ImageUrl { get; init; }
+    public string Description { get; init; } = string.Empty;
+    public string ImageUrl { get; init; } = string.Empty;
     public List<RocketPropertyVM> Properties { get; init; } = new();
 }
 
