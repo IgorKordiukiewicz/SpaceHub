@@ -25,7 +25,7 @@ public static class Infrastructure
         });
 
         services.AddSingleton<DbContext>();
-        services.AddScoped<IDataUpdateService, DataUpdateService>();
+        services.AddHostedService<DataUpdateService>();
 
         return services;
     }

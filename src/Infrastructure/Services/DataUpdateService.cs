@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
@@ -7,23 +9,30 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Infrastructure.Services;
 
-public interface IDataUpdateService
-{
-    Task UpdateArticles();
-}
-
-public class DataUpdateService : IDataUpdateService
+public class DataUpdateService : BackgroundService
 {
     private readonly IArticleApi _articleApi;
     private readonly DbContext _db;
+    private readonly PeriodicTimer _timer;
 
-    public DataUpdateService(IArticleApi articleApi, DbContext db)
+    public DataUpdateService(IArticleApi articleApi, DbContext db, IOptions<InfrastructureSettings> settingsOptions)
     {
         _articleApi = articleApi;
         _db = db;
+
+        _timer = new PeriodicTimer(TimeSpan.FromMinutes(settingsOptions.Value.DataUpdateEveryXMinutes));
     }
 
-    public async Task UpdateArticles()
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while(await _timer.WaitForNextTickAsync(stoppingToken)
+            && !stoppingToken.IsCancellationRequested)
+        {
+            await UpdateArticles();
+        }
+    }
+
+    private async Task UpdateArticles()
     {
         var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable<CollectionLastUpdateModel>()
             .Where(x => x.CollectionType == ECollection.Articles)
