@@ -13,7 +13,7 @@ public record LaunchResponse
     public LaunchStatusResponse Status { get; init; }
 
     [JsonPropertyName("net")]
-    public DateTime? Date { get; init; }
+    public DateTime Date { get; init; }
 
     [JsonPropertyName("window_start")]
     public DateTime? WindowStart { get; init; }
