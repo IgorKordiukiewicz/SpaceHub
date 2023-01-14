@@ -44,7 +44,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand>
             var newArticles = new List<ArticleModel>();
             foreach (var article in articles)
             {
-                newArticles.Add(CreateModel(article);
+                newArticles.Add(CreateModel(article));
             }
 
             await _db.Articles.InsertManyAsync(newArticles);

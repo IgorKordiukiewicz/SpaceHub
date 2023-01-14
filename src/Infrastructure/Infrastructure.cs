@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Refit;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
-using SpaceHub.Infrastructure.Services;
 
 namespace SpaceHub.Infrastructure;
 
@@ -25,7 +23,6 @@ public static class Infrastructure
         });
 
         services.AddSingleton<DbContext>();
-        services.AddHostedService<DataUpdateService>();
 
         return services;
     }

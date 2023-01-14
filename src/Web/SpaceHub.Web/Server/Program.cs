@@ -1,3 +1,4 @@
+using Hangfire;
 using SpaceHub.Application;
 using SpaceHub.Infrastructure;
 using SpaceHub.Web.Server;
@@ -13,6 +14,8 @@ var infrastructureSettings = infrastructureSettingsSection.Get<InfrastructureSet
 
 builder.Services.ConfigureInfrastructureServices(infrastructureSettings);
 builder.Services.ConfigureApplicationServices();
+
+builder.Services.ConfigureHangfire(infrastructureSettings);
 
 var app = builder.Build();
 
@@ -34,6 +37,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseHangfireDashboard();
+app.AddJobs();
 
 app.MapRazorPages();
 app.MapControllers();
