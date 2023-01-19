@@ -16,6 +16,7 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
 {
     private readonly DbContext _db;
     private readonly ILaunchApi _api;
+    private const int MaxLaunchesPerRequest = 25;
 
     public UpdateLaunchesHandler(DbContext db, ILaunchApi api)
     {
@@ -57,19 +58,22 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
             .Select(x => x.LastUpdate)
             .SingleAsync();
 
-        var launches = new List<LaunchDetailResponse>();
-        int offset = 0;
-        // TODO: Inefficient, maybe break when Launches.Count < 100 (limit) to avoid having to call api one more time
-        while (true)
-        {
-            var result = await _api.GetLaunchesUpdatedBetweenAsync(lastUpdateTime.ToQueryParameter(), DateTime.UtcNow.ToQueryParameter(), offset);
-            if (!result.Launches.Any())
-            {
-                break;
-            }
+        var startDate = lastUpdateTime.ToQueryParameter();
+        var endDate = DateTime.UtcNow.ToQueryParameter();
+        var count = (await _api.GetLaunchesUpdatedBetweenCountAsync(startDate, endDate))?.Count ?? 0;
 
-            launches.AddRange(result.Launches);
-            offset += 100;
+        int requestsRequired = (int)Math.Ceiling((float)count / MaxLaunchesPerRequest);
+        var tasks = new List<Task<LaunchesDetailResponse>>();
+        for(int i = 0; i < requestsRequired; ++i)
+        {
+            tasks.Add(_api.GetLaunchesUpdatedBetweenAsync(startDate, endDate, MaxLaunchesPerRequest, i * MaxLaunchesPerRequest));
+        }
+        await Task.WhenAll(tasks);
+
+        var launches = new List<LaunchDetailResponse>();
+        foreach (var task in tasks)
+        {
+            launches.AddRange(task.Result.Launches);
         }
 
         return launches;

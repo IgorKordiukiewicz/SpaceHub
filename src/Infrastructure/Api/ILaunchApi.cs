@@ -5,6 +5,9 @@ namespace SpaceHub.Infrastructure.Api;
 
 public interface ILaunchApi
 {
-    [Get("/launnch?mode=detailed&last_updated__gte={startDate}&last_updated__lte={endDate}&limit=100&offset={offset}")]
-    Task<LaunchesDetailResponse> GetLaunchesUpdatedBetweenAsync(string startDate, string endDate, int offset);
+    [Get("/launch?mode=detailed&last_updated__gte={startDate}&last_updated__lte={endDate}&limit={limit}&offset={offset}")]
+    Task<LaunchesDetailResponse> GetLaunchesUpdatedBetweenAsync(string startDate, string endDate, int limit, int offset);
+
+    [Get("/launch?mode=list&last_updated__gte={startDate}&last_updated__lte={endDate}&limit=1")]
+    Task<MultiElementResponse> GetLaunchesUpdatedBetweenCountAsync(string startDate, string endDate);
 }
