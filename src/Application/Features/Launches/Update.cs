@@ -7,6 +7,7 @@ using SpaceHub.Infrastructure.Enums;
 using SpaceHub.Infrastructure.Data;
 using MongoDB.Driver.Linq;
 using System.Globalization;
+using SpaceHub.Application.Common;
 
 namespace SpaceHub.Application.Features.Launches;
 
@@ -27,6 +28,11 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
     public async Task<Unit> Handle(UpdateLaunchesCommand request, CancellationToken cancellationToken)
     {
         var launches = await GetLaunchesFromApi();
+        if(!launches.Any())
+        {
+            return Unit.Value;
+        }
+
         var existingIds = _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet();
 
         var writes = new List<WriteModel<LaunchModel>>();
@@ -62,7 +68,7 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
         var endDate = DateTime.UtcNow.ToQueryParameter();
         var count = (await _api.GetLaunchesUpdatedBetweenCountAsync(startDate, endDate))?.Count ?? 0;
 
-        int requestsRequired = (int)Math.Ceiling((float)count / MaxLaunchesPerRequest);
+        int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxLaunchesPerRequest);
         var tasks = new List<Task<LaunchesDetailResponse>>();
         for(int i = 0; i < requestsRequired; ++i)
         {

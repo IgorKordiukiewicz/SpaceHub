@@ -10,4 +10,10 @@ public interface ILaunchApi
 
     [Get("/launch?mode=list&last_updated__gte={startDate}&last_updated__lte={endDate}&limit=1")]
     Task<MultiElementResponse> GetLaunchesUpdatedBetweenCountAsync(string startDate, string endDate);
+
+    [Get("/config/launcher/?mode=list&limit=1")]
+    Task<MultiElementResponse> GetRocketsCountAsync();
+
+    [Get("/config/launcher/?mode=detailed&limit={limit}&offset={offset}")]
+    Task<RocketsDetailResponse> GetRockets(int limit, int offset);
 }
