@@ -16,4 +16,10 @@ public interface ILaunchApi
 
     [Get("/config/launcher/?mode=detailed&limit={limit}&offset={offset}")]
     Task<RocketsDetailResponse> GetRockets(int limit, int offset);
+
+    [Get("/agencies/?limit=1")]
+    Task<MultiElementResponse> GetAgenciesCount();
+
+    [Get("/agencies/?mode=detailed&limit={limit}&offset={offset}")]
+    Task<AgenciesDetailResponse> GetAgencies(int limit, int offset);
 }

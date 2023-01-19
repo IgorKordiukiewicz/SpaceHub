@@ -8,6 +8,7 @@ using MediatR;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Application.Features.Rockets;
+using SpaceHub.Application.Features.Agencies;
 
 namespace SpaceHub.Web.Server;
 
@@ -59,6 +60,11 @@ public static class Hangfire
         recurringJobManager.AddOrUpdate(
             "Update rockets",
             () => mediator.Send(new UpdateRocketsCommand(), CancellationToken.None),
+            "0 1 * * *",
+            utcZone);
+        recurringJobManager.AddOrUpdate(
+            "Update agencies",
+            () => mediator.Send(new UpdateAgenciesCommand(), CancellationToken.None),
             "0 1 * * *",
             utcZone);
     }
