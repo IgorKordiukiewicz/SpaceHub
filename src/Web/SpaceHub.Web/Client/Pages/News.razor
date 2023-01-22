@@ -3,6 +3,7 @@
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Utils;
+@using System.Net;
 
 @if(_viewModel is not null)
 {
@@ -62,7 +63,15 @@
             .AddParameter("pageNumber", _pageNumber)
             .AddParameter("itemsPerPage", _itemsPerPage)
             .Url;
-        _viewModel = await _httpClient.GetFromJsonAsync<ArticlesVM>(url);
+        var response = await _httpClient.GetAsync(url);
+        if (response.IsSuccessStatusCode)
+        {
+            _viewModel = await _httpClient.GetFromJsonAsync<ArticlesVM>(url);
+        }
+        else if (response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            // TODO: Bad request - pop-up or ?
+        }
     }
 
     private async Task OnSearchChanged(string searchValue)

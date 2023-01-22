@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using LanguageExt.Common;
+using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
+using SpaceHub.Application.Exceptions;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Infrastructure.Api;
@@ -10,9 +12,9 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record GetLaunchesQuery(ETimeFrame TimeFrame, string? SearchValue, int PageNumber, int ItemsPerPage) : IRequest<LaunchesVM>;
+public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<LaunchesVM>>;
 
-internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM>
+internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
 {
     private readonly DbContext _db;
 
@@ -21,8 +23,18 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, LaunchesVM
         _db = db;
     }
 
-    public async Task<LaunchesVM> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<LaunchesVM>> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
+        // TODO: Refactor validation -> use FluentValidiation, also the query params can't be null
+        if(request.PageNumber <= 0)
+        {
+            return new Result<LaunchesVM>(new ValidationException("Page number has to be > 0."));
+        }
+        if(request.ItemsPerPage <= 0)
+        {
+            return new Result<LaunchesVM>(new ValidationException("Items per page have to be > 0."));
+        }
+
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
         var now = DateTime.UtcNow;
         

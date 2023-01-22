@@ -5,6 +5,7 @@
 @using SpaceHub.Contracts.Enums;
 @using SpaceHub.Web.Client.Utils;
 @using System.Timers;
+@using System.Net;
 
 <style>
     @@media only screen and (max-width: 1280px) {
@@ -225,7 +226,16 @@
             .AddParameter("pageNumber", _pageNumber)
             .AddParameter("itemsPerPage", _itemsPerPage)
             .Url;
-        _viewModel = await _httpClient.GetFromJsonAsync<LaunchesVM>(url);
+        // TODO: Move request handling to helper class
+        var response = await _httpClient.GetAsync(url);
+        if(response.IsSuccessStatusCode)
+        {
+            _viewModel = await _httpClient.GetFromJsonAsync<LaunchesVM>(url);
+        }
+        else if(response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            // TODO: Bad request - pop-up or ?
+        }
     }
 
     private async Task OnTimeFrameChanged(ETimeFrame timeFrame)
@@ -267,9 +277,18 @@
             StateHasChanged();
 
             var url = new UrlBuilder("api/launches/" + id).Url;
-            var data = await _httpClient.GetFromJsonAsync<LaunchDetailsVM>(url);
-            _launchesDetails[id].Data = data;
-        }
+            var response = await _httpClient.GetAsync(url);
+            if(response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<LaunchDetailsVM>();
+                _launchesDetails[id].Data = data;
+            }
+            else if(response.StatusCode == HttpStatusCode.NotFound)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                // TODO: Display pop-up & hide the expandable view?
+            }
+        }   
         else
         {
             launchDetails.Visible = !launchDetails.Visible;

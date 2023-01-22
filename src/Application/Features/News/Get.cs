@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using LanguageExt.Common;
+using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
+using SpaceHub.Application.Exceptions;
 using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Api;
@@ -11,9 +13,9 @@ using SpaceHub.Infrastructure.Data.Models;
 
 namespace SpaceHub.Application.Features.News;
 
-public record GetNewsQuery(string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<ArticlesVM>;
+public record GetNewsQuery(string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<ArticlesVM>>;
 
-internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
+internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>>
 {
     private readonly DbContext _db;
 
@@ -22,8 +24,17 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
         _db = db;
     }
 
-    public async Task<ArticlesVM> Handle(GetNewsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ArticlesVM>> Handle(GetNewsQuery request, CancellationToken cancellationToken)
     {
+        if (request.PageNumber <= 0)
+        {
+            return new Result<ArticlesVM>(new ValidationException("Page number has to be > 0."));
+        }
+        if (request.ItemsPerPage <= 0)
+        {
+            return new Result<ArticlesVM>(new ValidationException("Items per page have to be > 0."));
+        }
+
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
 
         // TODO: To improve performance, maybe add where clause to pre-filter articles by search
@@ -44,7 +55,7 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, ArticlesVM>
         }
 
         var totalArticlesCount = filteredArticles.Count;
-        var totalPagesCount = Pagination.GetPagesCount((int)totalArticlesCount, request.ItemsPerPage);
+        var totalPagesCount = Pagination.GetPagesCount(totalArticlesCount, request.ItemsPerPage);
 
         var articlesViewModels = filteredArticles
             .Skip(offset)

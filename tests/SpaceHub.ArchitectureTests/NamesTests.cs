@@ -69,4 +69,17 @@ public class NamesTests
 
         result.IsSuccessful.Should().BeTrue();
     }
+
+    [Fact]
+    public void Exceptions_ShouldHaveExceptionSuffix()
+    {
+        var result = Types.InCurrentDomain()
+            .That()
+            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application) + ".Exceptions")
+            .Should()
+            .HaveNameEndingWith("Exception")
+            .GetResult();
+
+        result.IsSuccessful.Should().BeTrue();
+    }
 }

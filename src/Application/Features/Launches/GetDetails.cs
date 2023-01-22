@@ -9,12 +9,14 @@ using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 using MongoDB.Driver.Linq;
 using SpaceHub.Domain.Models;
+using LanguageExt.Common;
+using SpaceHub.Application.Exceptions;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record GetLaunchDetailsQuery(string Id) : IRequest<LaunchDetailsVM>;
+public record GetLaunchDetailsQuery(string Id) : IRequest<Result<LaunchDetailsVM>>;
 
-internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, LaunchDetailsVM>
+internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, Result<LaunchDetailsVM>>
 {
     private readonly DbContext _db;
 
@@ -23,18 +25,18 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
         _db = db;
     }
 
-    public async Task<LaunchDetailsVM> Handle(GetLaunchDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<LaunchDetailsVM>> Handle(GetLaunchDetailsQuery request, CancellationToken cancellationToken)
     {
         var launch = await _db.Launches.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == request.Id);
         if (launch is null)
         {
-            // TODO
+            return new Result<LaunchDetailsVM>(new RecordNotFoundException($"Launch with id {request.Id} not found."));
         }
         
         var agency = await _db.Agencies.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == launch.AgencyApiId);
         if (agency is null)
         {
-            // TODO
+            return new Result<LaunchDetailsVM>(new RecordNotFoundException($"Agency with id {launch.AgencyApiId} not found."));
         }
         
         var rocket = await _db.Rockets.AsQueryable()
@@ -67,7 +69,7 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
             }).FirstOrDefaultAsync();
         if (rocket is null)
         {
-            // TODO
+            return new Result<LaunchDetailsVM>(new RecordNotFoundException($"Rocket with id {launch.RocketApiId} not found."));
         }
         
         static string PropertyAsString<T>(T? value)
@@ -93,7 +95,7 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
             new(ERocketProperty.FirstFlight.GetDisplayName(), PropertyAsString(rocket.FirstFlight), ERocketProperty.FirstFlight.GetSymbol()),
             new(ERocketProperty.LaunchSuccessPercent.GetDisplayName(), PropertyAsString(rocket.LaunchSuccess), ERocketProperty.LaunchSuccessPercent.GetSymbol()),
         };
-        
+
         return new LaunchDetailsVM
         {
             Agency = new AgencyVM
