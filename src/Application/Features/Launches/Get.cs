@@ -12,6 +12,7 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
+// TODO: Search not working
 public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<LaunchesVM>>;
 
 internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
