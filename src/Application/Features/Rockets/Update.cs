@@ -47,7 +47,7 @@ internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand>
             }
         }
 
-        var _ = await _db.Rockets.BulkWriteAsync(writes);
+        _ = await _db.Rockets.BulkWriteAsync(writes);
 
         await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Rockets,

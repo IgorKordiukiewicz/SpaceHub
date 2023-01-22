@@ -51,7 +51,7 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
             }
         }
 
-        var _ = await _db.Agencies.BulkWriteAsync(writes);
+        _ = await _db.Agencies.BulkWriteAsync(writes);
 
         await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Agencies,

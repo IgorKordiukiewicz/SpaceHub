@@ -48,7 +48,7 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
             }
         }
 
-        var _ = await _db.Launches.BulkWriteAsync(writes);
+        _ = await _db.Launches.BulkWriteAsync(writes);
 
         await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Launches,
