@@ -1,6 +1,10 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using MongoDB.Driver;
+using OneOf;
+using Refit;
 using SpaceHub.Application.Common;
+using SpaceHub.Application.Errors;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -9,9 +13,9 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Application.Features.Agencies;
 
-public record UpdateAgenciesCommand() : IRequest;
+public record UpdateAgenciesCommand() : IRequest<Result>;
 
-internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
+internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand, Result>
 {
     private readonly DbContext _db;
     private readonly ILaunchApi _api;
@@ -23,13 +27,19 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
         _api = api;
     }
 
-    public async Task<Unit> Handle(UpdateAgenciesCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateAgenciesCommand request, CancellationToken cancellationToken)
     {
-        var agencies = await GetAgenciesFromApi();
+        var agenciesResult = await GetAgenciesFromApi();
+        if(!agenciesResult.TryPickT0(out var agencies, out var apiError))
+        {
+            return Result.Fail(apiError);
+        }
+
         if (!agencies.Any())
         {
-            return Unit.Value;
+            return Result.Ok();
         }
+
         var existingIds = _db.Agencies.AsQueryable().Select(x => x.ApiId).ToHashSet();
 
         var writes = new List<WriteModel<AgencyModel>>();
@@ -45,21 +55,30 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
             }
         }
 
-        var writeResult = await _db.Agencies.BulkWriteAsync(writes);
+        if(writes.Any())
+        {
+            _ = await _db.Agencies.BulkWriteAsync(writes);
+        }
 
-        await _db.CollectionsLastUpdates.UpdateOneAsync(
+        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Agencies,
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
 
-        return Unit.Value;
+        return Result.Ok();
     }
 
-    private async Task<List<AgencyDetailResponse>> GetAgenciesFromApi()
+    private async Task<OneOf<List<AgencyDetailResponse>, ApiError>> GetAgenciesFromApi()
     {
-        var count = (await _api.GetRocketsCountAsync())?.Count ?? 0;
+        var countResponse = await _api.GetAgenciesCount();
+        if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
+        {
+            return countResponseError;
+        }
+
+        var count = countResponseContent.Count;
         int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxAgenciesPerRequest);
 
-        var tasks = new List<Task<AgenciesDetailResponse>>();
+        var tasks = new List<Task<IApiResponse<AgenciesDetailResponse>>>();
         for (int i = 0; i < requestsRequired; ++i)
         {
             tasks.Add(_api.GetAgencies(MaxAgenciesPerRequest, i * MaxAgenciesPerRequest));
@@ -69,7 +88,12 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
         var agencies = new List<AgencyDetailResponse>();
         foreach (var task in tasks)
         {
-            agencies.AddRange(task.Result.Agencies);
+            if(!task.Result.GetContentOrError().TryPickT0(out var agencyResponseContent, out var agencyResponseError))
+            {
+                return agencyResponseError;
+            }
+
+            agencies.AddRange(agencyResponseContent.Agencies);
         }
 
         return agencies;

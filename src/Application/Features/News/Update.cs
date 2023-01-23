@@ -1,6 +1,9 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using SpaceHub.Application.Common;
+using SpaceHub.Application.Errors;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -9,9 +12,9 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Application.Features.News;
 
-public record UpdateArticlesCommand() : IRequest;
+public record UpdateArticlesCommand() : IRequest<Result>;
 
-internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand>
+internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Result>
 {
     private readonly DbContext _db;
     private readonly IArticleApi _api;
@@ -22,7 +25,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand>
         _api = api;
     }
 
-    public async Task<Unit> Handle(UpdateArticlesCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateArticlesCommand request, CancellationToken cancellationToken)
     {
         var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
             .Where(x => x.CollectionType == ECollection.Articles)
@@ -30,12 +33,10 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand>
             .SingleAsync();
 
         var now = DateTime.UtcNow; // TODO: Use some kind of interface for DateTime
-        var articles = await _api.GetArticlesPublishedBetweenAsync(lastUpdateTime.ToQueryParameter(), now.ToQueryParameter());
-        if (articles is null)
+        var response = await _api.GetArticlesPublishedBetween(lastUpdateTime.ToQueryParameter(), now.ToQueryParameter());
+        if(!response.GetContentOrError().TryPickT0(out var articles, out var error))
         {
-            // TODO: log,
-            // method should return Result<T>, if this method's result is bad then maybe add background job in hangfire to retry in e.g. 30minutes
-            return Unit.Value;
+            return Result.Fail(error);
         }
 
         if (articles.Any())
@@ -46,14 +47,17 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand>
                 newArticles.Add(CreateModel(article));
             }
 
-            await _db.Articles.InsertManyAsync(newArticles);
+            if(newArticles.Any())
+            {
+                await _db.Articles.InsertManyAsync(newArticles);
+            }
         }
 
-        await _db.CollectionsLastUpdates.UpdateOneAsync(
+        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Articles,
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, now));
 
-        return Unit.Value;
+        return Result.Ok();
     }
 
     private ArticleModel CreateModel(ArticleResponse response)

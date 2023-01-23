@@ -8,12 +8,16 @@ using SpaceHub.Infrastructure.Data;
 using MongoDB.Driver.Linq;
 using System.Globalization;
 using SpaceHub.Application.Common;
+using FluentResults;
+using SpaceHub.Application.Errors;
+using OneOf;
+using Refit;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record UpdateLaunchesCommand() : IRequest;
+public record UpdateLaunchesCommand() : IRequest<Result>;
 
-internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
+internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand, Result>
 {
     private readonly DbContext _db;
     private readonly ILaunchApi _api;
@@ -25,12 +29,17 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
         _api = api;
     }
 
-    public async Task<Unit> Handle(UpdateLaunchesCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateLaunchesCommand request, CancellationToken cancellationToken)
     {
-        var launches = await GetLaunchesFromApi();
+        var launchesResult = await GetLaunchesFromApi();
+        if(!launchesResult.TryPickT0(out var launches, out var apiError))
+        {
+            return apiError;
+        }
+
         if(!launches.Any())
         {
-            return Unit.Value;
+            return Result.Ok();
         }
 
         var existingIds = _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet();
@@ -48,16 +57,19 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
             }
         }
 
-        _ = await _db.Launches.BulkWriteAsync(writes);
+        if(writes.Any())
+        {
+            _ = await _db.Launches.BulkWriteAsync(writes);
+        }
 
-        await _db.CollectionsLastUpdates.UpdateOneAsync(
+        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Launches,
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
 
-        return Unit.Value;
+        return Result.Ok();
     }
 
-    private async Task<List<LaunchDetailResponse>> GetLaunchesFromApi()
+    private async Task<OneOf<List<LaunchDetailResponse>, ApiError>> GetLaunchesFromApi()
     {
         var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
             .Where(x => x.CollectionType == ECollection.Launches)
@@ -66,20 +78,31 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand>
 
         var startDate = lastUpdateTime.ToQueryParameter();
         var endDate = DateTime.UtcNow.ToQueryParameter();
-        var count = (await _api.GetLaunchesUpdatedBetweenCountAsync(startDate, endDate))?.Count ?? 0;
+        var countResponse = await _api.GetLaunchesUpdatedBetweenCount(startDate, endDate);
+        if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
+        {
+            return countResponseError;
+        }
 
+        var count = countResponseContent.Count;
         int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxLaunchesPerRequest);
-        var tasks = new List<Task<LaunchesDetailResponse>>();
+
+        var tasks = new List<Task<IApiResponse<LaunchesDetailResponse>>>();
         for(int i = 0; i < requestsRequired; ++i)
         {
-            tasks.Add(_api.GetLaunchesUpdatedBetweenAsync(startDate, endDate, MaxLaunchesPerRequest, i * MaxLaunchesPerRequest));
+            tasks.Add(_api.GetLaunchesUpdatedBetween(startDate, endDate, MaxLaunchesPerRequest, i * MaxLaunchesPerRequest));
         }
         await Task.WhenAll(tasks);
 
         var launches = new List<LaunchDetailResponse>();
         foreach (var task in tasks)
         {
-            launches.AddRange(task.Result.Launches);
+            if(!task.Result.GetContentOrError().TryPickT0(out var launchResponseContent, out var launchResponseError))
+            {
+                return launchResponseError;
+            }
+
+            launches.AddRange(launchResponseContent.Launches);
         }
 
         return launches;

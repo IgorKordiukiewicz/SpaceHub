@@ -57,6 +57,7 @@ public static class EndpointsExtension
         {
             RecordNotFoundError => Results.NotFound(error.Message),
             ValidationError => Results.BadRequest(error.Message),
+            ApiError => Results.StatusCode(500),
             _ => Results.StatusCode(500)
         };
     }

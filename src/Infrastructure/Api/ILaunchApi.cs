@@ -5,21 +5,21 @@ namespace SpaceHub.Infrastructure.Api;
 
 public interface ILaunchApi
 {
-    [Get("/launch?mode=detailed&last_updated__gte={startDate}&last_updated__lte={endDate}&limit={limit}&offset={offset}")]
-    Task<LaunchesDetailResponse> GetLaunchesUpdatedBetweenAsync(string startDate, string endDate, int limit, int offset);
-
     [Get("/launch?mode=list&last_updated__gte={startDate}&last_updated__lte={endDate}&limit=1")]
-    Task<MultiElementResponse> GetLaunchesUpdatedBetweenCountAsync(string startDate, string endDate);
+    Task<IApiResponse<MultiElementResponse>> GetLaunchesUpdatedBetweenCount(string startDate, string endDate);
+
+    [Get("/launch?mode=detailed&last_updated__gte={startDate}&last_updated__lte={endDate}&limit={limit}&offset={offset}")]
+    Task<IApiResponse<LaunchesDetailResponse>> GetLaunchesUpdatedBetween(string startDate, string endDate, int limit, int offset);
 
     [Get("/config/launcher/?mode=list&limit=1")]
-    Task<MultiElementResponse> GetRocketsCountAsync();
+    Task<IApiResponse<MultiElementResponse>> GetRocketsCount();
 
     [Get("/config/launcher/?mode=detailed&limit={limit}&offset={offset}")]
-    Task<RocketsDetailResponse> GetRockets(int limit, int offset);
+    Task<IApiResponse<RocketsDetailResponse>> GetRockets(int limit, int offset);
 
     [Get("/agencies/?limit=1")]
-    Task<MultiElementResponse> GetAgenciesCount();
+    Task<IApiResponse<MultiElementResponse>> GetAgenciesCount();
 
     [Get("/agencies/?mode=detailed&limit={limit}&offset={offset}")]
-    Task<AgenciesDetailResponse> GetAgencies(int limit, int offset);
+    Task<IApiResponse<AgenciesDetailResponse>> GetAgencies(int limit, int offset);
 }

@@ -1,7 +1,11 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using OneOf;
+using Refit;
 using SpaceHub.Application.Common;
+using SpaceHub.Application.Errors;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -10,9 +14,9 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Application.Features.Rockets;
 
-public record UpdateRocketsCommand() : IRequest;
+public record UpdateRocketsCommand() : IRequest<Result>;
 
-internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand>
+internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand, Result>
 {
     private readonly DbContext _db;
     private readonly ILaunchApi _api;
@@ -24,14 +28,19 @@ internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand>
         _api = api;
     }
 
-    public async Task<Unit> Handle(UpdateRocketsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateRocketsCommand request, CancellationToken cancellationToken)
     {
-        // TODO: Add a check if request was successful, and if not log it
-        var rockets = await GetRocketsFromApi();
+        var rocketsResult = await GetRocketsFromApi();
+        if(!rocketsResult.TryPickT0(out var rockets, out var apiError))
+        {
+            return Result.Fail(apiError);
+        }
+
         if(!rockets.Any())
         {
-            return Unit.Value;
+            return Result.Ok();
         }
+
         var existingIds = _db.Rockets.AsQueryable().Select(x => x.ApiId).ToHashSet();
 
         var writes = new List<WriteModel<RocketModel>>();
@@ -47,21 +56,30 @@ internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand>
             }
         }
 
-        _ = await _db.Rockets.BulkWriteAsync(writes);
+        if(writes.Any())
+        {
+            _ = await _db.Rockets.BulkWriteAsync(writes);
+        }
 
-        await _db.CollectionsLastUpdates.UpdateOneAsync(
+        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Rockets,
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
 
-        return Unit.Value;
+        return Result.Ok();
     }
 
-    private async Task<List<RocketConfigDetailResponse>> GetRocketsFromApi()
+    private async Task<OneOf<List<RocketConfigDetailResponse>, ApiError>> GetRocketsFromApi()
     {
-        var count = (await _api.GetRocketsCountAsync())?.Count ?? 0;
+        var countResponse = await _api.GetRocketsCount();
+        if(!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
+        {
+            return countResponseError;
+        }
+
+        var count = countResponseContent.Count;
         int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxRocketsPerRequest);
 
-        var tasks = new List<Task<RocketsDetailResponse>>();
+        var tasks = new List<Task<IApiResponse<RocketsDetailResponse>>>();
         for (int i = 0; i < requestsRequired; ++i)
         {
             tasks.Add(_api.GetRockets(MaxRocketsPerRequest, i * MaxRocketsPerRequest));
@@ -71,7 +89,12 @@ internal class UpdateRocketsHandler : IRequestHandler<UpdateRocketsCommand>
         var rockets = new List<RocketConfigDetailResponse>();
         foreach(var task in tasks)
         {
-            rockets.AddRange(task.Result.Rockets);
+            if(!task.Result.GetContentOrError().TryPickT0(out var rocketResponseContent, out var rocketResponseError))
+            {
+                return rocketResponseError;
+            }
+
+            rockets.AddRange(rocketResponseContent.Rockets);
         }
 
         return rockets;
