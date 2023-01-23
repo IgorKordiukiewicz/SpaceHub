@@ -71,13 +71,13 @@ public class NamesTests
     }
 
     [Fact]
-    public void Exceptions_ShouldHaveExceptionSuffix()
+    public void Errors_ShouldHaveErrorSuffix()
     {
         var result = Types.InCurrentDomain()
             .That()
-            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application) + ".Exceptions")
+            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application) + ".Errors")
             .Should()
-            .HaveNameEndingWith("Exception")
+            .HaveNameEndingWith("Error")
             .GetResult();
 
         result.IsSuccessful.Should().BeTrue();

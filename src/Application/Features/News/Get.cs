@@ -1,13 +1,11 @@
-﻿using LanguageExt.Common;
+﻿using FluentResults;
 using MediatR;
-using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
-using SpaceHub.Application.Exceptions;
+using SpaceHub.Application.Errors;
 using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Domain;
-using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 
@@ -28,11 +26,11 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
     {
         if (request.PageNumber <= 0)
         {
-            return new Result<ArticlesVM>(new ValidationException("Page number has to be > 0."));
+            return Result.Fail<ArticlesVM>(new ValidationError("Page number has to be > 0."));
         }
         if (request.ItemsPerPage <= 0)
         {
-            return new Result<ArticlesVM>(new ValidationException("Items per page have to be > 0."));
+            return Result.Fail<ArticlesVM>(new ValidationError("Items per page have to be > 0."));
         }
 
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
@@ -70,6 +68,6 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
                 Url = x.Url
             }).ToList();
 
-        return new ArticlesVM(articlesViewModels, totalPagesCount);
+        return Result.Ok(new ArticlesVM(articlesViewModels, totalPagesCount));
     }
 }

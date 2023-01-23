@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;

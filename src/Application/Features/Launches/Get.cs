@@ -1,13 +1,11 @@
-﻿using LanguageExt.Common;
+﻿using FluentResults;
 using MediatR;
-using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
-using SpaceHub.Application.Exceptions;
+using SpaceHub.Application.Errors;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.ViewModels;
-using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
@@ -29,11 +27,11 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
         // TODO: Refactor validation -> use FluentValidiation, also the query params can't be null
         if(request.PageNumber <= 0)
         {
-            return new Result<LaunchesVM>(new ValidationException("Page number has to be > 0."));
+            return Result.Fail<LaunchesVM>(new ValidationError("Page number has to be > 0."));
         }
         if(request.ItemsPerPage <= 0)
         {
-            return new Result<LaunchesVM>(new ValidationException("Items per page have to be > 0."));
+            return Result.Fail<LaunchesVM>(new ValidationError("Items per page have to be > 0."));
         }
 
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
@@ -70,7 +68,7 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
                 TimeToLaunch = x.Date - now
             })
             .ToListAsync();
-        
-        return new LaunchesVM(launches, totalPagesCount);
+
+        return Result.Ok(new LaunchesVM(launches, totalPagesCount));
     }
 }

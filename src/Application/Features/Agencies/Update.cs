@@ -1,15 +1,10 @@
 ﻿using MediatR;
 using MongoDB.Driver;
 using SpaceHub.Application.Common;
-using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Api;
-using SpaceHub.Infrastructure.Data.Models;
+using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Application.Features.Agencies;
@@ -30,7 +25,6 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
 
     public async Task<Unit> Handle(UpdateAgenciesCommand request, CancellationToken cancellationToken)
     {
-        // TODO: Add a check if request was successful, and if not log it
         var agencies = await GetAgenciesFromApi();
         if (!agencies.Any())
         {
@@ -51,7 +45,7 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand>
             }
         }
 
-        _ = await _db.Agencies.BulkWriteAsync(writes);
+        var writeResult = await _db.Agencies.BulkWriteAsync(writes);
 
         await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Agencies,

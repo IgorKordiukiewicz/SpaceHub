@@ -1,6 +1,6 @@
-﻿using LanguageExt.Common;
+﻿using FluentResults;
 using MediatR;
-using SpaceHub.Application.Exceptions;
+using SpaceHub.Application.Errors;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Contracts.Enums;
@@ -32,21 +32,32 @@ public static class EndpointsExtension
 
     private static IResult ToHttpResult<T>(this Result<T> handlerResult)
     {
-        return handlerResult.Match(value =>
+        if(!handlerResult.IsFailed)
         {
-            return Results.Ok(value);
-        }, exception =>
-        {
-            if (exception is RecordNotFoundException)
-            {
-                return Results.NotFound(exception.Message);
-            }
-            else if(exception is ValidationException)
-            {
-                return Results.BadRequest(exception.Message);
-            }
+            return Results.Ok(handlerResult.Value);
+        }
 
-            return Results.StatusCode(500);
-        });
+        return GetErrorResult(handlerResult.Errors);
+    }
+
+    private static IResult ToHttpResult(this Result handlerResult)
+    {
+        if(!handlerResult.IsFailed)
+        {
+            return Results.Ok();
+        }
+
+        return GetErrorResult(handlerResult.Errors);
+    }
+
+    private static IResult GetErrorResult(List<IError> errors)
+    {
+        var error = errors.FirstOrDefault();
+        return error switch
+        {
+            RecordNotFoundError => Results.NotFound(error.Message),
+            ValidationError => Results.BadRequest(error.Message),
+            _ => Results.StatusCode(500)
+        };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DnsClient.Internal;
+using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -23,10 +24,11 @@ public class ResultLoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
             return response; 
         }
 
-        var isFaulted = typeof(TResponse).GetProperty("IsFaulted")?.GetValue(response) as bool?;
-        if(isFaulted is not null && isFaulted.Value)
+        var errors = typeof(TResponse).GetProperty("Errors")?.GetValue(response) as List<IError>;
+        var error = errors?.FirstOrDefault();
+        if(error is not null)
         {
-            _logger.LogError(response.ToString());
+            _logger.LogError("Request: \"{request}\" failed with error message: \"{errorMessage}\"", request.ToString(), error.Message);
         }
 
         return response;
