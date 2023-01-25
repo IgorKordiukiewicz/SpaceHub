@@ -1,10 +1,7 @@
 ﻿using FluentResults;
 using MediatR;
 using MongoDB.Driver;
-using OneOf;
-using Refit;
 using SpaceHub.Application.Common;
-using SpaceHub.Application.Errors;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -29,74 +26,22 @@ internal class UpdateAgenciesHandler : IRequestHandler<UpdateAgenciesCommand, Re
 
     public async Task<Result> Handle(UpdateAgenciesCommand request, CancellationToken cancellationToken)
     {
-        var agenciesResult = await GetAgenciesFromApi();
-        if(!agenciesResult.TryPickT0(out var agencies, out var apiError))
+        var updateService = new DataUpdateService<AgenciesDetailResponse, AgencyDetailResponse, AgencyModel, int>
         {
-            return Result.Fail(apiError);
-        }
+            GetItemsCountFunc = _api.GetAgenciesCount,
+            GetItemsFunc = idx => _api.GetAgencies(MaxAgenciesPerRequest, idx * MaxAgenciesPerRequest),
+            UpdateModelFunc = CreateUpdateModel,
+            InsertModelFunc = CreateInsertModel,
+            ResponseItemIdSelector = responseItem => responseItem.Id,
+            ResponseItemsSelector = response => response.Agencies,
+            CollectionSelector = db => db.Agencies,
+            ExistingIds = _db.Agencies.AsQueryable().Select(x => x.ApiId).ToHashSet(),
+            MaxItemsPerRequest = MaxAgenciesPerRequest,
+            CollectionType = ECollection.Agencies,
+            Db = _db
+        };
 
-        if (!agencies.Any())
-        {
-            return Result.Ok();
-        }
-
-        var existingIds = _db.Agencies.AsQueryable().Select(x => x.ApiId).ToHashSet();
-
-        var writes = new List<WriteModel<AgencyModel>>();
-        foreach (var agency in agencies)
-        {
-            if (existingIds.Contains(agency.Id))
-            {
-                writes.Add(CreateUpdateModel(agency));
-            }
-            else
-            {
-                writes.Add(CreateInsertModel(agency));
-            }
-        }
-
-        if(writes.Any())
-        {
-            _ = await _db.Agencies.BulkWriteAsync(writes);
-        }
-
-        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
-            x => x.CollectionType == ECollection.Agencies,
-            Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
-
-        return Result.Ok();
-    }
-
-    private async Task<OneOf<List<AgencyDetailResponse>, ApiError>> GetAgenciesFromApi()
-    {
-        var countResponse = await _api.GetAgenciesCount();
-        if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
-        {
-            return countResponseError;
-        }
-
-        var count = countResponseContent.Count;
-        int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxAgenciesPerRequest);
-
-        var tasks = new List<Task<IApiResponse<AgenciesDetailResponse>>>();
-        for (int i = 0; i < requestsRequired; ++i)
-        {
-            tasks.Add(_api.GetAgencies(MaxAgenciesPerRequest, i * MaxAgenciesPerRequest));
-        }
-        await Task.WhenAll(tasks);
-
-        var agencies = new List<AgencyDetailResponse>();
-        foreach (var task in tasks)
-        {
-            if(!task.Result.GetContentOrError().TryPickT0(out var agencyResponseContent, out var agencyResponseError))
-            {
-                return agencyResponseError;
-            }
-
-            agencies.AddRange(agencyResponseContent.Agencies);
-        }
-
-        return agencies;
+        return await updateService.Handle();
     }
 
     private UpdateOneModel<AgencyModel> CreateUpdateModel(AgencyDetailResponse agency)

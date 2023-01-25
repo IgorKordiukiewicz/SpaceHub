@@ -1,17 +1,14 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 using MongoDB.Driver;
-using SpaceHub.Infrastructure.Api.Responses;
+using MongoDB.Driver.Linq;
+using SpaceHub.Application.Common;
 using SpaceHub.Infrastructure.Api;
+using SpaceHub.Infrastructure.Api.Responses;
+using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
-using SpaceHub.Infrastructure.Data;
-using MongoDB.Driver.Linq;
 using System.Globalization;
-using SpaceHub.Application.Common;
-using FluentResults;
-using SpaceHub.Application.Errors;
-using OneOf;
-using Refit;
 
 namespace SpaceHub.Application.Features.Launches;
 
@@ -31,46 +28,6 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand, Re
 
     public async Task<Result> Handle(UpdateLaunchesCommand request, CancellationToken cancellationToken)
     {
-        var launchesResult = await GetLaunchesFromApi();
-        if(!launchesResult.TryPickT0(out var launches, out var apiError))
-        {
-            return apiError;
-        }
-
-        if(!launches.Any())
-        {
-            return Result.Ok();
-        }
-
-        var existingIds = _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet();
-
-        var writes = new List<WriteModel<LaunchModel>>();
-        foreach (var launch in launches)
-        {
-            if (existingIds.Contains(launch.Id))
-            {
-                writes.Add(CreateUpdateModel(launch));
-            }
-            else
-            {
-                writes.Add(CreateInsertModel(launch));
-            }
-        }
-
-        if(writes.Any())
-        {
-            _ = await _db.Launches.BulkWriteAsync(writes);
-        }
-
-        _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
-            x => x.CollectionType == ECollection.Launches,
-            Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
-
-        return Result.Ok();
-    }
-
-    private async Task<OneOf<List<LaunchDetailResponse>, ApiError>> GetLaunchesFromApi()
-    {
         var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
             .Where(x => x.CollectionType == ECollection.Launches)
             .Select(x => x.LastUpdate)
@@ -78,34 +35,23 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand, Re
 
         var startDate = lastUpdateTime.ToQueryParameter();
         var endDate = DateTime.UtcNow.ToQueryParameter();
-        var countResponse = await _api.GetLaunchesUpdatedBetweenCount(startDate, endDate);
-        if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
+
+        var updateService = new DataUpdateService<LaunchesDetailResponse, LaunchDetailResponse, LaunchModel, string>
         {
-            return countResponseError;
-        }
+            GetItemsCountFunc = () => _api.GetLaunchesUpdatedBetweenCount(startDate, endDate),
+            GetItemsFunc = idx => _api.GetLaunchesUpdatedBetween(startDate, endDate, MaxLaunchesPerRequest, idx * MaxLaunchesPerRequest),
+            UpdateModelFunc = CreateUpdateModel,
+            InsertModelFunc = CreateInsertModel,
+            ResponseItemIdSelector = responseItem => responseItem.Id,
+            ResponseItemsSelector = response => response.Launches,
+            CollectionSelector = db => db.Launches,
+            ExistingIds = _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet(),
+            MaxItemsPerRequest = MaxLaunchesPerRequest,
+            CollectionType = ECollection.Launches,
+            Db = _db
+        };
 
-        var count = countResponseContent.Count;
-        int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxLaunchesPerRequest);
-
-        var tasks = new List<Task<IApiResponse<LaunchesDetailResponse>>>();
-        for(int i = 0; i < requestsRequired; ++i)
-        {
-            tasks.Add(_api.GetLaunchesUpdatedBetween(startDate, endDate, MaxLaunchesPerRequest, i * MaxLaunchesPerRequest));
-        }
-        await Task.WhenAll(tasks);
-
-        var launches = new List<LaunchDetailResponse>();
-        foreach (var task in tasks)
-        {
-            if(!task.Result.GetContentOrError().TryPickT0(out var launchResponseContent, out var launchResponseError))
-            {
-                return launchResponseError;
-            }
-
-            launches.AddRange(launchResponseContent.Launches);
-        }
-
-        return launches;
+        return await updateService.Handle();
     }
 
     private UpdateOneModel<LaunchModel> CreateUpdateModel(LaunchDetailResponse response)
