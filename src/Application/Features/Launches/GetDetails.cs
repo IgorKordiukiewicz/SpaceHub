@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -12,6 +13,14 @@ using SpaceHub.Infrastructure.Data;
 namespace SpaceHub.Application.Features.Launches;
 
 public record GetLaunchDetailsQuery(string Id) : IRequest<Result<LaunchDetailsVM>>;
+
+public class GetLaunchDetailsQueryValidator : AbstractValidator<GetLaunchDetailsQuery>
+{
+    public GetLaunchDetailsQueryValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+    }
+}
 
 internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, Result<LaunchDetailsVM>>
 {

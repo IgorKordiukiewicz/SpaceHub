@@ -1,5 +1,7 @@
 ﻿using FluentResults;
+using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
@@ -13,6 +15,17 @@ namespace SpaceHub.Application.Features.Launches;
 // TODO: Search not working
 public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<LaunchesVM>>;
 
+public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
+{
+    public GetLaunchesQueryValidator()
+    {
+        RuleFor(x => x.PageNumber).NotNull().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.ItemsPerPage).NotNull().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.TimeFrame).NotNull().IsInEnum();
+        RuleFor(x => x.SearchValue).NotNull();
+    }
+}
+
 internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
 {
     private readonly DbContext _db;
@@ -24,16 +37,6 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
 
     public async Task<Result<LaunchesVM>> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Refactor validation -> use FluentValidiation, also the query params can't be null
-        if(request.PageNumber <= 0)
-        {
-            return Result.Fail<LaunchesVM>(new ValidationError("Page number has to be > 0."));
-        }
-        if(request.ItemsPerPage <= 0)
-        {
-            return Result.Fail<LaunchesVM>(new ValidationError("Items per page have to be > 0."));
-        }
-
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
         var now = DateTime.UtcNow;
         

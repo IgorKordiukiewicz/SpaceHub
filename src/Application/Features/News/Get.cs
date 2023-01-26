@@ -1,9 +1,11 @@
 ﻿using FluentResults;
+using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SpaceHub.Application.Common;
 using SpaceHub.Application.Errors;
+using SpaceHub.Application.Features.Launches;
 using SpaceHub.Contracts.ViewModels;
 using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Data;
@@ -12,6 +14,16 @@ using SpaceHub.Infrastructure.Data.Models;
 namespace SpaceHub.Application.Features.News;
 
 public record GetNewsQuery(string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<ArticlesVM>>;
+
+public class GetNewsQueryValidator : AbstractValidator<GetNewsQuery>
+{
+    public GetNewsQueryValidator()
+    {
+        RuleFor(x => x.PageNumber).NotNull().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.ItemsPerPage).NotNull().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.SearchValue).NotNull();
+    }
+}
 
 internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>>
 {
@@ -24,15 +36,6 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
 
     public async Task<Result<ArticlesVM>> Handle(GetNewsQuery request, CancellationToken cancellationToken)
     {
-        if (request.PageNumber <= 0)
-        {
-            return Result.Fail<ArticlesVM>(new ValidationError("Page number has to be > 0."));
-        }
-        if (request.ItemsPerPage <= 0)
-        {
-            return Result.Fail<ArticlesVM>(new ValidationError("Items per page have to be > 0."));
-        }
-
         var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
 
         // TODO: To improve performance, maybe add where clause to pre-filter articles by search
