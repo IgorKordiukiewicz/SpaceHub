@@ -155,11 +155,11 @@
                     </MudPaper>
                 </MudItem>
             }
-
-        <div class="d-flex flex-column align-center my-8">
-            <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged" />
-        </div>
     </MudGrid>
+
+    <div class="d-flex flex-column align-center my-8">
+        <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged" />
+    </div>
 }
 
 @code {
