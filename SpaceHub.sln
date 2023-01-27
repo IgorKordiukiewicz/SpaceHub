@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.Domain", "src\Spac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.Contracts", "src\SpaceHub.Contracts\SpaceHub.Contracts.csproj", "{DBFD4872-5024-41DA-8988-50BEBD8BCC2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceHub.UnitTests", "tests\SpaceHub.UnitTests\SpaceHub.UnitTests.csproj", "{521F6356-FB40-4F16-9DC5-B3BBCFE5FDB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.UnitTests", "tests\SpaceHub.UnitTests\SpaceHub.UnitTests.csproj", "{521F6356-FB40-4F16-9DC5-B3BBCFE5FDB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceHub.ArchitectureTests", "tests\SpaceHub.ArchitectureTests\SpaceHub.ArchitectureTests.csproj", "{BE879842-BD92-4267-9778-472816B51207}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.ArchitectureTests", "tests\SpaceHub.ArchitectureTests\SpaceHub.ArchitectureTests.csproj", "{BE879842-BD92-4267-9778-472816B51207}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
