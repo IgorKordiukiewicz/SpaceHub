@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Application\SpaceHub.Application.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\SpaceHub.Infrastructure.csproj" />
-    <ProjectReference Include="..\Client\SpaceHub.Web.Client.csproj" />
+    <ProjectReference Include="..\SpaceHub.Application\SpaceHub.Application.csproj" />
+    <ProjectReference Include="..\SpaceHub.Infrastructure\SpaceHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\SpaceHub.Web.Client\SpaceHub.Web.Client.csproj" />
   </ItemGroup>
 
 </Project>

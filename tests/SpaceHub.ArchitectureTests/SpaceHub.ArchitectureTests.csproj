@@ -24,12 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Application\SpaceHub.Application.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\SpaceHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\SpaceHub.Application\SpaceHub.Application.csproj" />
     <ProjectReference Include="..\..\src\SpaceHub.Contracts\SpaceHub.Contracts.csproj" />
     <ProjectReference Include="..\..\src\SpaceHub.Domain\SpaceHub.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Web\SpaceHub.Web\Client\SpaceHub.Web.Client.csproj" />
-    <ProjectReference Include="..\..\src\Web\SpaceHub.Web\Server\SpaceHub.Web.Server.csproj" />
+    <ProjectReference Include="..\..\src\SpaceHub.Infrastructure\SpaceHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\SpaceHub.Web.Client\SpaceHub.Web.Client.csproj" />
+    <ProjectReference Include="..\..\src\SpaceHub.Web.Server\SpaceHub.Web.Server.csproj" />
   </ItemGroup>
 
 </Project>
