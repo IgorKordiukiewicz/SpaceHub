@@ -50,14 +50,14 @@
         </MudItem>
             @foreach (var launch in _viewModel.Launches)
             {
-                <MudItem xs="12" Class="mb-10">
+                <MudItem xs="12">
                 <MudPaper Style="background-color: var(--mud-palette-dark);">
                         <MudPaper>
                         <MudGrid>
                             <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
                                 <MudImage Src="@launch.ImageUrl" ObjectFit="ObjectFit.Cover" Class="card_img_rounded launch_img" />
                             </MudItem>
-                            <MudItem md="12" lg="8">
+                            <MudItem md="12" lg="9">
                                 <MudText Typo="Typo.h4" Color="Color.Primary" Align="Align.Center">
                                     @launch.Name
                                 </MudText>
@@ -82,17 +82,12 @@
                                     (@launch.Status)
                                 </MudText>
                             </MudItem>
-                            <MudItem md="12" lg="1" Class="d-flex align-content-end flex-wrap justify-center">
-                                <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" OnClick="(e) => ToggleLaunchDetails(launch.Id)" />
-                            </MudItem>
                         </MudGrid>
                         </MudPaper>
-                        @if(_launchesDetails.TryGetValue(launch.Id, out var details) && details.Visible)
+                        @if (_launchesDetails.TryGetValue(launch.Id, out var details) && details.Visible && details.Data is not null)
                         {
-                            if(details.Data is not null)
-                            {
-                                <MudGrid>
-                                    <MudItem xs="12" Class="mx-6 mt-8 mb-2">
+                            <MudGrid>
+                                <MudItem xs="12" Class="mx-6 mt-8 mb-2">
                                     <MudPaper>
                                         <MudGrid>
                                             <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
@@ -108,9 +103,9 @@
                                             </MudItem>
                                         </MudGrid>
                                     </MudPaper>
-                                    </MudItem>
-                                    <MudItem xs="12" Class="mx-6 mt-2 mb-4">
-                                        <MudPaper>
+                                </MudItem>
+                                <MudItem xs="12" Class="mx-6 mt-2 mb-4">
+                                    <MudPaper>
                                         <MudGrid>
                                             <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
                                                 <MudImage Src="@details.Data.Rocket.ImageUrl" ObjectFit="ObjectFit.Cover" Fluid="true" Class="card_img_rounded" />
@@ -122,7 +117,7 @@
                                                 <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2">
                                                     @details.Data.Rocket.Description
                                                 </MudText>
-                                                <MudDivider/>
+                                                <MudDivider />
                                                 <MudGrid Class="py-2 px-4">
                                                     @foreach (var (name, value, symbol) in details.Data.Rocket.Properties)
                                                     {
@@ -139,20 +134,16 @@
                                                     }
                                                 </MudGrid>
                                             </MudItem>
-                                            
+
                                         </MudGrid>
-                                        </MudPaper>
-                                    </MudItem>
-                                </MudGrid>
-                            }
-                            else
-                            {
-                                <div class="d-flex justify-center flex-grow pt-8 pb-4">
-                                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                                </div>
-                            }
+                                    </MudPaper>
+                                </MudItem>
+                            </MudGrid>
                         }
                     </MudPaper>
+                </MudItem>
+                <MudItem xs="12" Class="mb-10 mt-0 py-0 d-flex flex-column align-center">
+                <MudButton Variant="Variant.Filled" Color="@GetExpanderColor(launch.Id)" StartIcon="@GetExpanderIcon(launch.Id)" Style="width: 100%;" OnClick="(e) => ToggleLaunchDetails(launch.Id)"></MudButton>
                 </MudItem>
             }
     </MudGrid>
@@ -266,5 +257,29 @@
     private string GetPropertyValueDisplay(string value, string? symbol)
     {
         return value + (symbol is null ? "" : " " + symbol);
+    }
+
+    private Color GetExpanderColor(string id)
+    {
+        var unexpandedColor = Color.Dark;
+        var expandedColor = Color.Primary;
+        if(!_launchesDetails.TryGetValue(id, out var launchDetails))
+        {
+            return unexpandedColor;
+        }
+
+        return launchDetails.Visible ? expandedColor : unexpandedColor;
+    }
+
+    private string GetExpanderIcon(string id)
+    {
+        var unexpandedIcon = Icons.Material.Filled.ExpandMore;
+        var expandedIcon = Icons.Material.Filled.ExpandLess;
+        if (!_launchesDetails.TryGetValue(id, out var launchDetails))
+        {
+            return unexpandedIcon;
+        }
+
+        return launchDetails.Visible ? expandedIcon : unexpandedIcon;
     }
 }
