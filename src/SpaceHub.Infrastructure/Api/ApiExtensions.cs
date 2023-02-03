@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpaceHub.Infrastructure.Api;
+﻿namespace SpaceHub.Infrastructure.Api;
 
 public static class ApiExtensions
 {

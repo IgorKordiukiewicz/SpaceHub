@@ -1,8 +1,5 @@
-﻿using FluentValidation;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SpaceHub.Application.Behaviors;
-using SpaceHub.Application.Features.Launches;
 using System.Reflection;
 
 namespace SpaceHub.Application;

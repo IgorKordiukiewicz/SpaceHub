@@ -1,6 +1,4 @@
 ﻿using DnsClient.Internal;
-using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace SpaceHub.Application.Behaviors;

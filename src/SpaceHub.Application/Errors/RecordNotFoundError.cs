@@ -1,6 +1,4 @@
-﻿using FluentResults;
-
-namespace SpaceHub.Application.Errors;
+﻿namespace SpaceHub.Application.Errors;
 
 public class RecordNotFoundError : Error
 {

@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using Refit;
+﻿using Refit;
 
 namespace SpaceHub.Application.Errors;
 
