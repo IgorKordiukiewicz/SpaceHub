@@ -1,5 +1,6 @@
 ﻿@page "/news"
 @inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Utils;
@@ -42,9 +43,6 @@
 }
 
 @code {
-    [Inject]
-    private IJSRuntime _jsRuntime { get; set; }
-
     private ArticlesVM? _viewModel;
 
     private string _searchValue = string.Empty;

@@ -1,0 +1,70 @@
+﻿@using MudBlazor
+@using SpaceHub.Contracts.ViewModels;
+<style>
+    @@media only screen and (max-width: 1280px) {
+        .card_img_rounded {
+            border-top-left-radius: var(--mud-default-borderradius) !important;
+            border-top-right-radius: var(--mud-default-borderradius) !important;
+        }
+    }
+
+    @@media only screen and (min-width: 1280px) {
+        .card_img_rounded {
+            border-top-left-radius: var(--mud-default-borderradius) !important;
+            border-bottom-left-radius: var(--mud-default-borderradius) !important;
+        }
+    }
+</style>
+
+<MudItem xs="12" Class="@GetItemClass()">
+    <MudPaper>
+        <MudGrid>
+            <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
+                <MudImage Src="@Rocket.ImageUrl" ObjectFit="ObjectFit.Cover" Fluid="true" Class="card_img_rounded" />
+            </MudItem>
+            <MudItem md="12" lg="9">
+                <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
+                    @Rocket.Name
+                </MudText>
+                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2">
+                    @Rocket.Description
+                </MudText>
+                <MudDivider />
+                <MudGrid Class="py-2 px-4">
+                    @foreach (var (name, value, symbol) in Rocket.Properties)
+                    {
+                        <MudItem xs="3">
+                            <MudText Typo="Typo.body1">
+                                @name
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="3">
+                            <MudText Typo="Typo.body1" Align="Align.End">
+                                @GetPropertyValueDisplay(value, symbol)
+                            </MudText>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudItem>
+
+        </MudGrid>
+    </MudPaper>
+</MudItem>
+
+@code {
+    [Parameter]
+    public bool Nested { get; set; }
+
+    [Parameter]
+    public RocketVM Rocket { get; set; }
+
+    private string GetPropertyValueDisplay(string value, string? symbol)
+    {
+        return value + (symbol is null ? "" : " " + symbol);
+    }
+
+    private string GetItemClass()
+    {
+        return Nested ? "mx-6 mt-2 mb-4" : "mb-10";
+    }
+}

@@ -1,7 +1,73 @@
 ﻿@page "/rockets"
+@inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
+@using MudBlazor
+@using SpaceHub.Contracts.ViewModels;
+@using SpaceHub.Web.Client.Components
+@using SpaceHub.Web.Client.Utils;
+@using System.Net;
 
+@if(_viewModel is not null)
+{
+    <MudGrid Class="d-flex align-stretch">
+        <MudItem xs="12">
+            <MudTextField Label="Search" T="string" TextChanged="OnSearchChanged"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
+        </MudItem>
 
+        @foreach(var rocket in _viewModel.Rockets)
+        {
+            <RocketCard Rocket="@rocket" Nested="@false"/>
+        }
+    </MudGrid>
+
+    <div class="d-flex flex-column align-center my-8">
+        <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged" />
+    </div>
+}
 
 @code {
+    // TODO: Add default ctor or default values for View Models so they don't have to be nullable in Client
+    private RocketsVM? _viewModel;
 
+    private string _searchValue = string.Empty;
+    private int _pageNumber = 1;
+    private int _itemsPerPage = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateRockets();
+    }
+
+    private async Task UpdateRockets()
+    {
+        var url = new UrlBuilder("api/rockets")
+            .AddParameter("searchValue", _searchValue)
+            .AddParameter("pageNumber", _pageNumber)
+            .AddParameter("itemsPerPage", _itemsPerPage)
+            .Url;
+        var response = await _httpClient.GetAsync(url);
+        // TODO: Extract api requests and response handling to helper class/component
+        if(response.IsSuccessStatusCode)
+        {
+            _viewModel = await response.Content.ReadFromJsonAsync<RocketsVM>();
+        }
+        else if (response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            // TODO: Bad request - pop-up or ?
+        }
+    }
+
+    private async Task OnSearchChanged(string searchValue)
+    {
+        _searchValue = searchValue;
+        await UpdateRockets();
+    }
+
+    private async Task OnPageChanged(int pageNumber)
+    {
+        _pageNumber = pageNumber;
+        await UpdateRockets();
+        await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
 }

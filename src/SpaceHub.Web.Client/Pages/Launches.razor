@@ -1,5 +1,6 @@
 ﻿@page "/launches"
 @inject HttpClient _httpClient
+@inject IJSRuntime _jsRuntime
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Contracts.Enums;
@@ -104,40 +105,7 @@
                                         </MudGrid>
                                     </MudPaper>
                                 </MudItem>
-                                <MudItem xs="12" Class="mx-6 mt-2 mb-4">
-                                    <MudPaper>
-                                        <MudGrid>
-                                            <MudItem md="12" lg="3" Class="d-flex justify-center py-0">
-                                                <MudImage Src="@details.Data.Rocket.ImageUrl" ObjectFit="ObjectFit.Cover" Fluid="true" Class="card_img_rounded" />
-                                            </MudItem>
-                                            <MudItem md="12" lg="9">
-                                                <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
-                                                    @details.Data.Rocket.Name
-                                                </MudText>
-                                                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2">
-                                                    @details.Data.Rocket.Description
-                                                </MudText>
-                                                <MudDivider />
-                                                <MudGrid Class="py-2 px-4">
-                                                    @foreach (var (name, value, symbol) in details.Data.Rocket.Properties)
-                                                    {
-                                                        <MudItem xs="3">
-                                                            <MudText Typo="Typo.body1">
-                                                                @name
-                                                            </MudText>
-                                                        </MudItem>
-                                                        <MudItem xs="3">
-                                                            <MudText Typo="Typo.body1" Align="Align.End">
-                                                                @GetPropertyValueDisplay(value, symbol)
-                                                            </MudText>
-                                                        </MudItem>
-                                                    }
-                                                </MudGrid>
-                                            </MudItem>
-
-                                        </MudGrid>
-                                    </MudPaper>
-                                </MudItem>
+                                <RocketCard Rocket="@details.Data.Rocket" Nested="@true"/>
                             </MudGrid>
                         }
                     </MudPaper>
@@ -154,13 +122,10 @@
 }
 
 @code {
-    [Inject]
-    private IJSRuntime _jsRuntime { get; set; }
-
     private LaunchesVM? _viewModel;
 
     private ETimeFrame _timeFrame = ETimeFrame.Upcoming;
-    private string? _searchValue = null;
+    private string _searchValue = string.Empty;
     private int _pageNumber = 1;
     private int _itemsPerPage = 10;
 
@@ -252,11 +217,6 @@
         {
             launchDetails.Visible = !launchDetails.Visible;
         }
-    }
-
-    private string GetPropertyValueDisplay(string value, string? symbol)
-    {
-        return value + (symbol is null ? "" : " " + symbol);
     }
 
     private Color GetExpanderColor(string id)
