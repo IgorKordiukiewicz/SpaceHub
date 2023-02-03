@@ -3,6 +3,7 @@ using MediatR;
 using SpaceHub.Application.Errors;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Application.Features.News;
+using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
 
 namespace SpaceHub.Web.Server;
@@ -26,6 +27,12 @@ public static class EndpointsExtension
         app.MapGet("/api/launches/{id}", async (IMediator mediator, string id) =>
         {
             var result = await mediator.Send(new GetLaunchDetailsQuery(id));
+            return result.ToHttpResult();
+        });
+
+        app.MapGet("/api/rockets", async (IMediator mediator, string searchValue, int pageNumber, int itemsPerPage) =>
+        {
+            var result = await mediator.Send(new GetRocketsQuery(searchValue, pageNumber, itemsPerPage));
             return result.ToHttpResult();
         });
     }
