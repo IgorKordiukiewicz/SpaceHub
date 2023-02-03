@@ -42,7 +42,7 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
             .Where(x => x.Name.ToLower().Contains(request.SearchValue.ToLower()))
             .OrderBy(x => x.Name);
 
-        var count = query.Count();
+        var count = await query.CountAsync();
         var totalPagesCount = Pagination.GetPagesCount(count, request.ItemsPerPage);
 
         // TODO: Code temporarily copied from launches/getDetails, refactor it later

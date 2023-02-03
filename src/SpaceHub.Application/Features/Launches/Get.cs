@@ -52,7 +52,7 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
                 .OrderByDescending(x => x.Date);
         }
         
-        var count = query.Count();
+        var count = await query.CountAsync();
         var totalPagesCount = Pagination.GetPagesCount(count, request.ItemsPerPage);
         
         var launches = await query.Skip(offset)
