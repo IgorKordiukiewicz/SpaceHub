@@ -39,10 +39,10 @@ public class Rocket
     public int? GeoCapacity { get; init; }
 
     [Symbol("$")]
-    public int? CostPerKgToLeo { get => GetCostPerKgToOrbit(LaunchCost, LeoCapacity); }
+    public int? CostPerKgToLeo => GetCostPerKgToOrbit(LaunchCost, LeoCapacity);
 
     [Symbol("$")]
-    public int? CostPerKgToGeo { get => GetCostPerKgToOrbit(LaunchCost, GeoCapacity); }
+    public int? CostPerKgToGeo => GetCostPerKgToOrbit(LaunchCost, GeoCapacity);
 
     public int SuccessfulLaunches { get; set; }
     public int TotalLaunches { get; set; }
@@ -50,7 +50,7 @@ public class Rocket
     public int PendingLaunches { get; set; }
 
     [Symbol("%")]
-    public int LaunchSuccess { get => TotalLaunches > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunches) : 0; }
+    public int LaunchSuccess => TotalLaunches > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunches) : 0;
 
     public DateTime? FirstFlight { get; init; }
 

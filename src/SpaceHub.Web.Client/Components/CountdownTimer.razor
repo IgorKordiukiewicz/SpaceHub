@@ -6,7 +6,7 @@
     [Parameter]
     public DateTime Date { get; set; }
 
-    private TimeSpan _timeToLaunch { get => Date >= DateTime.Now ? Date - DateTime.Now : TimeSpan.FromMinutes(0.0); }
+    private TimeSpan _timeToLaunch => Date >= DateTime.Now ? Date - DateTime.Now : TimeSpan.FromMinutes(0.0);
 
     private Timer _timer = new(1000);
 
