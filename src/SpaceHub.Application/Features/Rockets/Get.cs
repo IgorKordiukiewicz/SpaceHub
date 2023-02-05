@@ -1,19 +1,19 @@
-﻿using SpaceHub.Domain.Enums;
+﻿using SpaceHub.Contracts.Utils;
+using SpaceHub.Domain.Enums;
 using SpaceHub.Domain.Extensions;
 using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
-public record GetRocketsQuery(string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<RocketsVM>>;
+public record GetRocketsQuery(string SearchValue, Pagination Pagination) : IRequest<Result<RocketsVM>>;
 
 public class GetRocketsQueryValidator : AbstractValidator<GetRocketsQuery>
 {
     public GetRocketsQueryValidator()
     {
         RuleFor(x => x.SearchValue).NotNull();
-        RuleFor(x => x.PageNumber).NotNull().GreaterThanOrEqualTo(1);
-        RuleFor(x => x.ItemsPerPage).NotNull().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.Pagination).SetValidator(new PaginationParametersValidator());
     }
 }
 
@@ -28,7 +28,6 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
 
     public async Task<Result<RocketsVM>> Handle(GetRocketsQuery request, CancellationToken cancellationToken)
     {
-        var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
         var now = DateTime.UtcNow;
 
         var query = _db.Rockets.AsQueryable()
@@ -36,11 +35,11 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
             .OrderBy(x => x.Name);
 
         var count = await query.CountAsync();
-        var totalPagesCount = Pagination.GetPagesCount(count, request.ItemsPerPage);
+        var totalPagesCount = request.Pagination.GetPagesCount(count);
 
         // TODO: Code temporarily copied from launches/getDetails, refactor it later
-        var rockets = await query.Skip(offset)
-            .Take(request.ItemsPerPage)
+        var rockets = await query.Skip(request.Pagination.Offset)
+            .Take(request.Pagination.ItemsPerPage)
             .Select(x => new Rocket
             {
                 ApiId = x.ApiId,

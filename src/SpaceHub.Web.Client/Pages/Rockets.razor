@@ -2,6 +2,7 @@
 @inject HttpClient _httpClient
 @inject IJSRuntime _jsRuntime
 @using MudBlazor
+@using SpaceHub.Contracts.Utils;
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components
 @using SpaceHub.Web.Client.Utils;
@@ -31,8 +32,7 @@
     private RocketsVM? _viewModel;
 
     private string _searchValue = string.Empty;
-    private int _pageNumber = 1;
-    private int _itemsPerPage = 10;
+    private Pagination _pagination = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,8 +43,8 @@
     {
         var url = new UrlBuilder("api/rockets")
             .AddParameter("searchValue", _searchValue)
-            .AddParameter("pageNumber", _pageNumber)
-            .AddParameter("itemsPerPage", _itemsPerPage)
+            .AddParameter("pageNumber", _pagination.PageNumber)
+            .AddParameter("itemsPerPage", _pagination.ItemsPerPage)
             .Url;
         var response = await _httpClient.GetAsync(url);
         // TODO: Extract api requests and response handling to helper class/component
@@ -66,7 +66,7 @@
 
     private async Task OnPageChanged(int pageNumber)
     {
-        _pageNumber = pageNumber;
+        _pagination.PageNumber = pageNumber;
         await UpdateRockets();
         await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
     }

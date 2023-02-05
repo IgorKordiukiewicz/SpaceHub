@@ -1,6 +1,6 @@
-﻿using SpaceHub.Application.Common;
+﻿using SpaceHub.Contracts.Utils;
 
-namespace SpaceHub.UnitTests.Application.Common;
+namespace SpaceHub.UnitTests.Contracts.Utils;
 
 public class PaginationTests
 {
@@ -10,7 +10,8 @@ public class PaginationTests
     [InlineData(3, 10, 20)]
     public void GetOffset_Should_CalculateOffsetCorrectly(int pageNumber, int itemsPerPage, int expectedResult)
     {
-        var result = Pagination.GetOffset(pageNumber, itemsPerPage);
+        var pagination = new Pagination(pageNumber, itemsPerPage);
+        var result = pagination.Offset;
 
         result.Should().Be(expectedResult);
     }
@@ -23,7 +24,8 @@ public class PaginationTests
     [InlineData(19, 10, 2)]
     public void GetPagesCount_Should_CalculatePagesCountCorrectly(int itemsCount, int itemsPerPage, int expectedResult)
     {
-        var result = Pagination.GetPagesCount(itemsCount, itemsPerPage);
+        var pagination = new Pagination(1, itemsPerPage);
+        var result = pagination.GetPagesCount(itemsCount);
 
         result.Should().Be(expectedResult);
     }

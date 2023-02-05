@@ -1,19 +1,19 @@
 ﻿using SpaceHub.Contracts.Enums;
+using SpaceHub.Contracts.Utils;
 using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
 // TODO: Search not working
-public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, int PageNumber, int ItemsPerPage) : IRequest<Result<LaunchesVM>>;
+public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, Pagination Pagination) : IRequest<Result<LaunchesVM>>;
 
 public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
 {
     public GetLaunchesQueryValidator()
     {
-        RuleFor(x => x.PageNumber).NotNull().GreaterThanOrEqualTo(1);
-        RuleFor(x => x.ItemsPerPage).NotNull().GreaterThanOrEqualTo(1);
         RuleFor(x => x.TimeFrame).NotNull().IsInEnum();
         RuleFor(x => x.SearchValue).NotNull();
+        RuleFor(x => x.Pagination).SetValidator(new PaginationParametersValidator());
     }
 }
 
@@ -28,7 +28,6 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
 
     public async Task<Result<LaunchesVM>> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
-        var offset = Pagination.GetOffset(request.PageNumber, request.ItemsPerPage);
         var now = DateTime.UtcNow;
         
         var query = _db.Launches.AsQueryable();
@@ -44,10 +43,10 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
         }
         
         var count = await query.CountAsync();
-        var totalPagesCount = Pagination.GetPagesCount(count, request.ItemsPerPage);
+        var totalPagesCount = request.Pagination.GetPagesCount(count);
         
-        var launches = await query.Skip(offset)
-            .Take(request.ItemsPerPage)
+        var launches = await query.Skip(request.Pagination.Offset)
+            .Take(request.Pagination.ItemsPerPage)
             .Select(x => new LaunchVM
             {
                 Id = x.ApiId,
@@ -60,8 +59,7 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
                 PadLocationName = x.Pad.LocationName,
                 Upcoming = x.Date > now, // TODO: Move to domain?
                 TimeToLaunch = x.Date - now
-            })
-            .ToListAsync();
+            }).ToListAsync();
 
         return Result.Ok(new LaunchesVM(launches, totalPagesCount));
     }

@@ -1,10 +1,12 @@
 ﻿using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using SpaceHub.Application.Errors;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
+using SpaceHub.Contracts.Utils;
 
 namespace SpaceHub.Web.Server;
 
@@ -12,15 +14,15 @@ public static class EndpointsExtension
 {
     public static void AddEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/articles", async (IMediator mediator, string searchValue, int pageNumber, int itemsPerPage) =>
+        app.MapGet("/api/articles", async (IMediator mediator, string searchValue, [AsParameters] Pagination pagination) =>
         {
-            var result = await mediator.Send(new GetNewsQuery(searchValue, pageNumber, itemsPerPage));
+            var result = await mediator.Send(new GetNewsQuery(searchValue, pagination));
             return result.ToHttpResult();
         });
 
-        app.MapGet("/api/launches", async (IMediator mediator, ETimeFrame timeFrame, string searchValue, int pageNumber, int itemsPerPage) =>
+        app.MapGet("/api/launches", async (IMediator mediator, ETimeFrame timeFrame, string searchValue, [AsParameters] Pagination pagination) =>
         {
-            var result = await mediator.Send(new GetLaunchesQuery(timeFrame, searchValue, pageNumber, itemsPerPage));
+            var result = await mediator.Send(new GetLaunchesQuery(timeFrame, searchValue, pagination));
             return result.ToHttpResult();
         });
 
@@ -30,9 +32,9 @@ public static class EndpointsExtension
             return result.ToHttpResult();
         });
 
-        app.MapGet("/api/rockets", async (IMediator mediator, string searchValue, int pageNumber, int itemsPerPage) =>
+        app.MapGet("/api/rockets", async (IMediator mediator, string searchValue, [AsParameters] Pagination pagination) =>
         {
-            var result = await mediator.Send(new GetRocketsQuery(searchValue, pageNumber, itemsPerPage));
+            var result = await mediator.Send(new GetRocketsQuery(searchValue, pagination));
             return result.ToHttpResult();
         });
     }
