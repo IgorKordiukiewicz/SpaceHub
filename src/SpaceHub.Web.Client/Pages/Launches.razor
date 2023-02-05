@@ -2,7 +2,6 @@
 @inject HttpClient _httpClient
 @inject IJSRuntime _jsRuntime
 @using MudBlazor
-@using SpaceHub.Contracts.Utils;
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Contracts.Enums;
 @using SpaceHub.Web.Client.Components
@@ -117,9 +116,7 @@
             }
     </MudGrid>
 
-    <div class="d-flex flex-column align-center my-8">
-        <MudPagination Count="@_viewModel.TotalPagesCount" Size="Size.Large" SelectedChanged="OnPageChanged" />
-    </div>
+    <Pagination PagesCount="@_viewModel.TotalPagesCount" PageChanged="UpdateLaunches" @ref="_paginationComponent" />
 }
 
 @code {
@@ -127,7 +124,7 @@
 
     private ETimeFrame _timeFrame = ETimeFrame.Upcoming;
     private string _searchValue = string.Empty;
-    private Pagination _pagination = new();
+    private Pagination _paginationComponent = new();
 
     private class LaunchDetails
     {
@@ -147,8 +144,7 @@
         var url = new UrlBuilder("api/launches")
             .AddParameter("timeFrame", _timeFrame)
             .AddParameter("searchValue", _searchValue)
-            .AddParameter("pageNumber", _pagination.PageNumber)
-            .AddParameter("itemsPerPage", _pagination.ItemsPerPage)
+            .AddParameters(_paginationComponent.GetQueryParameters())
             .Url;
         // TODO: Move request handling to helper class
         var response = await _httpClient.GetAsync(url);
@@ -172,13 +168,6 @@
     {
         _searchValue = searchValue;
         await UpdateLaunches();
-    }
-
-    private async Task OnPageChanged(int pageNumber)
-    {
-        _pagination.PageNumber = pageNumber;
-        await UpdateLaunches();
-        await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 
     private Color StatusColor(string status) => status.ToLower() switch

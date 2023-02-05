@@ -1,0 +1,33 @@
+﻿@inject IJSRuntime _jsRuntime
+@using MudBlazor
+@using SpaceHub.Contracts.Utils;
+
+<div class="d-flex flex-column align-center my-8">
+    <MudPagination Count="@PagesCount" Size="Size.Large" SelectedChanged="OnPageChanged"/>
+</div>
+
+@code {
+    [Parameter]
+    public int PagesCount { get; set; }
+
+    [Parameter]
+    public EventCallback PageChanged { get; set; }
+
+    private Contracts.Utils.Pagination _pagination = new();
+
+    public List<(string, string)> GetQueryParameters()
+    {
+        return new()
+        {
+            ("pageNumber", _pagination.PageNumber.ToString()),
+            ("itemsPerPage", _pagination.ItemsPerPage.ToString()),
+        };
+    }
+
+    private async Task OnPageChanged(int pageNumber)
+    {
+        _pagination.PageNumber = pageNumber;
+        await PageChanged.InvokeAsync();
+        await _jsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+}

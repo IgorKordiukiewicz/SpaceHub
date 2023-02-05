@@ -18,4 +18,13 @@ public class UrlBuilder
         _queryParameters += $"{prefix}{name}={value}";
         return this;
     }
+
+    public UrlBuilder AddParameters(List<(string, string)> parameters)
+    {
+        foreach(var (name, value) in parameters)
+        {
+            AddParameter(name, value);
+        }
+        return this;
+    }
 }
