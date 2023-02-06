@@ -21,5 +21,5 @@ public record RocketVM
     public int? SuccessfulLaunches { get; init; }
     public int? TotalLaunches { get; init; }
     public int? LaunchSuccess { get; init; }
-    public DateTime? FirstFlight { get; init; }
+    public DateOnly? FirstFlight { get; init; }
 }

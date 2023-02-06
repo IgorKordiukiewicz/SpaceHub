@@ -96,7 +96,7 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
                 SuccessfulLaunches = rocket.SuccessfulLaunches,
                 TotalLaunches = rocket.TotalLaunches,
                 LaunchSuccess = rocket.LaunchSuccess,
-                FirstFlight = rocket.FirstFlight,
+                FirstFlight = rocket.FirstFlight is not null ? DateOnly.FromDateTime(rocket.FirstFlight.Value) : null,
             }
         });
     }
