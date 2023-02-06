@@ -10,7 +10,7 @@
 
     private Timer _timer = new(1000);
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _timer.Elapsed += Update;
         _timer.Start();

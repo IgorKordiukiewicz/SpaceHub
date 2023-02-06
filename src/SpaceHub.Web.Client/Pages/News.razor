@@ -1,6 +1,6 @@
 ﻿@page "/news"
 @inject HttpClient _httpClient
-@inject IJSRuntime _jsRuntime
+@inject IDialogService _dialogService
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components
@@ -46,9 +46,11 @@
 
     private string _searchValue = string.Empty;
     private Pagination _paginationComponent = new();
+    private RequestHandler _requestHandler = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        _requestHandler = new(_httpClient, _dialogService);
         await UpdateArticles();
     }
 
@@ -58,15 +60,8 @@
             .AddParameter("searchValue", _searchValue)
             .AddParameters(_paginationComponent.GetQueryParameters())
             .Url;
-        var response = await _httpClient.GetAsync(url);
-        if (response.IsSuccessStatusCode)
-        {
-            _viewModel = await _httpClient.GetFromJsonAsync<ArticlesVM>(url);
-        }
-        else if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            // TODO: Bad request - pop-up or ?
-        }
+
+        _viewModel = await _requestHandler.HandleAPIRequest<ArticlesVM>(url);
     }
 
     private async Task OnSearchChanged(string searchValue)

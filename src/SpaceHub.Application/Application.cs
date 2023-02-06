@@ -9,6 +9,7 @@ public static class Application
     public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
     {
         services.AddMediatR(Assembly.GetExecutingAssembly());
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         // Order matters, result logging has to be registered before validation,

@@ -1,6 +1,6 @@
 ﻿@page "/launches"
 @inject HttpClient _httpClient
-@inject IJSRuntime _jsRuntime
+@inject IDialogService _dialogService
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Contracts.Enums;
@@ -125,6 +125,7 @@
     private ETimeFrame _timeFrame = ETimeFrame.Upcoming;
     private string _searchValue = string.Empty;
     private Pagination _paginationComponent = new();
+    private RequestHandler _requestHandler = null!;
 
     private class LaunchDetails
     {
@@ -136,6 +137,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _requestHandler = new(_httpClient, _dialogService);
         await UpdateLaunches();
     }
 
@@ -146,16 +148,7 @@
             .AddParameter("searchValue", _searchValue)
             .AddParameters(_paginationComponent.GetQueryParameters())
             .Url;
-        // TODO: Move request handling to helper class
-        var response = await _httpClient.GetAsync(url);
-        if(response.IsSuccessStatusCode)
-        {
-            _viewModel = await _httpClient.GetFromJsonAsync<LaunchesVM>(url);
-        }
-        else if(response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            // TODO: Bad request - pop-up or ?
-        }
+        _viewModel = await _requestHandler.HandleAPIRequest<LaunchesVM>(url);
     }
 
     private async Task OnTimeFrameChanged(ETimeFrame timeFrame)

@@ -1,6 +1,6 @@
 ﻿@page "/rockets"
 @inject HttpClient _httpClient
-@inject IJSRuntime _jsRuntime
+@inject IDialogService _dialogService
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components
@@ -30,9 +30,11 @@
 
     private string _searchValue = string.Empty;
     private Pagination _paginationComponent = new();
+    private RequestHandler _requestHandler = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        _requestHandler = new(_httpClient, _dialogService);
         await UpdateRockets();
     }
 
@@ -42,16 +44,8 @@
             .AddParameter("searchValue", _searchValue)
             .AddParameters(_paginationComponent.GetQueryParameters())
             .Url;
-        var response = await _httpClient.GetAsync(url);
-        // TODO: Extract api requests and response handling to helper class/component
-        if(response.IsSuccessStatusCode)
-        {
-            _viewModel = await response.Content.ReadFromJsonAsync<RocketsVM>();
-        }
-        else if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            // TODO: Bad request - pop-up or ?
-        }
+
+        _viewModel = await _requestHandler.HandleAPIRequest<RocketsVM>(url);
     }
 
     private async Task OnSearchChanged(string searchValue)
