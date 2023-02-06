@@ -31,19 +31,20 @@
                 </MudText>
                 <MudDivider />
                 <MudGrid Class="py-2 px-4">
-                    @foreach (var (name, value, symbol) in Rocket.Properties)
-                    {
-                        <MudItem xs="3">
-                            <MudText Typo="Typo.body1">
-                                @name
-                            </MudText>
-                        </MudItem>
-                        <MudItem xs="3">
-                            <MudText Typo="Typo.body1" Align="Align.End">
-                                @GetPropertyValueDisplay(value, symbol)
-                            </MudText>
-                        </MudItem>
-                    }
+                    <RocketProperty Name="Length" Value="@Rocket.Length.ToString()" UnitSymbol="m" />
+                    <RocketProperty Name="Diameter" Value="@Rocket.Diameter.ToString()"  UnitSymbol="m"/>
+                    <RocketProperty Name="Max Stages" Value="@Rocket.MaxStages.ToString()" />
+                    <RocketProperty Name="LaunchCost" Value="@Rocket.LaunchCost.ToString()" UnitSymbol="$" />
+                    <RocketProperty Name="Liftoff Mass" Value="@Rocket.LiftoffMass.ToString()" UnitSymbol="T" />
+                    <RocketProperty Name="Liftoff Thrust" Value="@Rocket.LiftoffThrust.ToString()" UnitSymbol="kN" />
+                    <RocketProperty Name="Leo Capacity" Value="@Rocket.LeoCapacity.ToString()" UnitSymbol="kg" />
+                    <RocketProperty Name="Geo Capacity" Value="@Rocket.GeoCapacity.ToString()" UnitSymbol="kg" />
+                    <RocketProperty Name="Cost per kg to Leo" Value="@Rocket.CostPerKgToLeo.ToString()" UnitSymbol="$" />
+                    <RocketProperty Name="Cost per kg to Geo" Value="@Rocket.CostPerKgToGeo.ToString()" UnitSymbol="$" />
+                    <RocketProperty Name="Successful Launches" Value="@Rocket.SuccessfulLaunches.ToString()" />
+                    <RocketProperty Name="Total Launches" Value="@Rocket.TotalLaunches.ToString()" />
+                    <RocketProperty Name="Launch Success" Value="@Rocket.LaunchSuccess.ToString()" UnitSymbol="%"/>
+                    <RocketProperty Name="First Flight" Value="@Rocket.FirstFlight.ToString()" />
                 </MudGrid>
             </MudItem>
 

@@ -1,6 +1,4 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using SpaceHub.Domain.Attributes;
-using SpaceHub.Domain.Enums;
 
 namespace SpaceHub.Infrastructure.Data.Models;
 
