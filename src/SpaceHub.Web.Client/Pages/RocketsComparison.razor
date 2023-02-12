@@ -8,66 +8,79 @@
 
 @if(_rocketsComparisonMeta is not null)
 {
-<MudPaper>
-    <MudForm>
-        <MudSelect T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
-            <MudSelectItem Value="@GroupType.All" />
-            <MudSelectItem Value="@GroupType.Family" />
-            <MudSelectItem Value="@GroupType.Individual" />
-        </MudSelect>
-        @switch (_groupType)
-        {
-            case GroupType.All:
-                break;
-            case GroupType.Family:
+<MudGrid>
+    <MudItem xs="12" lg="3">
+        <MudPaper Class="pa-4">
+            <MudForm Class="gap-4 d-flex flex-wrap mb-4">
+                <MudSelect @ref="_groupTypeSelect" T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
+                    <MudSelectItem Value="@GroupType.Individual" />
+                    <MudSelectItem Value="@GroupType.Family" />
+                    <MudSelectItem Value="@GroupType.All" Disabled="IsGroupTypeAllSelectItemDisabled()" />
+                </MudSelect>
+                @switch (_groupType)
                 {
-                    <MudAutocomplete T="string" Label="Select Family" SearchFunc="@SearchFamilies" @bind-Value="@_familyName" />
-                    break;
+                    case GroupType.All:
+                        break;
+                    case GroupType.Family:
+                        {
+                            <MudAutocomplete @ref="_familyNameAutocomplete" @bind-Value="@_familyName" T="string" Label="Select Family" 
+                            SearchFunc="@SearchFamilies"  Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
+                            break;
+                        }
+                    case GroupType.Individual:
+                        {
+                            <MudAutocomplete @ref="_rocketNameAutocomplete" @bind-Value="@_rocketName" T="string" Label="Select Rocket" 
+                            SearchFunc="@SearchRockets" Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
+                            break;
+                        }
+                    default:
+                        break;
                 }
-
-            case GroupType.Individual:
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" FullWidth="true" OnClick="OnComparisonGroupAdded" Disabled="IsAddingNewComparisonGroupDisabled()">Add</MudButton>
+            </MudForm>
+            <MudDivider />
+            <MudList Clickable="false">
+                @foreach (var comparisonGroup in _comparisonGroups)
                 {
-                    <MudAutocomplete T="string" Label="Select Rocket" SearchFunc="@SearchRockets" @bind-Value="@_rocketName" />
-                    break;
+                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
+                        <div class="d-flex justify-space-between align-center">
+                            <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
+                        </div>
+                    </MudListItem>
                 }
-            default:
-                break;
-        }
-        <MudButton Color="Color.Primary" OnClick="OnComparisonGroupAdded" Disabled="IsAddingNewComparisonGroupDisabled()">Add</MudButton>
-    </MudForm>
-    <MudDivider />
-    <MudList Clickable="false">
-        @foreach (var comparisonGroup in _comparisonGroups)
-        {
-            <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
-                <div class="d-flex justify-space-between align-center">
-                    <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
-                    <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
-                </div>
-            </MudListItem>
-        }
-    </MudList>
-</MudPaper>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" lg="9">
+        <MudPaper Style="width: 100%; height: 100%;">
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 }
 
 @code {
     private RocketsComparisonMetaVM? _rocketsComparisonMeta;
     private RequestHandler _requestHandler = null!;
 
+    private MudAutocomplete<string> _familyNameAutocomplete;
+    private MudAutocomplete<string> _rocketNameAutocomplete;
+    private MudSelect<GroupType> _groupTypeSelect;
+
     private int _maxGroups = 5;
 
     public enum GroupType
     {
-        All,
+        Individual,
         Family,
-        Individual
+        All
     }
     private GroupType _groupType = GroupType.Individual;
 
-    private string _familyName = string.Empty;
+    private string? _familyName;
     private List<string> _familiesNames = new();
 
-    private string _rocketName = string.Empty;
+    private string? _rocketName;
     private List<string> _rocketsNames = new();
 
     private class ComparisonGroup
@@ -109,23 +122,30 @@
             case GroupType.All:
                 {
                     comparisonGroup.RocketsCount = _rocketsComparisonMeta.TotalCount;
+
+                    _groupTypeSelect.SelectOption(GroupType.Individual);
                     break;
                 }
             case GroupType.Family:
                 {
                     comparisonGroup.FamilyName = _familyName;
                     comparisonGroup.RocketsCount = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
+
+                    _familyNameAutocomplete.Clear();
                     break;
                 }
             case GroupType.Individual:
                 {
                     comparisonGroup.RocketName = _rocketName;
                     comparisonGroup.RocketId = _rocketsComparisonMeta.RocketNamesWithId.First(x => x.Key == _rocketName).Value;
+
+                    _rocketNameAutocomplete.Clear();
                     break;
                 }
             default:
                 break;
         }
+
         _comparisonGroups.Add(comparisonGroup);
     }
 
@@ -138,22 +158,26 @@
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
     {
+        var filteredNames = _familiesNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Family).Select(x => x.FamilyName));
+
         if(string.IsNullOrEmpty(value))
         {
-            return _familiesNames;
+            return filteredNames;
         }
 
-        return _familiesNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task<IEnumerable<string>> SearchRockets(string value)
     {
+        var filteredNames = _rocketsNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Individual).Select(x => x.RocketName));
+
         if (string.IsNullOrEmpty(value))
         {
-            return _rocketsNames;
+            return filteredNames;
         }
 
-        return _rocketsNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
     private void OnDeleteGroupButtonClicked(ComparisonGroup comparisonGroup, MouseEventArgs e)
@@ -172,11 +196,16 @@
         {
             GroupType.All => _comparisonGroups.Any(x => x.Type == GroupType.All),
             GroupType.Family => _comparisonGroups.Any(x => x.Type == GroupType.Family && x.FamilyName == _familyName)
-                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName),
+                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty),
             GroupType.Individual => _comparisonGroups.Any(x => x.Type == GroupType.Individual && x.RocketName == _rocketName)
-                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName),
+                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty),
         };
 
         return _comparisonGroups.Count >= _maxGroups || disabledForType;
+    }
+
+    private bool IsGroupTypeAllSelectItemDisabled()
+    {
+        return _comparisonGroups.Any(x => x.Type == GroupType.All);
     }
 }
