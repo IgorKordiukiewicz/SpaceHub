@@ -35,35 +35,10 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
         var count = await query.CountAsync();
         var totalPagesCount = request.Pagination.GetPagesCount(count);
 
-        // TODO: Move rocket mappings to /Common ?
-        var rockets = await query.Skip(request.Pagination.Offset)
+        var rockets = (await query.Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
-            .Select(x => new Rocket
-            {
-                ApiId = x.ApiId,
-                Name = x.Name,
-                Family = x.Family,
-                Variant = x.Variant,
-                Active = x.Active,
-                Reusable = x.Reusable,
-                Description = x.Description,
-                ImageUrl = x.ImageUrl,
-                WikiUrl = x.WikiUrl,
-                InfoUrl = x.InfoUrl,
-                Length = x.Length,
-                Diameter = x.Diameter,
-                MaxStages = x.MaxStages,
-                LaunchCost = x.LaunchCost,
-                LiftoffMass = x.LiftoffMass,
-                LiftoffThrust = x.ThrustAtLiftoff,
-                LeoCapacity = x.LeoCapacity,
-                GeoCapacity = x.GeoCapacity,
-                SuccessfulLaunches = x.SuccessfulLaunches,
-                TotalLaunches = x.TotalLaunches,
-                ConsecutiveSuccessfulLaunches = x.ConsecutiveSuccessfulLaunches,
-                PendingLaunches = x.PendingLaunches,
-                FirstFlight = x.FirstFlight
-            }).ToListAsync();
+            .ToListAsync())
+            .Select(x => x.ToDomainModel()); // Select has to be after querying the data, because MongoDB's LINQ doesn't work with extension methods in Select
 
         if (!rockets.Any())
         {
@@ -73,26 +48,7 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
         var rocketsVMs = new List<RocketVM>();
         foreach(var rocket in rockets)
         {
-            rocketsVMs.Add(new()
-            {
-                Name = rocket.Name,
-                Description = rocket.Description,
-                ImageUrl = rocket.ImageUrl,
-                Length = rocket.Length,
-                Diameter = rocket.Diameter,
-                MaxStages = rocket.MaxStages,
-                LaunchCost = rocket.LaunchCost,
-                LiftoffMass = rocket.LiftoffMass,
-                LiftoffThrust = rocket.LiftoffThrust,
-                LeoCapacity = rocket.LeoCapacity,
-                GeoCapacity = rocket.GeoCapacity,
-                CostPerKgToLeo = rocket.CostPerKgToLeo,
-                CostPerKgToGeo = rocket.CostPerKgToGeo,
-                SuccessfulLaunches = rocket.SuccessfulLaunches,
-                TotalLaunches = rocket.TotalLaunches,
-                LaunchSuccess = rocket.LaunchSuccess,
-                FirstFlight = rocket.FirstFlight is not null ? DateOnly.FromDateTime(rocket.FirstFlight.Value) : null,
-            });
+            rocketsVMs.Add(rocket.ToViewModel());
         }
 
         return new RocketsVM(rocketsVMs, totalPagesCount);
