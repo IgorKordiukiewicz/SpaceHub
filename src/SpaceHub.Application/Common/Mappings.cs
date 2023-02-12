@@ -39,6 +39,7 @@ public static class Mappings
     {
         return new()
         {
+            ApiId = rocket.ApiId,
             Name = rocket.Name,
             Description = rocket.Description,
             ImageUrl = rocket.ImageUrl,

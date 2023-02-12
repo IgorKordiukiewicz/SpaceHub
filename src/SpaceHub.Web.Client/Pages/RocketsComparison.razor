@@ -1,0 +1,151 @@
+﻿@page "/rockets/comparison"
+@inject HttpClient _httpClient
+@inject IDialogService _dialogService
+@using MudBlazor
+@using SpaceHub.Contracts.ViewModels;
+@using SpaceHub.Web.Client.Components;
+@using SpaceHub.Web.Client.Utils;
+
+<MudPaper>
+    <MudForm>
+        <MudSelect T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
+            <MudSelectItem Value="@GroupType.All" />
+            <MudSelectItem Value="@GroupType.Family" />
+            <MudSelectItem Value="@GroupType.Individual" />
+        </MudSelect>
+        @switch(_groupType)
+        {
+            case GroupType.All:
+                break;
+            case GroupType.Family:
+                {
+                    <MudAutocomplete T="string" Label="Select Family" SearchFunc="@SearchFamilies" @bind-Value="@_familyName"/>
+                    break;
+                }
+
+            case GroupType.Individual:
+                {
+                    <MudAutocomplete T="string" Label="Select Rocket" SearchFunc="@SearchRockets" @bind-Value="@_rocketName" />
+                    break;
+                }
+            default:
+                break;
+        }
+        <MudButton Color="Color.Primary" OnClick="OnComparisonGroupAdded">Add</MudButton>
+    </MudForm>
+    <MudDivider/>
+    <MudList Clickable="false">
+        @foreach(var comparisonGroup in _comparisonGroups)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
+                <div class="d-flex justify-space-between align-center">
+                    <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.Clear"></MudIconButton>
+                </div>
+            </MudListItem>
+        }
+    </MudList>
+</MudPaper>
+
+@code {
+    private RocketsComparisonMetaVM? _rocketsComparisonMeta;
+    private RequestHandler _requestHandler = null!;
+
+    // TODO: Allow only finite number of groups, don't allow duplicates, don't allow multiple All groups, assign colors to groups
+    private int _maxGroups = 5;
+
+    public enum GroupType
+    {
+        All,
+        Family,
+        Individual
+    }
+    private GroupType _groupType = GroupType.Individual;
+
+    private string _familyName = string.Empty;
+    private List<string> _familiesNames = new();
+
+    private string _rocketName = string.Empty;
+    private List<string> _rocketsNames = new();
+
+    private class ComparisonGroup
+    {
+        public GroupType Type { get; set; }
+
+        public string? FamilyName { get; set; }
+        public string? RocketName { get; set; }
+        public int? RocketId { get; set; }
+
+        public int RocketsCount { get; set; }
+    }
+    private List<ComparisonGroup> _comparisonGroups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _requestHandler = new(_httpClient, _dialogService);
+        var url = new UrlBuilder("api/rockets/comparison_meta").Url;
+
+        _rocketsComparisonMeta = await _requestHandler.HandleAPIRequest<RocketsComparisonMetaVM>(url);
+
+        if(_rocketsComparisonMeta is not null)
+        {
+            _familiesNames = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.Select(x => x.Key).ToList();
+            _rocketsNames = _rocketsComparisonMeta.RocketNamesWithId.Select(x => x.Key).ToList();
+        }
+    }
+
+    private void OnComparisonGroupAdded()
+    {
+        var comparisonGroup = new ComparisonGroup() { Type = _groupType };
+        switch(comparisonGroup.Type)
+        {
+            case GroupType.All:
+                {
+                    comparisonGroup.RocketsCount = _rocketsComparisonMeta.TotalCount;
+                    break;
+                }
+            case GroupType.Family:
+                {
+                    comparisonGroup.FamilyName = _familyName;
+                    comparisonGroup.RocketsCount = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
+                    break;
+                }
+            case GroupType.Individual:
+                {
+                    comparisonGroup.RocketName = _rocketName;
+                    comparisonGroup.RocketId = _rocketsComparisonMeta.RocketNamesWithId.First(x => x.Key == _rocketName).Value;
+                    break;
+                }
+            default:
+                break;
+        }
+        _comparisonGroups.Add(comparisonGroup);
+    }
+
+    private string GetComparisonGroupTitle(ComparisonGroup comparisonGroup) => comparisonGroup.Type switch
+    {
+        GroupType.All => $"All ({comparisonGroup.RocketsCount})",
+        GroupType.Family => $"Family: {comparisonGroup.FamilyName} ({comparisonGroup.RocketsCount})",
+        GroupType.Individual => $"{comparisonGroup.RocketName}",
+    };
+
+    private async Task<IEnumerable<string>> SearchFamilies(string value)
+    {
+        if(string.IsNullOrEmpty(value))
+        {
+            return _familiesNames;
+        }
+
+        return _familiesNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private async Task<IEnumerable<string>> SearchRockets(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return _rocketsNames;
+        }
+
+        return _rocketsNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    }
+}

@@ -37,6 +37,12 @@ public static class EndpointsExtension
             var result = await mediator.Send(new GetRocketsQuery(searchValue, pagination));
             return result.ToHttpResult();
         });
+
+        app.MapGet("/api/rockets/comparison_meta", async (IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetRocketsComparisonMetaQuery());
+            return result.ToHttpResult();
+        });
     }
 
     private static IResult ToHttpResult<T>(this Result<T> handlerResult)
