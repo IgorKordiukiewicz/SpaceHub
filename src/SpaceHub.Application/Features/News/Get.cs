@@ -27,8 +27,6 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
 
     public async Task<Result<ArticlesVM>> Handle(GetNewsQuery request, CancellationToken cancellationToken)
     {
-        // TODO: To improve performance, maybe add where clause to pre-filter articles by search
-        // e.g. Title/summary must contain searchValue, and then the queried models will be further filtered by more complex and accurate search?
         var articles = await _db.Articles.AsQueryable()
             .OrderByDescending(x => x.PublishDate)
             .ToListAsync();

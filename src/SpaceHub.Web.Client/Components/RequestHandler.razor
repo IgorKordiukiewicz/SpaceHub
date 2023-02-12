@@ -1,4 +1,5 @@
 ﻿@using MudBlazor;
+@using System.Net;
 
 @code {
     // Dependencies have to be manually passed from parent component, because [Inject]/@Inject injects them after parent initialization
@@ -20,7 +21,8 @@
         }
         else
         {
-            await _dialogService.ShowMessageBox($"{(int)response.StatusCode} {response.StatusCode}", await response.Content.ReadAsStringAsync());
+            var message = response.StatusCode != HttpStatusCode.InternalServerError ? await response.Content.ReadAsStringAsync() : string.Empty;
+            await _dialogService.ShowMessageBox($"{(int)response.StatusCode} {response.ReasonPhrase}", message);
             return null;
         }
     }
