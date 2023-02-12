@@ -40,7 +40,7 @@
             <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
                 <div class="d-flex justify-space-between align-center">
                     <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
-                    <MudIconButton Icon="@Icons.Material.Filled.Clear"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
                 </div>
             </MudListItem>
         }
@@ -147,5 +147,10 @@
         }
 
         return _rocketsNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void OnDeleteGroupButtonClicked(ComparisonGroup comparisonGroup, MouseEventArgs e)
+    {
+        _comparisonGroups.Remove(comparisonGroup);
     }
 }
