@@ -41,6 +41,8 @@ public static class Mappings
         {
             ApiId = rocket.ApiId,
             Name = rocket.Name,
+            Family = rocket.Family,
+            Variant = rocket.Variant,
             Description = rocket.Description,
             ImageUrl = rocket.ImageUrl,
             Length = rocket.Length,

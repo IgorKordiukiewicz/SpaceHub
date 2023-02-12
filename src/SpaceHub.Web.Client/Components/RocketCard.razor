@@ -26,11 +26,13 @@
                 <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
                     @Rocket.Name
                 </MudText>
-                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2">
+                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2 px-2">
                     @Rocket.Description
                 </MudText>
-                <MudDivider />
+                <MudDivider/>
                 <MudGrid Class="py-2 px-4">
+                    <RocketProperty Name="Family" Value="@Rocket.Family" />
+                    <RocketProperty Name="Variant" Value="@Rocket.Variant" />
                     <RocketProperty Name="Length" Value="@Rocket.Length.ToString()" UnitSymbol="m" />
                     <RocketProperty Name="Diameter" Value="@Rocket.Diameter.ToString()"  UnitSymbol="m"/>
                     <RocketProperty Name="Max Stages" Value="@Rocket.MaxStages.ToString()" />

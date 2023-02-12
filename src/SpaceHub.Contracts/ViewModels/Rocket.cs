@@ -4,6 +4,8 @@ public record RocketVM
 {
     public required int ApiId { get; init; }
     public required string Name { get; init; }
+    public string Family { get; init; } = string.Empty;
+    public string Variant { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public string ImageUrl { get; init; } = string.Empty;
     public double? Length { get; init; }
