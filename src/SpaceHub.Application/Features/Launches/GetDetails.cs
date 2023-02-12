@@ -51,7 +51,11 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
             {
                 Name = agency.Name,
                 Description = agency.Description,
-                ImageUrl = agency.LogoUrl
+                ImageUrl = agency.LogoUrl,
+                Type = agency.Type,
+                CountryCode = agency.CountryCode,
+                Administrator = agency.Administrator,
+                FoundingYear = agency.FoundingYear
             },
             Rocket = rocket.ToViewModel()
         });

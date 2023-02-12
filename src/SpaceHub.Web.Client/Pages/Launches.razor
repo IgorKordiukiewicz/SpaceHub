@@ -98,7 +98,10 @@
                                                 <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary">
                                                     @details.Data.Agency.Name
                                                 </MudText>
-                                                <MudText Typo="Typo.body2" Align="Align.Center">
+                                            <MudText Typo="Typo.body1" Align="Align.Center">
+                                                <b>@string.Join(" | ", details.Data.Agency.Type, details.Data.Agency.CountryCode, details.Data.Agency.Administrator, details.Data.Agency.FoundingYear)</b>
+                                            </MudText>
+                                                <MudText Typo="Typo.body2" Align="Align.Center" Class="pb-2 px-2">
                                                     @details.Data.Agency.Description
                                                 </MudText>
                                             </MudItem>
