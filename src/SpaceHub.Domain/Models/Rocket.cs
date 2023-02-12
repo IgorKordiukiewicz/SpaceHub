@@ -29,7 +29,7 @@ public class Rocket
     public int ConsecutiveSuccessfulLaunches { get; set; }
     public int PendingLaunches { get; set; }
 
-    public int LaunchSuccess => TotalLaunches > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunches) : 0;
+    public int? LaunchSuccess => TotalLaunches > 0 ? (int)Math.Round((double)SuccessfulLaunches * 100 / TotalLaunches) : null;
 
     public DateTime? FirstFlight { get; init; }
 

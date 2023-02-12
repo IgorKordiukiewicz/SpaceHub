@@ -204,8 +204,5 @@
         return _comparisonGroups.Count >= _maxGroups || disabledForType;
     }
 
-    private bool IsGroupTypeAllSelectItemDisabled()
-    {
-        return _comparisonGroups.Any(x => x.Type == GroupType.All);
-    }
+    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Type == GroupType.All);
 }

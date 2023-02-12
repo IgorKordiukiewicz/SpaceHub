@@ -33,18 +33,18 @@
                 <MudGrid Class="py-2 px-4">
                     <RocketProperty Name="Family" Value="@Rocket.Family" />
                     <RocketProperty Name="Variant" Value="@Rocket.Variant" />
-                    <RocketProperty Name="Length" Value="@Rocket.Length.ToString()" UnitSymbol="m" />
-                    <RocketProperty Name="Diameter" Value="@Rocket.Diameter.ToString()"  UnitSymbol="m"/>
-                    <RocketProperty Name="Max Stages" Value="@Rocket.MaxStages.ToString()" />
-                    <RocketProperty Name="LaunchCost" Value="@Rocket.LaunchCost.ToString()" UnitSymbol="$" />
-                    <RocketProperty Name="Liftoff Mass" Value="@Rocket.LiftoffMass.ToString()" UnitSymbol="T" />
-                    <RocketProperty Name="Liftoff Thrust" Value="@Rocket.LiftoffThrust.ToString()" UnitSymbol="kN" />
-                    <RocketProperty Name="Leo Capacity" Value="@Rocket.LeoCapacity.ToString()" UnitSymbol="kg" />
-                    <RocketProperty Name="Geo Capacity" Value="@Rocket.GeoCapacity.ToString()" UnitSymbol="kg" />
-                    <RocketProperty Name="Cost per kg to Leo" Value="@Rocket.CostPerKgToLeo.ToString()" UnitSymbol="$" />
-                    <RocketProperty Name="Cost per kg to Geo" Value="@Rocket.CostPerKgToGeo.ToString()" UnitSymbol="$" />
-                    <RocketProperty Name="Successful Launches" Value="@Rocket.SuccessfulLaunches.ToString()" />
-                    <RocketProperty Name="Total Launches" Value="@Rocket.TotalLaunches.ToString()" />
+                    <RocketProperty Name="Length" Value="@FormatValue(Rocket.Length)" UnitSymbol="m" />
+                    <RocketProperty Name="Diameter" Value="@FormatValue(Rocket.Diameter)" UnitSymbol="m" />
+                    <RocketProperty Name="Max Stages" Value="@FormatValue(Rocket.MaxStages)" />
+                    <RocketProperty Name="LaunchCost" Value="@FormatValue(Rocket.LaunchCost)" UnitSymbol="$" />
+                    <RocketProperty Name="Liftoff Mass" Value="@FormatValue(Rocket.LiftoffMass)" UnitSymbol="T" />
+                    <RocketProperty Name="Liftoff Thrust" Value="@FormatValue(Rocket.LiftoffThrust)" UnitSymbol="kN" />
+                    <RocketProperty Name="Leo Capacity" Value="@FormatValue(Rocket.LeoCapacity)" UnitSymbol="kg" />
+                    <RocketProperty Name="Geo Capacity" Value="@FormatValue(Rocket.GeoCapacity)" UnitSymbol="kg" />
+                    <RocketProperty Name="Cost per kg to Leo" Value="@FormatValue(Rocket.CostPerKgToLeo)" UnitSymbol="$" />
+                    <RocketProperty Name="Cost per kg to Geo" Value="@FormatValue(Rocket.CostPerKgToGeo)" UnitSymbol="$" />
+                    <RocketProperty Name="Successful Launches" Value="@FormatValue(Rocket.SuccessfulLaunches)" />
+                    <RocketProperty Name="Total Launches" Value="@FormatValue(Rocket.TotalLaunches.ToString())" />
                     <RocketProperty Name="Launch Success" Value="@Rocket.LaunchSuccess.ToString()" UnitSymbol="%"/>
                     <RocketProperty Name="First Flight" Value="@Rocket.FirstFlight.ToString()" />
                 </MudGrid>
@@ -61,13 +61,7 @@
     [Parameter]
     public RocketVM Rocket { get; set; }
 
-    private string GetPropertyValueDisplay(string value, string? symbol)
-    {
-        return value + (symbol is null ? "" : " " + symbol);
-    }
+    private string GetItemClass() => Nested ? "mx-6 mt-2 mb-4" : "mb-10";
 
-    private string GetItemClass()
-    {
-        return Nested ? "mx-6 mt-2 mb-4" : "mb-10";
-    }
+    private string FormatValue<T>(T? value) => string.Format("{0:#,0.##}", value);
 }
