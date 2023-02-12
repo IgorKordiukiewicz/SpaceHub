@@ -6,6 +6,8 @@
 @using SpaceHub.Web.Client.Components;
 @using SpaceHub.Web.Client.Utils;
 
+@if(_rocketsComparisonMeta is not null)
+{
 <MudPaper>
     <MudForm>
         <MudSelect T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
@@ -13,13 +15,13 @@
             <MudSelectItem Value="@GroupType.Family" />
             <MudSelectItem Value="@GroupType.Individual" />
         </MudSelect>
-        @switch(_groupType)
+        @switch (_groupType)
         {
             case GroupType.All:
                 break;
             case GroupType.Family:
                 {
-                    <MudAutocomplete T="string" Label="Select Family" SearchFunc="@SearchFamilies" @bind-Value="@_familyName"/>
+                    <MudAutocomplete T="string" Label="Select Family" SearchFunc="@SearchFamilies" @bind-Value="@_familyName" />
                     break;
                 }
 
@@ -31,11 +33,11 @@
             default:
                 break;
         }
-        <MudButton Color="Color.Primary" OnClick="OnComparisonGroupAdded">Add</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnComparisonGroupAdded" Disabled="IsAddingNewComparisonGroupDisabled()">Add</MudButton>
     </MudForm>
-    <MudDivider/>
+    <MudDivider />
     <MudList Clickable="false">
-        @foreach(var comparisonGroup in _comparisonGroups)
+        @foreach (var comparisonGroup in _comparisonGroups)
         {
             <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
                 <div class="d-flex justify-space-between align-center">
@@ -46,12 +48,12 @@
         }
     </MudList>
 </MudPaper>
+}
 
 @code {
     private RocketsComparisonMetaVM? _rocketsComparisonMeta;
     private RequestHandler _requestHandler = null!;
 
-    // TODO: Allow only finite number of groups, don't allow duplicates, don't allow multiple All groups, assign colors to groups
     private int _maxGroups = 5;
 
     public enum GroupType
@@ -96,6 +98,11 @@
 
     private void OnComparisonGroupAdded()
     {
+        if(IsAddingNewComparisonGroupDisabled())
+        {
+            return;
+        }
+
         var comparisonGroup = new ComparisonGroup() { Type = _groupType };
         switch(comparisonGroup.Type)
         {
@@ -152,5 +159,24 @@
     private void OnDeleteGroupButtonClicked(ComparisonGroup comparisonGroup, MouseEventArgs e)
     {
         _comparisonGroups.Remove(comparisonGroup);
+    }
+
+    private bool IsAddingNewComparisonGroupDisabled()
+    {
+        if(_rocketsComparisonMeta is null)
+        {
+            return true;
+        }
+
+        var disabledForType = _groupType switch
+        {
+            GroupType.All => _comparisonGroups.Any(x => x.Type == GroupType.All),
+            GroupType.Family => _comparisonGroups.Any(x => x.Type == GroupType.Family && x.FamilyName == _familyName)
+                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName),
+            GroupType.Individual => _comparisonGroups.Any(x => x.Type == GroupType.Individual && x.RocketName == _rocketName)
+                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName),
+        };
+
+        return _comparisonGroups.Count >= _maxGroups || disabledForType;
     }
 }
