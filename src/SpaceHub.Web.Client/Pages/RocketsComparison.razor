@@ -65,13 +65,14 @@
 }
 
 @code {
-    private RadarConfig _config;
+    private int x = 0;
+    private RadarConfig _config = null!;
     private RocketsComparisonMetaVM? _rocketsComparisonMeta;
     private RequestHandler _requestHandler = null!;
 
-    private MudAutocomplete<string> _familyNameAutocomplete;
-    private MudAutocomplete<string> _rocketNameAutocomplete;
-    private MudSelect<GroupType> _groupTypeSelect;
+    private MudAutocomplete<string>? _familyNameAutocomplete;
+    private MudAutocomplete<string>? _rocketNameAutocomplete;
+    private MudSelect<GroupType>? _groupTypeSelect;
 
     private int _maxGroups = 5;
 
@@ -173,25 +174,25 @@
         {
             case GroupType.All:
                 {
-                    comparisonGroup.RocketsCount = _rocketsComparisonMeta.TotalCount;
+                    comparisonGroup.RocketsCount = _rocketsComparisonMeta!.TotalCount;
 
-                    _groupTypeSelect.SelectOption(GroupType.Individual);
+                    _groupTypeSelect!.SelectOption(GroupType.Individual);
                     break;
                 }
             case GroupType.Family:
                 {
                     comparisonGroup.FamilyName = _familyName;
-                    comparisonGroup.RocketsCount = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
+                    comparisonGroup.RocketsCount = _rocketsComparisonMeta!.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
 
-                    _familyNameAutocomplete.Clear();
+                    _familyNameAutocomplete!.Clear();
                     break;
                 }
             case GroupType.Individual:
                 {
                     comparisonGroup.RocketName = _rocketName;
-                    comparisonGroup.RocketId = _rocketsComparisonMeta.RocketNamesWithId.First(x => x.Key == _rocketName).Value;
+                    comparisonGroup.RocketId = _rocketsComparisonMeta!.RocketNamesWithId.First(x => x.Key == _rocketName).Value;
 
-                    _rocketNameAutocomplete.Clear();
+                    _rocketNameAutocomplete!.Clear();
                     break;
                 }
             default:
@@ -210,7 +211,7 @@
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
     {
-        var filteredNames = _familiesNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Family).Select(x => x.FamilyName));
+        var filteredNames = _familiesNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Family).Select(x => x.FamilyName!));
 
         if(string.IsNullOrEmpty(value))
         {
@@ -222,7 +223,7 @@
 
     private async Task<IEnumerable<string>> SearchRockets(string value)
     {
-        var filteredNames = _rocketsNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Individual).Select(x => x.RocketName));
+        var filteredNames = _rocketsNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Individual).Select(x => x.RocketName!));
 
         if (string.IsNullOrEmpty(value))
         {
@@ -239,7 +240,7 @@
 
     private bool IsAddingNewComparisonGroupDisabled()
     {
-        if(_rocketsComparisonMeta is null)
+        if(_rocketsComparisonMeta is null || _groupTypeSelect is null || _familyNameAutocomplete is null || _rocketNameAutocomplete is null)
         {
             return true;
         }
@@ -251,6 +252,7 @@
                 || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty),
             GroupType.Individual => _comparisonGroups.Any(x => x.Type == GroupType.Individual && x.RocketName == _rocketName)
                 || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty),
+            _ => true
         };
 
         return _comparisonGroups.Count >= _maxGroups || disabledForType;
