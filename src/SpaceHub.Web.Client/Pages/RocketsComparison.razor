@@ -1,6 +1,10 @@
 ﻿@page "/rockets/comparison"
 @inject HttpClient _httpClient
 @inject IDialogService _dialogService
+@using ChartJs.Blazor
+@using ChartJs.Blazor.Common;
+@using ChartJs.Blazor.RadarChart;
+@using ChartJs.Blazor.Util;
 @using MudBlazor
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components;
@@ -10,7 +14,7 @@
 {
 <MudGrid>
     <MudItem xs="12" lg="3">
-        <MudPaper Class="pa-4">
+        <MudPaper Class="pa-4" Style="height: 100%;">
             <MudForm Class="gap-4 d-flex flex-wrap mb-4">
                 <MudSelect @ref="_groupTypeSelect" T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
                     <MudSelectItem Value="@GroupType.Individual" />
@@ -54,12 +58,14 @@
     </MudItem>
     <MudItem xs="12" lg="9">
         <MudPaper Style="width: 100%; height: 100%;">
+            <Chart Config="_config"></Chart>
         </MudPaper>
     </MudItem>
 </MudGrid>
 }
 
 @code {
+    private RadarConfig _config;
     private RocketsComparisonMetaVM? _rocketsComparisonMeta;
     private RequestHandler _requestHandler = null!;
 
@@ -107,6 +113,52 @@
             _familiesNames = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.Select(x => x.Key).ToList();
             _rocketsNames = _rocketsComparisonMeta.RocketNamesWithId.Select(x => x.Key).ToList();
         }
+
+        InitializeChart();
+    }
+
+    private void InitializeChart()
+    {
+        _config = new RadarConfig
+            {
+                Options = new RadarOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Rocket Properties"
+                    },
+                    Scale = new ChartJs.Blazor.Common.Axes.LinearRadialAxis()
+                    {
+                        Ticks = new ChartJs.Blazor.Common.Axes.Ticks.LinearRadialTicks()
+                        {
+                            Min = 0.0,
+                            Max = 1.0
+                        }
+                    },
+                    Tooltips = new()
+                    {
+
+                    },
+                }
+            };
+
+        foreach (string color in new[] { "Prop1", "Prop2", "Prop3", "Prop4", "Prop5", "Prop5", "Prop6" })
+        {
+            _config.Data.Labels.Add(color);
+        }
+
+        RadarDataset<float> dataset = new RadarDataset<float>(new[] { 0.7F, 0.59F, 0.9F, 0.17F, 0.56F, 0.55F, 0.40F });
+        dataset.BackgroundColor = ColorUtil.ColorString(255, 99, 132, 0.2);
+        dataset.BorderColor = ColorUtil.ColorString(255, 99, 132);
+
+        RadarDataset<float> dataset2 = new RadarDataset<float>(new[] { 0.56F, 0.82F, 0.75F, 0.44F, 0.58F, 0.70F, 0.60F });
+        dataset2.BackgroundColor = ColorUtil.ColorString(99, 132, 255, 0.2);
+        dataset2.BorderColor = ColorUtil.ColorString(99, 132, 255);
+
+        _config.Data.Datasets.Add(dataset);
+        _config.Data.Datasets.Add(dataset2);
     }
 
     private void OnComparisonGroupAdded()
