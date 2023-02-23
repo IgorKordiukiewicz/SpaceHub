@@ -7,8 +7,26 @@ using SpaceHub.Application.Features.News;
 using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Utils;
+using SpaceHub.Contracts.ViewModels;
 
 namespace SpaceHub.Web.Server;
+
+public class TestController : Controller
+{
+    private readonly IMediator _mediator;
+
+    public TestController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    //[HttpPost("api/rockets/comparison")]
+    //public async Task<IActionResult> Comparison([FromBody] List<ComparisonGroupDto> comparisonGroups)
+    //{
+    //    var result = await _mediator.Send(new GetRocketsComparisonQuery(comparisonGroups));
+    //    return Ok(result);
+    //}
+}
 
 public static class EndpointsExtension
 {
@@ -38,9 +56,11 @@ public static class EndpointsExtension
             return result.ToHttpResult();
         });
 
-        app.MapGet("/api/rockets/comparison", async (IMediator mediator) =>
+        // TODO: Since this endpoint only gets data and does not modify it, having it as a POST request, kinda violates REST
+        // maybe consider sending the comparisonGroups as a query string (maybe encoded?)
+        app.MapPost("/api/rockets/comparison", async (IMediator mediator, List<ComparisonGroup> comparisonGroups) =>
         {
-            var result = await mediator.Send(new GetRocketsComparisonQuery());
+            var result = await mediator.Send(new GetRocketsComparisonQuery(comparisonGroups));
             return result.ToHttpResult();
         });
 

@@ -6,9 +6,12 @@
 @using ChartJs.Blazor.RadarChart;
 @using ChartJs.Blazor.Util;
 @using MudBlazor
+@using SpaceHub.Contracts.Utils;
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components;
 @using SpaceHub.Web.Client.Utils;
+@using System.Text.Json;
+@using System.Text;
 
 @if(_rocketsComparisonMeta is not null)
 {
@@ -58,16 +61,20 @@
     </MudItem>
     <MudItem xs="12" lg="9">
         <MudPaper Style="width: 100%; height: 100%;">
-            <Chart Config="_config"></Chart>
+            <Chart @ref="_chart" Config="_config"></Chart>
         </MudPaper>
     </MudItem>
 </MudGrid>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UpdateChart"> <!--TEMPORARY-->
+    Update Chart
+</MudButton>
 }
 
 @code {
-    private int x = 0;
-    private RadarConfig _config = null!;
     private RocketsComparisonMetaVM? _rocketsComparisonMeta;
+
+    private Chart? _chart;
+    private RadarConfig _config = null!;
     private RequestHandler _requestHandler = null!;
 
     private MudAutocomplete<string>? _familyNameAutocomplete;
@@ -90,7 +97,7 @@
     private string? _rocketName;
     private List<string> _rocketsNames = new();
 
-    private class ComparisonGroup
+    private class ComparisonGroupData // TODO: Change name/reuse models from Contracts
     {
         public GroupType Type { get; set; }
 
@@ -100,7 +107,7 @@
 
         public int RocketsCount { get; set; }
     }
-    private List<ComparisonGroup> _comparisonGroups = new();
+    private List<ComparisonGroupData> _comparisonGroups = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -121,45 +128,31 @@
     private void InitializeChart()
     {
         _config = new RadarConfig
-            {
-                Options = new RadarOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Rocket Properties"
-                    },
-                    Scale = new ChartJs.Blazor.Common.Axes.LinearRadialAxis()
-                    {
-                        Ticks = new ChartJs.Blazor.Common.Axes.Ticks.LinearRadialTicks()
-                        {
-                            Min = 0.0,
-                            Max = 1.0
-                        }
-                    },
-                    Tooltips = new()
-                    {
-
-                    },
-                }
-            };
-
-        foreach (string color in new[] { "Prop1", "Prop2", "Prop3", "Prop4", "Prop5", "Prop5", "Prop6" })
         {
-            _config.Data.Labels.Add(color);
+            Options = new RadarOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                },
+                Scale = new ChartJs.Blazor.Common.Axes.LinearRadialAxis()
+                {
+                    Ticks = new ChartJs.Blazor.Common.Axes.Ticks.LinearRadialTicks()
+                    {
+                        Min = 0.0,
+                        Max = 1.0
+                    }
+                },
+            }
+        };
+
+        // TODO: Prob should be returned in the meta endpoint
+        foreach (string label in new[] { "Length", "Diameter", "Launch Cost", "Liftoff Mass", "Liftoff Thrust",
+            "LEO Capacity", "GEO Capacity", "Successful Launches", "Launch Success (%)"})
+        {
+            _config.Data.Labels.Add(label);
         }
-
-        RadarDataset<float> dataset = new RadarDataset<float>(new[] { 0.7F, 0.59F, 0.9F, 0.17F, 0.56F, 0.55F, 0.40F });
-        dataset.BackgroundColor = ColorUtil.ColorString(255, 99, 132, 0.2);
-        dataset.BorderColor = ColorUtil.ColorString(255, 99, 132);
-
-        RadarDataset<float> dataset2 = new RadarDataset<float>(new[] { 0.56F, 0.82F, 0.75F, 0.44F, 0.58F, 0.70F, 0.60F });
-        dataset2.BackgroundColor = ColorUtil.ColorString(99, 132, 255, 0.2);
-        dataset2.BorderColor = ColorUtil.ColorString(99, 132, 255);
-
-        _config.Data.Datasets.Add(dataset);
-        _config.Data.Datasets.Add(dataset2);
     }
 
     private void OnComparisonGroupAdded()
@@ -169,7 +162,7 @@
             return;
         }
 
-        var comparisonGroup = new ComparisonGroup() { Type = _groupType };
+        var comparisonGroup = new ComparisonGroupData() { Type = _groupType };
         switch(comparisonGroup.Type)
         {
             case GroupType.All:
@@ -202,7 +195,7 @@
         _comparisonGroups.Add(comparisonGroup);
     }
 
-    private string GetComparisonGroupTitle(ComparisonGroup comparisonGroup) => comparisonGroup.Type switch
+    private string GetComparisonGroupTitle(ComparisonGroupData comparisonGroup) => comparisonGroup.Type switch
     {
         GroupType.All => $"All ({comparisonGroup.RocketsCount})",
         GroupType.Family => $"Family: {comparisonGroup.FamilyName} ({comparisonGroup.RocketsCount})",
@@ -233,14 +226,14 @@
         return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private void OnDeleteGroupButtonClicked(ComparisonGroup comparisonGroup, MouseEventArgs e)
+    private void OnDeleteGroupButtonClicked(ComparisonGroupData comparisonGroup, MouseEventArgs e)
     {
         _comparisonGroups.Remove(comparisonGroup);
     }
 
     private bool IsAddingNewComparisonGroupDisabled()
     {
-        if(_rocketsComparisonMeta is null || _groupTypeSelect is null || _familyNameAutocomplete is null || _rocketNameAutocomplete is null)
+        if(_rocketsComparisonMeta is null || _groupTypeSelect is null)
         {
             return true;
         }
@@ -249,9 +242,11 @@
         {
             GroupType.All => _comparisonGroups.Any(x => x.Type == GroupType.All),
             GroupType.Family => _comparisonGroups.Any(x => x.Type == GroupType.Family && x.FamilyName == _familyName)
-                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty),
+                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty)
+                || _familyNameAutocomplete is null,
             GroupType.Individual => _comparisonGroups.Any(x => x.Type == GroupType.Individual && x.RocketName == _rocketName)
-                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty),
+                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty)
+                || _rocketNameAutocomplete is null,
             _ => true
         };
 
@@ -259,4 +254,62 @@
     }
 
     private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Type == GroupType.All);
+
+    private async Task UpdateChart()
+    {
+        if(_chart is null)
+        {
+            return;
+        }
+
+        var url = new UrlBuilder("api/rockets/comparison").Url;
+        var comparisonGroups = new List<ComparisonGroup>();
+        foreach(var group in _comparisonGroups)
+        {
+            ComparisonGroup model = group.Type switch
+            {
+                GroupType.Individual => new IndividualComparisonGroup() { Id = Guid.NewGuid(), RocketId = group.RocketId!.Value },
+                GroupType.Family => new FamilyComparisonGroup() { Id = Guid.NewGuid(), FamilyName = group.FamilyName },
+                GroupType.All => new AllComparisonGroup() { Id = Guid.NewGuid() }
+            };
+            comparisonGroups.Add(model);
+        }
+        var json = JsonSerializer.Serialize(comparisonGroups);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync(url, content);
+        var viewModel = await response.Content.ReadFromJsonAsync<RocketsComparisonVM>();
+
+        bool colorTaken = false; // TEMP
+
+        _config.Data.Datasets.Clear();
+        foreach(var (id, data) in viewModel.ComparisonGroupsData)
+        {
+            var dataset = new RadarDataset<double>();
+            dataset.Add(data.Length);
+            dataset.Add(data.Diameter);
+            dataset.Add(data.LaunchCost);
+            dataset.Add(data.LiftoffMass);
+            dataset.Add(data.LiftoffThrust);
+            dataset.Add(data.LeoCapacity);
+            dataset.Add(data.GeoCapacity);
+            dataset.Add(data.SuccessfulLaunches);
+            dataset.Add(data.LaunchSuccess);
+
+            if(colorTaken)
+            {
+                dataset.BackgroundColor = ColorUtil.ColorString(255, 99, 132, 0.2);
+                dataset.BorderColor = ColorUtil.ColorString(255, 99, 132);
+            }
+            else
+            {
+                dataset.BackgroundColor = ColorUtil.ColorString(99, 132, 255, 0.2);
+                dataset.BorderColor = ColorUtil.ColorString(99, 132, 255);
+                colorTaken = true;
+            }
+
+            _config.Data.Datasets.Add(dataset);
+        }
+
+        await _chart.Update();
+    }
 }
