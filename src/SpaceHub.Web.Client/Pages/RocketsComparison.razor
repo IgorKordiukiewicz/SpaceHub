@@ -12,6 +12,7 @@
 @using SpaceHub.Web.Client.Utils;
 @using System.Text.Json;
 @using System.Text;
+@using System.Globalization;
 
 @if(_rocketsComparisonMeta is not null)
 {
@@ -49,7 +50,7 @@
             <MudList Clickable="false">
                 @foreach (var comparisonGroup in _comparisonGroups)
                 {
-                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="Color.Primary">
+                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="@comparisonGroup.Color">
                         <div class="d-flex justify-space-between align-center">
                             <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
                             <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
@@ -81,7 +82,13 @@
     private MudAutocomplete<string>? _rocketNameAutocomplete;
     private MudSelect<GroupType>? _groupTypeSelect;
 
-    private int _maxGroups = 5;
+    private int _maxGroups = 3;
+    private Dictionary<Color, bool> _groupColorsAvailability = new()
+    {
+        { Color.Primary, true },
+        { Color.Secondary, true },
+        { Color.Tertiary, true },
+    };
 
     public enum GroupType
     {
@@ -99,6 +106,7 @@
 
     private class ComparisonGroupData // TODO: Change name/reuse models from Contracts
     {
+        public Guid Id { get; set; }
         public GroupType Type { get; set; }
 
         public string? FamilyName { get; set; }
@@ -106,6 +114,8 @@
         public int? RocketId { get; set; }
 
         public int RocketsCount { get; set; }
+
+        public Color Color { get; set; }
     }
     private List<ComparisonGroupData> _comparisonGroups = new();
 
@@ -162,7 +172,14 @@
             return;
         }
 
-        var comparisonGroup = new ComparisonGroupData() { Type = _groupType };
+        var comparisonGroup = new ComparisonGroupData() 
+        { 
+            Id = Guid.NewGuid(),
+            Type = _groupType,
+            Color = _groupColorsAvailability.First(x => x.Value).Key
+        };
+        _groupColorsAvailability[comparisonGroup.Color] = false;
+
         switch(comparisonGroup.Type)
         {
             case GroupType.All:
@@ -228,6 +245,7 @@
 
     private void OnDeleteGroupButtonClicked(ComparisonGroupData comparisonGroup, MouseEventArgs e)
     {
+        _groupColorsAvailability[comparisonGroup.Color] = true;
         _comparisonGroups.Remove(comparisonGroup);
     }
 
@@ -268,9 +286,9 @@
         {
             ComparisonGroup model = group.Type switch
             {
-                GroupType.Individual => new IndividualComparisonGroup() { Id = Guid.NewGuid(), RocketId = group.RocketId!.Value },
-                GroupType.Family => new FamilyComparisonGroup() { Id = Guid.NewGuid(), FamilyName = group.FamilyName },
-                GroupType.All => new AllComparisonGroup() { Id = Guid.NewGuid() }
+                GroupType.Individual => new IndividualComparisonGroup() { Id = group.Id, RocketId = group.RocketId!.Value },
+                GroupType.Family => new FamilyComparisonGroup() { Id = group.Id, FamilyName = group.FamilyName },
+                GroupType.All => new AllComparisonGroup() { Id = group.Id }
             };
             comparisonGroups.Add(model);
         }
@@ -278,8 +296,6 @@
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _httpClient.PostAsync(url, content);
         var viewModel = await response.Content.ReadFromJsonAsync<RocketsComparisonVM>();
-
-        bool colorTaken = false; // TEMP
 
         _config.Data.Datasets.Clear();
         foreach(var (id, data) in viewModel.ComparisonGroupsData)
@@ -295,21 +311,25 @@
             dataset.Add(data.SuccessfulLaunches);
             dataset.Add(data.LaunchSuccess);
 
-            if(colorTaken)
-            {
-                dataset.BackgroundColor = ColorUtil.ColorString(255, 99, 132, 0.2);
-                dataset.BorderColor = ColorUtil.ColorString(255, 99, 132);
-            }
-            else
-            {
-                dataset.BackgroundColor = ColorUtil.ColorString(99, 132, 255, 0.2);
-                dataset.BorderColor = ColorUtil.ColorString(99, 132, 255);
-                colorTaken = true;
-            }
+            var color = _comparisonGroups.First(x => x.Id == id).Color;
+            dataset.BackgroundColor = ColorToString(color, 0.2F);
+            dataset.BorderColor = ColorToString(color, 1.0F);
 
             _config.Data.Datasets.Add(dataset);
         }
 
         await _chart.Update();
+    }
+
+    private static string ColorToString(Color color, float alpha)
+    {
+        var alphaStr = alpha.ToString("0.0#", CultureInfo.InvariantCulture);
+        return color switch
+        {
+            Color.Primary => $"rgba(119, 107, 231, {alphaStr})",
+            Color.Secondary => $"rgba(255, 64, 129, {alphaStr})",
+            Color.Tertiary => $"rgba(30, 200, 165, {alphaStr})",
+            _ => "rgba(255, 255, 255, 1.0)"
+        };
     }
 }
