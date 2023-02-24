@@ -5,5 +5,5 @@ namespace SpaceHub.Infrastructure.Api.Responses;
 public record AgenciesDetailResponse : MultiElementResponse
 {
     [JsonPropertyName("results")]
-    public IReadOnlyCollection<AgencyDetailResponse> Agencies { get; set; }
+    public IReadOnlyList<AgencyDetailResponse> Agencies { get; set; }
 }

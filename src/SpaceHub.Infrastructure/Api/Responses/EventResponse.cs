@@ -32,8 +32,8 @@ public record EventResponse
     public DateTime? Date { get; init; }
 
     [JsonPropertyName("launches")]
-    public IEnumerable<LaunchResponse> Launches { get; init; }
+    public IReadOnlyList<LaunchResponse> Launches { get; init; }
 
     [JsonPropertyName("program")]
-    public IEnumerable<ProgramResponse> Programs { get; init; }
+    public IReadOnlyList<ProgramResponse> Programs { get; init; }
 }

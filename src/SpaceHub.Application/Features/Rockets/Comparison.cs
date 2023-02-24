@@ -5,7 +5,7 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
-public record GetRocketsComparisonQuery(List<ComparisonGroup> ComparisonGroups) : IRequest<Result<RocketsComparisonVM>>;
+public record GetRocketsComparisonQuery(IEnumerable<ComparisonGroup> ComparisonGroups) : IRequest<Result<RocketsComparisonVM>>;
 
 internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsComparisonQuery, Result<RocketsComparisonVM>>
 {
@@ -25,12 +25,12 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
 
         foreach (var comparisonGroup in request.ComparisonGroups)
         {
-            IEnumerable<Rocket> groupRockets = comparisonGroup switch
+            var groupRockets = comparisonGroup switch
             {
-                IndividualComparisonGroup individual => allRockets.Where(x => x.ApiId == individual.RocketId),
-                FamilyComparisonGroup family => allRockets.Where(x => string.Equals(x.Family, family.FamilyName, StringComparison.OrdinalIgnoreCase)),
-                AllComparisonGroup all => allRockets,
-                _ => Enumerable.Empty<Rocket>()
+                IndividualComparisonGroup individual => allRockets.Where(x => x.ApiId == individual.RocketId).ToList(),
+                FamilyComparisonGroup family => allRockets.Where(x => string.Equals(x.Family, family.FamilyName, StringComparison.OrdinalIgnoreCase)).ToList(),
+                AllComparisonGroup all => allRockets.ToList(),
+                _ => new List<Rocket>()
             };
 
             groupsData.Add(comparisonGroup.Id, new()

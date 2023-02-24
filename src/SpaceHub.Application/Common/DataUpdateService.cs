@@ -15,7 +15,7 @@ public class DataUpdateService<TResponse, TResponseItem, TModel, TId>
     public required Func<TResponseItem, UpdateOneModel<TModel>> UpdateModelFunc { get; init; }
     public required Func<TResponseItem, InsertOneModel<TModel>> InsertModelFunc { get; init; }
     public required Func<TResponseItem, TId> ResponseItemIdSelector { get; init; }
-    public required Func<TResponse, IReadOnlyCollection<TResponseItem>> ResponseItemsSelector { get; init; }
+    public required Func<TResponse, IEnumerable<TResponseItem>> ResponseItemsSelector { get; init; }
     public required Func<DbContext, IMongoCollection<TModel>> CollectionSelector { get; init; }
     public required HashSet<TId> ExistingIds { get; set; }
     public required int MaxItemsPerRequest { get; init; }

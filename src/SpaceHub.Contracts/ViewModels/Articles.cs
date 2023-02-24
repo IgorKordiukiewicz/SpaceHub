@@ -1,6 +1,6 @@
 ﻿namespace SpaceHub.Contracts.ViewModels;
 
-public record ArticlesVM(IReadOnlyCollection<ArticleVM> Articles, int TotalPagesCount);
+public record ArticlesVM(IReadOnlyList<ArticleVM> Articles, int TotalPagesCount);
 
 public record ArticleVM
 {

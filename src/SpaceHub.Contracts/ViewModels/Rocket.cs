@@ -4,10 +4,10 @@ public record RocketVM
 {
     public required int ApiId { get; init; }
     public required string Name { get; init; }
-    public string Family { get; init; } = string.Empty;
-    public string Variant { get; init; } = string.Empty;
-    public string Description { get; init; } = string.Empty;
-    public string ImageUrl { get; init; } = string.Empty;
+    public required string Family { get; init; }
+    public required string Variant { get; init; }
+    public required string Description { get; init; }
+    public required string ImageUrl { get; init; }
     public double? Length { get; init; }
     public double? Diameter { get; init; }
     public int? MaxStages { get; init; }

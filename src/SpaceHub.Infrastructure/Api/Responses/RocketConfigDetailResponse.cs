@@ -11,7 +11,7 @@ public record RocketConfigDetailResponse : RocketConfigResponse
     public AgencyDetailResponse Manufacturer { get; init; }
 
     [JsonPropertyName("program")]
-    public IEnumerable<ProgramResponse> Programs { get; init; }
+    public IReadOnlyList<ProgramResponse> Programs { get; init; }
 
     [JsonPropertyName("alias")]
     public string Alias { get; init; }

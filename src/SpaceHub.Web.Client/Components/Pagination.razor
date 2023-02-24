@@ -15,9 +15,9 @@
 
     private Contracts.Utils.Pagination _pagination = new();
 
-    public List<(string, string)> GetQueryParameters()
+    public IReadOnlyList<(string, string)> GetQueryParameters()
     {
-        return new()
+        return new List<(string, string)>()
         {
             ("pageNumber", _pagination.PageNumber.ToString()),
             ("itemsPerPage", _pagination.ItemsPerPage.ToString()),

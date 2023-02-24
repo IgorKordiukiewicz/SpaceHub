@@ -23,6 +23,7 @@
     {
         var bodyJson = JsonSerializer.Serialize(body);
         var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+        Console.WriteLine(bodyJson);
 
         return await GetResponseContent<TResponse>(await _httpClient.PostAsync(url, content));
     }

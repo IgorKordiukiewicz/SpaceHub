@@ -1,8 +1,6 @@
 ﻿namespace SpaceHub.Contracts.ViewModels;
 
-// TODO: News (and later events too) use the response: IReadOnlyCollection<T> Items, int TotalPagesCount -> Extract it to separate class/record
-// maybe use Result<T> for all responses
-public record LaunchesVM(IReadOnlyCollection<LaunchVM> Launches, int TotalPagesCount);
+public record LaunchesVM(IReadOnlyList<LaunchVM> Launches, int TotalPagesCount);
 
 public class LaunchVM
 {

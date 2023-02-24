@@ -17,7 +17,7 @@ public record ProgramResponse
     public string Description { get; init; }
 
     [JsonPropertyName("agencies")]
-    public IEnumerable<AgencyResponse> Agencies { get; init; }
+    public IReadOnlyList<AgencyResponse> Agencies { get; init; }
 
     [JsonPropertyName("image_url")]
     public string ImageUrl { get; init; }

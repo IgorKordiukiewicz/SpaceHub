@@ -19,7 +19,7 @@ public class UrlBuilder
         return this;
     }
 
-    public UrlBuilder AddParameters(List<(string, string)> parameters)
+    public UrlBuilder AddParameters(IEnumerable<(string, string)> parameters)
     {
         foreach(var (name, value) in parameters)
         {

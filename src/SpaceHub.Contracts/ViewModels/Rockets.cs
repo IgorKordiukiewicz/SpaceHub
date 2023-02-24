@@ -1,3 +1,3 @@
 ﻿namespace SpaceHub.Contracts.ViewModels;
 
-public record RocketsVM(IReadOnlyCollection<RocketVM> Rockets, int TotalPagesCount);
+public record RocketsVM(IReadOnlyList<RocketVM> Rockets, int TotalPagesCount);

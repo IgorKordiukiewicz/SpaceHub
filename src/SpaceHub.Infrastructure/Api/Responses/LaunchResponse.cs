@@ -34,7 +34,7 @@ public record LaunchResponse
     public PadResponse Pad { get; init; }
 
     [JsonPropertyName("program")]
-    public IEnumerable<ProgramResponse> Programs { get; init; }
+    public IReadOnlyList<ProgramResponse> Programs { get; init; }
 
     [JsonPropertyName("image")]
     public string ImageUrl { get; init; }

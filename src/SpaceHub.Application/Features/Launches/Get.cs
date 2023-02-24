@@ -4,7 +4,6 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
-// TODO: Search not working
 public record GetLaunchesQuery(ETimeFrame TimeFrame, string SearchValue, Pagination Pagination) : IRequest<Result<LaunchesVM>>;
 
 public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
