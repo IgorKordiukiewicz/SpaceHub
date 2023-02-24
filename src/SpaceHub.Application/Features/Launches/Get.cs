@@ -29,8 +29,9 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
     public async Task<Result<LaunchesVM>> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
-        
-        var query = _db.Launches.AsQueryable();
+
+        var query = _db.Launches.AsQueryable()
+            .Where(x => x.Name.ToLower().Contains(request.SearchValue.ToLower()));
         if(request.TimeFrame == ETimeFrame.Upcoming)
         {
             query = query.Where(x => x.Date > now)

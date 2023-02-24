@@ -84,7 +84,7 @@ public class RocketComparisonCalculator
 
         private double CalculateRank(long value)
         {
-            // TODO: Improve performance
+            // TODO: Improve performance?
             for (int i = 0; i < _valuesRanked.Count; ++i)
             {
                 if (value == _valuesRanked[i])
