@@ -311,9 +311,12 @@
             dataset.Add(data.SuccessfulLaunches);
             dataset.Add(data.LaunchSuccess);
 
-            var color = _comparisonGroups.First(x => x.Id == id).Color;
+            var comparisonGroup = _comparisonGroups.First(x => x.Id == id);
+            var color = comparisonGroup.Color;
             dataset.BackgroundColor = ColorToString(color, 0.2F);
             dataset.BorderColor = ColorToString(color, 1.0F);
+
+            dataset.Label = GetComparisonGroupTitle(comparisonGroup);
 
             _config.Data.Datasets.Add(dataset);
         }
