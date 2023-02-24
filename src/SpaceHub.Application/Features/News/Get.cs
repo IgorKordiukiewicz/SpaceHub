@@ -12,7 +12,7 @@ public class GetNewsQueryValidator : AbstractValidator<GetNewsQuery>
     public GetNewsQueryValidator()
     {
         RuleFor(x => x.SearchValue).NotNull();
-        RuleFor(x => x.Pagination).SetValidator(new PaginationParametersValidator());
+        RuleFor(x => x.Pagination).SetValidator(new PaginationValidator());
     }
 }
 

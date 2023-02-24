@@ -11,7 +11,7 @@ public class GetRocketsQueryValidator : AbstractValidator<GetRocketsQuery>
     public GetRocketsQueryValidator()
     {
         RuleFor(x => x.SearchValue).NotNull();
-        RuleFor(x => x.Pagination).SetValidator(new PaginationParametersValidator());
+        RuleFor(x => x.Pagination).SetValidator(new PaginationValidator());
     }
 }
 

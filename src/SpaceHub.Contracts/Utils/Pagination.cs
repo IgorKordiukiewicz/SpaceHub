@@ -17,9 +17,9 @@ public class Pagination
     public int GetPagesCount(int itemsCount) => (itemsCount - 1) / ItemsPerPage + 1;
 }
 
-public class PaginationParametersValidator : AbstractValidator<Pagination>
+public class PaginationValidator : AbstractValidator<Pagination>
 {
-    public PaginationParametersValidator()
+    public PaginationValidator()
     {
         RuleFor(x => x.PageNumber).NotNull().GreaterThanOrEqualTo(1);
         RuleFor(x => x.ItemsPerPage).NotNull().GreaterThanOrEqualTo(1);
