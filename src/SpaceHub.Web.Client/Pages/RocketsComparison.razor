@@ -6,6 +6,7 @@
 @using ChartJs.Blazor.RadarChart;
 @using ChartJs.Blazor.Util;
 @using MudBlazor
+@using SpaceHub.Contracts.Enums;
 @using SpaceHub.Contracts.Utils;
 @using SpaceHub.Contracts.ViewModels;
 @using SpaceHub.Web.Client.Components;
@@ -20,22 +21,22 @@
     <MudItem xs="12" lg="3">
         <MudPaper Class="pa-4" Style="height: 100%;">
             <MudForm Class="gap-4 d-flex flex-wrap mb-4">
-                <MudSelect @ref="_groupTypeSelect" T="GroupType" Variant="Variant.Outlined" @bind-Value="@_groupType">
-                    <MudSelectItem Value="@GroupType.Individual" />
-                    <MudSelectItem Value="@GroupType.Family" />
-                    <MudSelectItem Value="@GroupType.All" Disabled="IsGroupTypeAllSelectItemDisabled()" />
+                <MudSelect @ref="_groupTypeSelect" T="EComparisonGroup" Variant="Variant.Outlined" @bind-Value="@_groupType">
+                    <MudSelectItem Value="@EComparisonGroup.Individual" />
+                    <MudSelectItem Value="@EComparisonGroup.Family" />
+                    <MudSelectItem Value="@EComparisonGroup.All" Disabled="IsGroupTypeAllSelectItemDisabled()" />
                 </MudSelect>
                 @switch (_groupType)
                 {
-                    case GroupType.All:
+                        case EComparisonGroup.All:
                         break;
-                    case GroupType.Family:
+                        case EComparisonGroup.Family:
                         {
                             <MudAutocomplete @ref="_familyNameAutocomplete" @bind-Value="@_familyName" T="string" Label="Select Family" 
                             SearchFunc="@SearchFamilies"  Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
                             break;
                         }
-                    case GroupType.Individual:
+                        case EComparisonGroup.Individual:
                         {
                             <MudAutocomplete @ref="_rocketNameAutocomplete" @bind-Value="@_rocketName" T="string" Label="Select Rocket" 
                             SearchFunc="@SearchRockets" Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
@@ -48,11 +49,11 @@
             </MudForm>
             <MudDivider />
             <MudList Clickable="false">
-                @foreach (var comparisonGroup in _comparisonGroups)
+                @foreach (var comparisonGroup in _comparisonGroups2)
                 {
                     <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="@comparisonGroup.Color">
                         <div class="d-flex justify-space-between align-center">
-                            <MudText Typo="Typo.subtitle1">@GetComparisonGroupTitle(comparisonGroup)</MudText>
+                            <MudText Typo="Typo.subtitle1">@comparisonGroup.Title</MudText>
                             <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
                         </div>
                     </MudListItem>
@@ -80,7 +81,7 @@
 
     private MudAutocomplete<string>? _familyNameAutocomplete;
     private MudAutocomplete<string>? _rocketNameAutocomplete;
-    private MudSelect<GroupType>? _groupTypeSelect;
+    private MudSelect<EComparisonGroup>? _groupTypeSelect;
 
     private int _maxGroups = 3;
     private Dictionary<Color, bool> _groupColorsAvailability = new()
@@ -90,13 +91,7 @@
         { Color.Tertiary, true },
     };
 
-    public enum GroupType
-    {
-        Individual,
-        Family,
-        All
-    }
-    private GroupType _groupType = GroupType.Individual;
+    private EComparisonGroup _groupType = EComparisonGroup.Individual;
 
     private string? _familyName;
     private List<string> _familiesNames = new();
@@ -104,20 +99,13 @@
     private string? _rocketName;
     private List<string> _rocketsNames = new();
 
-    private class ComparisonGroupData // TODO: Change name/reuse models from Contracts
+    private class ComparisonGroupDisplay
     {
-        public Guid Id { get; set; }
-        public GroupType Type { get; set; }
-
-        public string? FamilyName { get; set; }
-        public string? RocketName { get; set; }
-        public int? RocketId { get; set; }
-
-        public int RocketsCount { get; set; }
-
-        public Color Color { get; set; }
+        public required ComparisonGroup Group { get; init; }
+        public required string Title { get; init; }
+        public required Color Color { get; init; }
     }
-    private List<ComparisonGroupData> _comparisonGroups = new();
+    private List<ComparisonGroupDisplay> _comparisonGroups2 = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -172,35 +160,57 @@
             return;
         }
 
-        var comparisonGroup = new ComparisonGroupData() 
-        { 
-            Id = Guid.NewGuid(),
-            Type = _groupType,
-            Color = _groupColorsAvailability.First(x => x.Value).Key
-        };
-        _groupColorsAvailability[comparisonGroup.Color] = false;
+        var color = _groupColorsAvailability.First(x => x.Value).Key;
+        _groupColorsAvailability[color] = false;
 
-        switch(comparisonGroup.Type)
+        switch (_groupType)
         {
-            case GroupType.All:
+            case EComparisonGroup.All:
                 {
-                    comparisonGroup.RocketsCount = _rocketsComparisonMeta!.TotalCount;
+                    var rocketsCount = _rocketsComparisonMeta!.TotalCount;
+                    _comparisonGroups2.Add(new()
+                    {
+                        Group = new AllComparisonGroup()
+                        {
+                            Id = Guid.NewGuid()
+                        },
+                        Title = $"All ({rocketsCount})",
+                        Color = color
+                    });
 
-                    _groupTypeSelect!.SelectOption(GroupType.Individual);
+                    _groupTypeSelect!.SelectOption(EComparisonGroup.Individual);
                     break;
                 }
-            case GroupType.Family:
+            case EComparisonGroup.Family:
                 {
-                    comparisonGroup.FamilyName = _familyName;
-                    comparisonGroup.RocketsCount = _rocketsComparisonMeta!.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
+                    var rocketsCount = _rocketsComparisonMeta!.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
+                    _comparisonGroups2.Add(new()
+                    {
+                        Group = new FamilyComparisonGroup()
+                        {
+                            Id = Guid.NewGuid(),
+                            FamilyName = _familyName!
+                        },
+                        Title = $"Family: {_familyName} ({rocketsCount})",
+                        Color = color
+                    });
 
                     _familyNameAutocomplete!.Clear();
                     break;
                 }
-            case GroupType.Individual:
+            case EComparisonGroup.Individual:
                 {
-                    comparisonGroup.RocketName = _rocketName;
-                    comparisonGroup.RocketId = _rocketsComparisonMeta!.RocketNamesWithId.First(x => x.Key == _rocketName).Value;
+                    _comparisonGroups2.Add(new()
+                    {
+                        Group = new IndividualComparisonGroup()
+                        {
+                            Id = Guid.NewGuid(),
+                            RocketId = _rocketsComparisonMeta!.RocketNamesWithId.First(x => x.Key == _rocketName).Value,
+                            RocketName = _rocketName!
+                        },
+                        Title = _rocketName!,
+                        Color = color
+                    });
 
                     _rocketNameAutocomplete!.Clear();
                     break;
@@ -208,20 +218,11 @@
             default:
                 break;
         }
-
-        _comparisonGroups.Add(comparisonGroup);
     }
-
-    private string GetComparisonGroupTitle(ComparisonGroupData comparisonGroup) => comparisonGroup.Type switch
-    {
-        GroupType.All => $"All ({comparisonGroup.RocketsCount})",
-        GroupType.Family => $"Family: {comparisonGroup.FamilyName} ({comparisonGroup.RocketsCount})",
-        GroupType.Individual => $"{comparisonGroup.RocketName}",
-    };
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
     {
-        var filteredNames = _familiesNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Family).Select(x => x.FamilyName!));
+        var filteredNames = _familiesNames.Except(_comparisonGroups2.Where(x => x.Group.Type == EComparisonGroup.Family).Select(x => (x.Group as FamilyComparisonGroup)!.FamilyName));
 
         if(string.IsNullOrEmpty(value))
         {
@@ -233,7 +234,7 @@
 
     private async Task<IEnumerable<string>> SearchRockets(string value)
     {
-        var filteredNames = _rocketsNames.Except(_comparisonGroups.Where(x => x.Type == GroupType.Individual).Select(x => x.RocketName!));
+        var filteredNames = _rocketsNames.Except(_comparisonGroups2.Where(x => x.Group.Type == EComparisonGroup.Individual).Select(x => (x.Group as IndividualComparisonGroup)!.RocketName));
 
         if (string.IsNullOrEmpty(value))
         {
@@ -243,10 +244,10 @@
         return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private void OnDeleteGroupButtonClicked(ComparisonGroupData comparisonGroup, MouseEventArgs e)
+    private void OnDeleteGroupButtonClicked(ComparisonGroupDisplay comparisonGroup, MouseEventArgs e)
     {
         _groupColorsAvailability[comparisonGroup.Color] = true;
-        _comparisonGroups.Remove(comparisonGroup);
+        _comparisonGroups2.Remove(comparisonGroup);
     }
 
     private bool IsAddingNewComparisonGroupDisabled()
@@ -258,20 +259,20 @@
 
         var disabledForType = _groupType switch
         {
-            GroupType.All => _comparisonGroups.Any(x => x.Type == GroupType.All),
-            GroupType.Family => _comparisonGroups.Any(x => x.Type == GroupType.Family && x.FamilyName == _familyName)
+            EComparisonGroup.All => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.All),
+            EComparisonGroup.Family => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.Family && (x.Group as FamilyComparisonGroup)!.FamilyName == _familyName)
                 || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty)
                 || _familyNameAutocomplete is null,
-            GroupType.Individual => _comparisonGroups.Any(x => x.Type == GroupType.Individual && x.RocketName == _rocketName)
+            EComparisonGroup.Individual => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.Individual && (x.Group as IndividualComparisonGroup)!.RocketName == _rocketName)
                 || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty)
                 || _rocketNameAutocomplete is null,
             _ => true
         };
 
-        return _comparisonGroups.Count >= _maxGroups || disabledForType;
+        return _comparisonGroups2.Count >= _maxGroups || disabledForType;
     }
 
-    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Type == GroupType.All);
+    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.All);
 
     private async Task UpdateChart()
     {
@@ -281,18 +282,7 @@
         }
 
         var url = new UrlBuilder("api/rockets/comparison").Url;
-        var comparisonGroups = new List<ComparisonGroup>();
-        foreach(var group in _comparisonGroups)
-        {
-            ComparisonGroup model = group.Type switch
-            {
-                GroupType.Individual => new IndividualComparisonGroup() { Id = group.Id, RocketId = group.RocketId!.Value },
-                GroupType.Family => new FamilyComparisonGroup() { Id = group.Id, FamilyName = group.FamilyName },
-                GroupType.All => new AllComparisonGroup() { Id = group.Id }
-            };
-            comparisonGroups.Add(model);
-        }
-        var json = JsonSerializer.Serialize(comparisonGroups);
+        var json = JsonSerializer.Serialize(_comparisonGroups2.Select(x => x.Group));
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _httpClient.PostAsync(url, content);
         var viewModel = await response.Content.ReadFromJsonAsync<RocketsComparisonVM>();
@@ -311,12 +301,12 @@
             dataset.Add(data.SuccessfulLaunches);
             dataset.Add(data.LaunchSuccess);
 
-            var comparisonGroup = _comparisonGroups.First(x => x.Id == id);
+            var comparisonGroup = _comparisonGroups2.First(x => x.Group.Id == id);
             var color = comparisonGroup.Color;
             dataset.BackgroundColor = ColorToString(color, 0.2F);
             dataset.BorderColor = ColorToString(color, 1.0F);
 
-            dataset.Label = GetComparisonGroupTitle(comparisonGroup);
+            dataset.Label = comparisonGroup.Title;
 
             _config.Data.Datasets.Add(dataset);
         }

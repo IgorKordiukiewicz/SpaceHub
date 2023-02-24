@@ -16,6 +16,7 @@ public abstract record ComparisonGroup
 public record IndividualComparisonGroup : ComparisonGroup
 {
     public required int RocketId { get; init; }
+    public required string RocketName { get; init; }
     public override EComparisonGroup Type => EComparisonGroup.Individual;
 }
 
