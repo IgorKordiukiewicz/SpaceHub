@@ -1,5 +1,7 @@
 ﻿@using MudBlazor;
 @using System.Net;
+@using System.Text.Json;
+@using System.Text;
 
 @code {
     // Dependencies have to be manually passed from parent component, because [Inject]/@Inject injects them after parent initialization
@@ -12,18 +14,35 @@
         _dialogService = dialogService;
     }
 
-    public async Task<T?> HandleAPIRequest<T>(string url) where T : class
+    public async Task<TResponse?> HandleAPIRequest<TResponse>(string url) where TResponse : class
     {
-        var response = await _httpClient.GetAsync(url);
+        return await GetResponseContent<TResponse>(await _httpClient.GetAsync(url));
+    }
+
+    public async Task<TResponse?> HandleAPIRequest<TResponse, TBody>(string url, TBody body) where TResponse : class
+    {
+        var bodyJson = JsonSerializer.Serialize(body);
+        var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+        return await GetResponseContent<TResponse>(await _httpClient.PostAsync(url, content));
+    }
+
+    private async Task<TResponse?> GetResponseContent<TResponse>(HttpResponseMessage response) where TResponse : class
+    {
         if (response.IsSuccessStatusCode)
         {
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await response.Content.ReadFromJsonAsync<TResponse>();
         }
         else
         {
-            var message = response.StatusCode != HttpStatusCode.InternalServerError ? await response.Content.ReadAsStringAsync() : string.Empty;
-            await _dialogService.ShowMessageBox($"{(int)response.StatusCode} {response.ReasonPhrase}", message);
+            await DisplayErrorMessageBox(response);
             return null;
         }
+    }
+
+    private async Task DisplayErrorMessageBox(HttpResponseMessage response)
+    {
+        var message = response.StatusCode != HttpStatusCode.InternalServerError ? await response.Content.ReadAsStringAsync() : string.Empty;
+        await _dialogService.ShowMessageBox($"{(int)response.StatusCode} {response.ReasonPhrase}", message);
     }
 }

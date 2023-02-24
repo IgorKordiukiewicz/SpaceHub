@@ -49,7 +49,7 @@
             </MudForm>
             <MudDivider />
             <MudList Clickable="false">
-                @foreach (var comparisonGroup in _comparisonGroups2)
+                @foreach (var comparisonGroup in _comparisonGroups)
                 {
                     <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="@comparisonGroup.Color">
                         <div class="d-flex justify-space-between align-center">
@@ -105,7 +105,7 @@
         public required string Title { get; init; }
         public required Color Color { get; init; }
     }
-    private List<ComparisonGroupDisplay> _comparisonGroups2 = new();
+    private List<ComparisonGroupDisplay> _comparisonGroups = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,8 +116,8 @@
 
         if(_rocketsComparisonMeta is not null)
         {
-            _familiesNames = _rocketsComparisonMeta.FamilyGroupsWithItemsCount.Select(x => x.Key).ToList();
-            _rocketsNames = _rocketsComparisonMeta.RocketNamesWithId.Select(x => x.Key).ToList();
+            _familiesNames = _rocketsComparisonMeta.FamilyRocketsCountByName.Select(x => x.Key).ToList();
+            _rocketsNames = _rocketsComparisonMeta.RocketIdsByName.Select(x => x.Key).ToList();
         }
 
         InitializeChart();
@@ -168,7 +168,7 @@
             case EComparisonGroup.All:
                 {
                     var rocketsCount = _rocketsComparisonMeta!.TotalCount;
-                    _comparisonGroups2.Add(new()
+                    _comparisonGroups.Add(new()
                     {
                         Group = new AllComparisonGroup()
                         {
@@ -183,8 +183,8 @@
                 }
             case EComparisonGroup.Family:
                 {
-                    var rocketsCount = _rocketsComparisonMeta!.FamilyGroupsWithItemsCount.First(x => x.Key == _familyName).Value;
-                    _comparisonGroups2.Add(new()
+                    var rocketsCount = _rocketsComparisonMeta!.FamilyRocketsCountByName.First(x => x.Key == _familyName).Value;
+                    _comparisonGroups.Add(new()
                     {
                         Group = new FamilyComparisonGroup()
                         {
@@ -196,16 +196,17 @@
                     });
 
                     _familyNameAutocomplete!.Clear();
+                    _familyName = null;
                     break;
                 }
             case EComparisonGroup.Individual:
                 {
-                    _comparisonGroups2.Add(new()
+                    _comparisonGroups.Add(new()
                     {
                         Group = new IndividualComparisonGroup()
                         {
                             Id = Guid.NewGuid(),
-                            RocketId = _rocketsComparisonMeta!.RocketNamesWithId.First(x => x.Key == _rocketName).Value,
+                            RocketId = _rocketsComparisonMeta!.RocketIdsByName.First(x => x.Key == _rocketName).Value,
                             RocketName = _rocketName!
                         },
                         Title = _rocketName!,
@@ -213,6 +214,7 @@
                     });
 
                     _rocketNameAutocomplete!.Clear();
+                    _rocketName = null;
                     break;
                 }
             default:
@@ -222,20 +224,24 @@
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
     {
-        var filteredNames = _familiesNames.Except(_comparisonGroups2.Where(x => x.Group.Type == EComparisonGroup.Family).Select(x => (x.Group as FamilyComparisonGroup)!.FamilyName));
+        var filteredNames = _familiesNames.Except(_comparisonGroups
+            .Where(x => x.Group.Type == EComparisonGroup.Family)
+            .Select(x => (x.Group as FamilyComparisonGroup)!.FamilyName));
 
-        if(string.IsNullOrEmpty(value))
-        {
-            return filteredNames;
-        }
-
-        return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return GetNamesForSearch(filteredNames, value);
     }
 
     private async Task<IEnumerable<string>> SearchRockets(string value)
     {
-        var filteredNames = _rocketsNames.Except(_comparisonGroups2.Where(x => x.Group.Type == EComparisonGroup.Individual).Select(x => (x.Group as IndividualComparisonGroup)!.RocketName));
+        var filteredNames = _rocketsNames.Except(_comparisonGroups
+            .Where(x => x.Group.Type == EComparisonGroup.Individual)
+            .Select(x => (x.Group as IndividualComparisonGroup)!.RocketName));
 
+        return GetNamesForSearch(filteredNames, value);
+    }
+
+    private IEnumerable<string> GetNamesForSearch(IEnumerable<string> filteredNames, string value)
+    {
         if (string.IsNullOrEmpty(value))
         {
             return filteredNames;
@@ -247,7 +253,7 @@
     private void OnDeleteGroupButtonClicked(ComparisonGroupDisplay comparisonGroup, MouseEventArgs e)
     {
         _groupColorsAvailability[comparisonGroup.Color] = true;
-        _comparisonGroups2.Remove(comparisonGroup);
+        _comparisonGroups.Remove(comparisonGroup);
     }
 
     private bool IsAddingNewComparisonGroupDisabled()
@@ -259,20 +265,20 @@
 
         var disabledForType = _groupType switch
         {
-            EComparisonGroup.All => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.All),
-            EComparisonGroup.Family => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.Family && (x.Group as FamilyComparisonGroup)!.FamilyName == _familyName)
-                || !_rocketsComparisonMeta.FamilyGroupsWithItemsCount.ContainsKey(_familyName ?? string.Empty)
+            EComparisonGroup.All => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All),
+            EComparisonGroup.Family => _comparisonGroups.Any(x => (x.Group as FamilyComparisonGroup)?.FamilyName == _familyName)
+                || !_rocketsComparisonMeta.FamilyRocketsCountByName.ContainsKey(_familyName ?? string.Empty)
                 || _familyNameAutocomplete is null,
-            EComparisonGroup.Individual => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.Individual && (x.Group as IndividualComparisonGroup)!.RocketName == _rocketName)
-                || !_rocketsComparisonMeta.RocketNamesWithId.ContainsKey(_rocketName ?? string.Empty)
+            EComparisonGroup.Individual => _comparisonGroups.Any(x => (x.Group as IndividualComparisonGroup)?.RocketName == _rocketName)
+                || !_rocketsComparisonMeta.RocketIdsByName.ContainsKey(_rocketName ?? string.Empty)
                 || _rocketNameAutocomplete is null,
             _ => true
         };
 
-        return _comparisonGroups2.Count >= _maxGroups || disabledForType;
+        return _comparisonGroups.Count >= _maxGroups || disabledForType;
     }
 
-    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups2.Any(x => x.Group.Type == EComparisonGroup.All);
+    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All);
 
     private async Task UpdateChart()
     {
@@ -282,10 +288,7 @@
         }
 
         var url = new UrlBuilder("api/rockets/comparison").Url;
-        var json = JsonSerializer.Serialize(_comparisonGroups2.Select(x => x.Group));
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync(url, content);
-        var viewModel = await response.Content.ReadFromJsonAsync<RocketsComparisonVM>();
+        var viewModel = await _requestHandler.HandleAPIRequest<RocketsComparisonVM, IEnumerable<ComparisonGroup>>(url, _comparisonGroups.Select(x => x.Group));
 
         _config.Data.Datasets.Clear();
         foreach(var (id, data) in viewModel.ComparisonGroupsData)
@@ -301,7 +304,8 @@
             dataset.Add(data.SuccessfulLaunches);
             dataset.Add(data.LaunchSuccess);
 
-            var comparisonGroup = _comparisonGroups2.First(x => x.Group.Id == id);
+            var comparisonGroup = _comparisonGroups.First(x => x.Group.Id == id);
+
             var color = comparisonGroup.Color;
             dataset.BackgroundColor = ColorToString(color, 0.2F);
             dataset.BorderColor = ColorToString(color, 1.0F);

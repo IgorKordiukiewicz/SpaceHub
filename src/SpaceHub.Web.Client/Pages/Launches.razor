@@ -185,16 +185,10 @@
             });
 
             var url = new UrlBuilder("api/launches/" + id).Url;
-            var response = await _httpClient.GetAsync(url);
-            if(response.IsSuccessStatusCode)
+            var data = await _requestHandler.HandleAPIRequest<LaunchDetailsVM>(url);
+            if(data is not null)
             {
-                var data = await response.Content.ReadFromJsonAsync<LaunchDetailsVM>();
                 _launchesDetails[id].Data = data;
-            }
-            else if(response.StatusCode == HttpStatusCode.NotFound)
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                // TODO: Display pop-up & hide the expandable view?
             }
         }   
         else

@@ -23,10 +23,10 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
         return new RocketsComparisonMetaVM()
         {
             TotalCount = rockets.Count,
-            FamilyGroupsWithItemsCount = rockets.Where(x => !string.IsNullOrEmpty(x.Family))
+            FamilyRocketsCountByName = rockets.Where(x => !string.IsNullOrEmpty(x.Family))
                 .GroupBy(x => x.Family)
                 .ToDictionary(k => k.Key, v => v.Count()),
-            RocketNamesWithId = rockets.Select(x => (Id: x.Id, FullName: CreateFullRocketName(x)))
+            RocketIdsByName = rockets.Select(x => (Id: x.Id, FullName: CreateFullRocketName(x)))
                 .GroupBy(x => x.FullName)
                 .ToDictionary(k => k.Key, v => v.First().Id)
         };
