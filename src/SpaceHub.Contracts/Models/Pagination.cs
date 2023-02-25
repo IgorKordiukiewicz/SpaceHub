@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SpaceHub.Contracts.Utils;
+namespace SpaceHub.Contracts.Models;
 
 public class Pagination
 {

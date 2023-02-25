@@ -5,9 +5,8 @@ public record RocketsComparisonVM
     public required IReadOnlyDictionary<Guid, RocketPropertiesFractionsVM> ComparisonGroupsData { get; init; }
 }
 
-public record RocketPropertiesFractionsVM // TODO: Change name?
+public record RocketPropertiesFractionsVM
 {
-    // TODO: Add Range attribute? (0.0 - 1.0)
     public required double Length { get; init; }
     public required double Diameter { get; init; }
     public required double LaunchCost { get; init; }

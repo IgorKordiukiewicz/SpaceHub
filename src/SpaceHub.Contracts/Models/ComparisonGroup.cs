@@ -1,9 +1,8 @@
 ﻿using SpaceHub.Contracts.Enums;
 using System.Text.Json.Serialization;
 
-namespace SpaceHub.Contracts.Utils;
+namespace SpaceHub.Contracts.Models;
 
-// TODO: Move somewhere else, or rename Utils/ to something else
 [JsonDerivedType(typeof(IndividualComparisonGroup), (int)EComparisonGroup.Individual)]
 [JsonDerivedType(typeof(FamilyComparisonGroup), (int)EComparisonGroup.Family)]
 [JsonDerivedType(typeof(AllComparisonGroup), (int)EComparisonGroup.All)]

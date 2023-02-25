@@ -1,4 +1,4 @@
-﻿using SpaceHub.Contracts.Utils;
+﻿using SpaceHub.Contracts.Models;
 
 namespace SpaceHub.UnitTests.Contracts.Utils;
 

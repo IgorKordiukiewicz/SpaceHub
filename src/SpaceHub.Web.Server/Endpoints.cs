@@ -6,7 +6,7 @@ using SpaceHub.Application.Features.Launches;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
-using SpaceHub.Contracts.Utils;
+using SpaceHub.Contracts.Models;
 
 namespace SpaceHub.Web.Server;
 

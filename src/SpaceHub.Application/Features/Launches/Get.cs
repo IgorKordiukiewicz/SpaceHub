@@ -1,5 +1,5 @@
 ﻿using SpaceHub.Contracts.Enums;
-using SpaceHub.Contracts.Utils;
+using SpaceHub.Contracts.Models;
 using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;

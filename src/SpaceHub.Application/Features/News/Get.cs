@@ -1,4 +1,4 @@
-﻿using SpaceHub.Contracts.Utils;
+﻿using SpaceHub.Contracts.Models;
 using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
