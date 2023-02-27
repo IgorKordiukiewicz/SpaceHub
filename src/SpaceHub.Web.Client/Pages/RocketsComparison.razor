@@ -3,6 +3,11 @@
 @inject IDialogService _dialogService
 @using ChartJs.Blazor
 @using ChartJs.Blazor.Common;
+@using ChartJs.Blazor.Common.Axes;
+@using ChartJs.Blazor.Common.Axes.Ticks;
+@using ChartJs.Blazor.Common.Enums;
+@using ChartJs.Blazor.Common.Handlers;
+@using ChartJs.Blazor.Interop;
 @using ChartJs.Blazor.RadarChart;
 @using ChartJs.Blazor.Util;
 @using MudBlazor
@@ -63,7 +68,8 @@
     </MudItem>
     <MudItem xs="12" lg="9">
         <MudPaper Style="width: 100%; height: 100%;">
-            <Chart @ref="_chart" Config="_config"></Chart>
+            <Chart @ref="_chart" Config="_config">
+            </Chart>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -134,15 +140,31 @@
                 {
                     Display = false,
                 },
-                Scale = new ChartJs.Blazor.Common.Axes.LinearRadialAxis()
+                Scale = new LinearRadialAxis
                 {
-                    Ticks = new ChartJs.Blazor.Common.Axes.Ticks.LinearRadialTicks()
+                    Ticks = new LinearRadialTicks
                     {
                         Min = 0.0,
-                        Max = 1.0
-                    }
+                        Max = 1.0,
+                        ShowLabelBackdrop = false,
+                        FontColor = ColorUtil.ColorString(150, 150, 150, 0.8),
+                        FontSize = 12,
+                    },
+                    PointLabels = new PointLabels
+                    {
+                        FontColor = ColorUtil.ColorString(150, 150, 150, 1.0),
+                        FontSize = 14,
+                    },
                 },
-            }
+                Legend = new Legend
+                {
+                    Display = false,
+                },
+                Tooltips = new Tooltips
+                {
+                    Enabled = false
+                },
+            },
         };
 
         // TODO: Prob should be returned in the meta endpoint
