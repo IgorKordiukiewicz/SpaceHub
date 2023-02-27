@@ -73,9 +73,6 @@
         </MudPaper>
     </MudItem>
 </MudGrid>
-<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UpdateChart"> <!--TEMPORARY-->
-    Update Chart
-</MudButton>
 }
 
 @code {
@@ -175,7 +172,7 @@
         }
     }
 
-    private void OnComparisonGroupAdded()
+    private async Task OnComparisonGroupAdded()
     {
         if(IsAddingNewComparisonGroupDisabled())
         {
@@ -200,7 +197,7 @@
                         Color = color
                     });
 
-                    _groupTypeSelect!.SelectOption(EComparisonGroup.Individual);
+                    await _groupTypeSelect!.SelectOption(EComparisonGroup.Individual);
                     break;
                 }
             case EComparisonGroup.Family:
@@ -217,7 +214,7 @@
                         Color = color
                     });
 
-                    _familyNameAutocomplete!.Clear();
+                    await _familyNameAutocomplete!.Clear();
                     _familyName = null;
                     break;
                 }
@@ -235,13 +232,15 @@
                         Color = color
                     });
 
-                    _rocketNameAutocomplete!.Clear();
+                    await _rocketNameAutocomplete!.Clear();
                     _rocketName = null;
                     break;
                 }
             default:
                 break;
         }
+
+        await UpdateChart();
     }
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
@@ -272,10 +271,12 @@
         return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private void OnDeleteGroupButtonClicked(ComparisonGroupDisplay comparisonGroup, MouseEventArgs e)
+    private async Task OnDeleteGroupButtonClicked(ComparisonGroupDisplay comparisonGroup, MouseEventArgs e)
     {
         _groupColorsAvailability[comparisonGroup.Color] = true;
         _comparisonGroups.Remove(comparisonGroup);
+
+        await UpdateChart();
     }
 
     private bool IsAddingNewComparisonGroupDisabled()
