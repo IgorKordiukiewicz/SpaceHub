@@ -1,6 +1,7 @@
 ﻿@page "/rockets/comparison"
 @inject HttpClient _httpClient
 @inject IDialogService _dialogService
+@inject ISnackbar _snackbar
 @using ChartJs.Blazor
 @using ChartJs.Blazor.Common;
 @using ChartJs.Blazor.Common.Axes;
@@ -51,6 +52,12 @@
                         break;
                 }
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" FullWidth="true" OnClick="OnComparisonGroupAdded" Disabled="IsAddingNewComparisonGroupDisabled()">Add</MudButton>
+                @if (!IsCurrentComparisonGroupTypeInputValid() && IsLimitOfComparisonGroupsReached())
+                {
+                    <MudAlert Severity="Severity.Warning" Style="width: 100%;" Dense="true">
+                        Reached a maximum of <text>@_maxGroups</text> datasets
+                    </MudAlert>
+                }
             </MudForm>
             <MudDivider />
             <MudList Clickable="false">
@@ -281,12 +288,22 @@
 
     private bool IsAddingNewComparisonGroupDisabled()
     {
-        if(_rocketsComparisonMeta is null || _groupTypeSelect is null)
+        return IsLimitOfComparisonGroupsReached() || IsCurrentComparisonGroupTypeInputValid();
+    }
+
+    private bool IsLimitOfComparisonGroupsReached()
+    {
+        return _comparisonGroups.Count >= _maxGroups;
+    }
+
+    private bool IsCurrentComparisonGroupTypeInputValid()
+    {
+        if (_rocketsComparisonMeta is null || _groupTypeSelect is null)
         {
             return true;
         }
 
-        var disabledForType = _groupType switch
+        return _groupType switch
         {
             EComparisonGroup.All => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All),
             EComparisonGroup.Family => _comparisonGroups.Any(x => (x.Group as FamilyComparisonGroup)?.FamilyName == _familyName)
@@ -297,8 +314,6 @@
                 || _rocketNameAutocomplete is null,
             _ => true
         };
-
-        return _comparisonGroups.Count >= _maxGroups || disabledForType;
     }
 
     private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All);
