@@ -26,7 +26,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Re
             .Select(x => x.LastUpdate)
             .SingleAsync();
 
-        var now = DateTime.UtcNow; // TODO: Use some kind of interface for DateTime
+        var now = DateTime.UtcNow;
         var response = await _api.GetArticlesPublishedBetween(lastUpdateTime.ToQueryParameter(), now.ToQueryParameter());
         if(!response.GetContentOrError().TryPickT0(out var articles, out var error))
         {
