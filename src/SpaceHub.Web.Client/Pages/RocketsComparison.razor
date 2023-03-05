@@ -74,7 +74,7 @@
         </MudPaper>
     </MudItem>
     <MudItem xs="12" lg="9">
-        <MudPaper Style="width: 100%; height: 100%;">
+        <MudPaper Style="width: 100%; height: 100%;" Class="py-4">
             <Chart @ref="_chart" Config="_config">
             </Chart>
         </MudPaper>
@@ -171,11 +171,9 @@
             },
         };
 
-        // TODO: Prob should be returned in the meta endpoint
-        foreach (string label in new[] { "Length", "Diameter", "Launch Cost", "Liftoff Mass", "Liftoff Thrust",
-            "LEO Capacity", "GEO Capacity", "Successful Launches", "Launch Success (%)"})
+        foreach (var rocketPropertyType in Enum.GetValues<ERocketComparisonProperty>())
         {
-            _config.Data.Labels.Add(label);
+            _config.Data.Labels.Add(rocketPropertyType.ToString());
         }
     }
 
@@ -332,15 +330,11 @@
         foreach(var (id, data) in viewModel.ComparisonGroupsData)
         {
             var dataset = new RadarDataset<double>();
-            dataset.Add(data.Length);
-            dataset.Add(data.Diameter);
-            dataset.Add(data.LaunchCost);
-            dataset.Add(data.LiftoffMass);
-            dataset.Add(data.LiftoffThrust);
-            dataset.Add(data.LeoCapacity);
-            dataset.Add(data.GeoCapacity);
-            dataset.Add(data.SuccessfulLaunches);
-            dataset.Add(data.LaunchSuccess);
+            // TODO: Add Order attribute to and sort properties based on that?
+            foreach(var (type, value) in data)
+            {
+                dataset.Add(value);
+            }
 
             var comparisonGroup = _comparisonGroups.First(x => x.Group.Id == id);
 

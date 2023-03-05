@@ -6,7 +6,6 @@ public class ReferencesTests
     [InlineData(Namespaces.Domain, new[] { 
         Namespaces.Application, 
         Namespaces.Infrastructure, 
-        Namespaces.Contracts, 
         Namespaces.WebServer, 
         Namespaces.WebClient })]
     [InlineData(Namespaces.Application, new[] { 

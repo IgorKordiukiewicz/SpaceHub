@@ -1,4 +1,5 @@
-﻿using SpaceHub.Domain;
+﻿using SpaceHub.Contracts.Enums;
+using SpaceHub.Domain;
 using SpaceHub.Domain.Models;
 
 namespace SpaceHub.UnitTests.Domain;
@@ -14,11 +15,11 @@ public class RocketComparisonCalculatorTests
     {
         _rockets = new()
         {
-            _fixture.Build<Rocket>().With(x => x.Length, 70.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 2000).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 40.0).With(x => x.LiftoffMass, 100).With(x => x.LaunchCost, 4000).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 90.0).With(x => x.LiftoffMass, 300).With(x => x.LaunchCost, 5000).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 120.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 3000).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 50.0).With(x => x.LiftoffMass, 700).With(x => x.LaunchCost, 1000).Create(),
+            _fixture.Build<Rocket>().With(x => x.Length, 70.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 2000).With(r => r.LeoCapacity, 1).Create(),
+            _fixture.Build<Rocket>().With(x => x.Length, 40.0).With(x => x.LiftoffMass, 100).With(x => x.LaunchCost, 4000).With(r => r.LeoCapacity, 1).Create(),
+            _fixture.Build<Rocket>().With(x => x.Length, 90.0).With(x => x.LiftoffMass, 300).With(x => x.LaunchCost, 5000).With(r => r.LeoCapacity, 1).Create(),
+            _fixture.Build<Rocket>().With(x => x.Length, 120.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 3000).With(r => r.LeoCapacity, 1).Create(),
+            _fixture.Build<Rocket>().With(x => x.Length, 50.0).With(x => x.LiftoffMass, 700).With(x => x.LaunchCost, 1000).With(r => r.LeoCapacity, 1).Create(),
         };
 
         _calculator = new(_rockets);
@@ -52,7 +53,7 @@ public class RocketComparisonCalculatorTests
     // Value [200] : 0.0 - 100, 0.33 - [200], 0.67 - 300, 1.0 - 700
     [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33)]
     // Value [2000] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - [2000], 1.0 - 1000 (descending)
-    [InlineData(ERocketComparisonProperty.LaunchCost, 0.75)] 
+    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.75)] 
     public void CalculateFraction_ShouldReturnCorrectFractionForOneRocket_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
     {
         var result = _calculator.CalculateFraction(property, new Rocket[] { _rockets[0] });
@@ -66,7 +67,7 @@ public class RocketComparisonCalculatorTests
     // Value [(100 + 300) / 2 = 200] : 0.0 - 100, 0.33 - [200], 0.67 - 300, 1.0 - 700
     [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33)]
     // Value [(4000 + 5000) / 2 = 4500] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - [2000], 1.0 - 1000 (descending) -> between 0.0 & 0.25 -> 0.125
-    [InlineData(ERocketComparisonProperty.LaunchCost, 0.125)]
+    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125)]
     public void CalculateFraction_ShouldReturnCorrectFractionForGroupOfRockets_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
     {
         var result = _calculator.CalculateFraction(property, new Rocket[] { _rockets[1], _rockets[2] });

@@ -1,19 +1,7 @@
-﻿using SpaceHub.Domain.Models;
+﻿using SpaceHub.Contracts.Enums;
+using SpaceHub.Domain.Models;
 
 namespace SpaceHub.Domain;
-
-public enum ERocketComparisonProperty
-{
-    Length,
-    Diameter,
-    LaunchCost,
-    LiftoffMass,
-    LiftoffThrust,
-    LeoCapacity,
-    GeoCapacity,
-    SuccessfulLaunches,
-    LaunchSuccess
-}
 
 public class RocketComparisonCalculator
 {
@@ -25,13 +13,11 @@ public class RocketComparisonCalculator
         {
             { ERocketComparisonProperty.Length, new(rockets, x => x.Length) },
             { ERocketComparisonProperty.Diameter, new(rockets, x => x.Diameter) },
-            { ERocketComparisonProperty.LaunchCost, new(rockets, x => x.LaunchCost, true) },
             { ERocketComparisonProperty.LiftoffMass, new(rockets, x => x.LiftoffMass) },
             { ERocketComparisonProperty.LiftoffThrust, new(rockets, x => x.LiftoffThrust) },
-            { ERocketComparisonProperty.LeoCapacity, new(rockets, x => x.LeoCapacity) },
-            { ERocketComparisonProperty.GeoCapacity, new(rockets, x => x.GeoCapacity) },
+            { ERocketComparisonProperty.CostPerKgToLeo, new(rockets, x => x.CostPerKgToLeo, true) },
+            { ERocketComparisonProperty.CostPerKgToGeo, new(rockets, x => x.CostPerKgToGeo, true) },
             { ERocketComparisonProperty.SuccessfulLaunches, new(rockets, x => x.SuccessfulLaunches) },
-            { ERocketComparisonProperty.LaunchSuccess, new(rockets, x => x.LaunchSuccess) },
         };
     }
 

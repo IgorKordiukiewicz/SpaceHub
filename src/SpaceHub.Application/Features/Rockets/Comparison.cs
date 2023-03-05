@@ -1,4 +1,5 @@
-﻿using SpaceHub.Contracts.Models;
+﻿using SpaceHub.Contracts.Enums;
+using SpaceHub.Contracts.Models;
 using SpaceHub.Domain;
 using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data;
@@ -21,7 +22,8 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
         var allRockets = (await _db.Rockets.AsQueryable().ToListAsync()).Select(x => x.ToDomainModel());
         var comparisonCalculator = new RocketComparisonCalculator(allRockets);
 
-        var groupsData = new Dictionary<Guid, RocketPropertiesFractionsVM>();
+        var groupsData = new Dictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, double>>();
+        var propertiesTypes = Enum.GetValues<ERocketComparisonProperty>();
 
         foreach (var comparisonGroup in request.ComparisonGroups)
         {
@@ -33,18 +35,12 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
                 _ => new List<Rocket>()
             };
 
-            groupsData.Add(comparisonGroup.Id, new()
+            var groupData = new Dictionary<ERocketComparisonProperty, double>();
+            foreach(var propertyType in propertiesTypes)
             {
-                Length = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.Length, groupRockets),
-                Diameter = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.Diameter, groupRockets),
-                LaunchCost = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.LaunchCost, groupRockets),
-                LiftoffMass = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.LiftoffMass, groupRockets),
-                LiftoffThrust = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.LiftoffThrust, groupRockets),
-                LeoCapacity = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.LeoCapacity, groupRockets),
-                GeoCapacity = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.GeoCapacity, groupRockets),
-                SuccessfulLaunches = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.SuccessfulLaunches, groupRockets),
-                LaunchSuccess = comparisonCalculator.CalculateFraction(ERocketComparisonProperty.LaunchSuccess, groupRockets),
-            });
+                groupData.Add(propertyType, comparisonCalculator.CalculateFraction(propertyType, groupRockets));
+            }
+            groupsData.Add(comparisonGroup.Id, groupData);
         }
 
         return new RocketsComparisonVM()

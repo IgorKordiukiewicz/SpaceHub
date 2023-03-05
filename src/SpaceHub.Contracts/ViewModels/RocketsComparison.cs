@@ -1,8 +1,10 @@
-﻿namespace SpaceHub.Contracts.ViewModels;
+﻿using SpaceHub.Contracts.Enums;
+
+namespace SpaceHub.Contracts.ViewModels;
 
 public record RocketsComparisonVM
 {
-    public required IReadOnlyDictionary<Guid, RocketPropertiesFractionsVM> ComparisonGroupsData { get; init; }
+    public required IReadOnlyDictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, double>> ComparisonGroupsData { get; init; }
 }
 
 public record RocketPropertiesFractionsVM
