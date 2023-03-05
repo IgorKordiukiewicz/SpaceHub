@@ -40,7 +40,7 @@ public static class EndpointsExtension
 
         // TODO: Since this endpoint only gets data and does not modify it, having it as a POST request, kinda violates REST
         // maybe consider sending the comparisonGroups as a query string (maybe encoded?)
-        app.MapPost("/api/rockets/comparison", async (IMediator mediator, [FromBody] IEnumerable<ComparisonGroup> comparisonGroups) =>
+        app.MapPost("/api/rockets/comparison", async (IMediator mediator, [FromBody] IEnumerable<RocketsComparisonDataset> comparisonGroups) =>
         {
             var result = await mediator.Send(new GetRocketsComparisonQuery(comparisonGroups));
             return result.ToHttpResult();

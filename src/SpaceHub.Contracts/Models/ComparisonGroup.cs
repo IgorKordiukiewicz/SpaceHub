@@ -3,29 +3,29 @@ using System.Text.Json.Serialization;
 
 namespace SpaceHub.Contracts.Models;
 
-[JsonDerivedType(typeof(IndividualComparisonGroup), (int)EComparisonGroup.Individual)]
-[JsonDerivedType(typeof(FamilyComparisonGroup), (int)EComparisonGroup.Family)]
-[JsonDerivedType(typeof(AllComparisonGroup), (int)EComparisonGroup.All)]
-public abstract record ComparisonGroup
+[JsonDerivedType(typeof(IndividualRocketsComparisonDataset), (int)ERocketComparisonDataset.Individual)]
+[JsonDerivedType(typeof(FamilyRocketsComparisonDataset), (int)ERocketComparisonDataset.Family)]
+[JsonDerivedType(typeof(AllRocketsComparisonDataset), (int)ERocketComparisonDataset.All)]
+public abstract record RocketsComparisonDataset
 {
-    public abstract EComparisonGroup Type { get; }
+    public abstract ERocketComparisonDataset Type { get; }
     public required Guid Id { get; init; }
 }
 
-public record IndividualComparisonGroup : ComparisonGroup
+public record IndividualRocketsComparisonDataset : RocketsComparisonDataset
 {
     public required int RocketId { get; init; }
     public required string RocketName { get; init; }
-    public override EComparisonGroup Type => EComparisonGroup.Individual;
+    public override ERocketComparisonDataset Type => ERocketComparisonDataset.Individual;
 }
 
-public record FamilyComparisonGroup : ComparisonGroup
+public record FamilyRocketsComparisonDataset : RocketsComparisonDataset
 {
     public required string FamilyName { get; init; }
-    public override EComparisonGroup Type => EComparisonGroup.Family;
+    public override ERocketComparisonDataset Type => ERocketComparisonDataset.Family;
 }
 
-public record AllComparisonGroup : ComparisonGroup
+public record AllRocketsComparisonDataset : RocketsComparisonDataset
 {
-    public override EComparisonGroup Type => EComparisonGroup.All;
+    public override ERocketComparisonDataset Type => ERocketComparisonDataset.All;
 }

@@ -1,6 +1,6 @@
 ﻿namespace SpaceHub.Contracts.Enums;
 
-public enum EComparisonGroup
+public enum ERocketComparisonDataset
 {
     Individual,
     Family,

@@ -27,22 +27,22 @@
     <MudItem xs="12" lg="3">
         <MudPaper Class="pa-4" Style="height: 100%;">
             <MudForm Class="gap-4 d-flex flex-wrap mb-4">
-                <MudSelect @ref="_groupTypeSelect" T="EComparisonGroup" Variant="Variant.Outlined" @bind-Value="@_groupType">
-                    <MudSelectItem Value="@EComparisonGroup.Individual" />
-                    <MudSelectItem Value="@EComparisonGroup.Family" />
-                    <MudSelectItem Value="@EComparisonGroup.All" Disabled="IsGroupTypeAllSelectItemDisabled()" />
+                <MudSelect @ref="_datasetTypeSelect" T="ERocketComparisonDataset" Variant="Variant.Outlined" @bind-Value="@_datasetType">
+                    <MudSelectItem Value="@ERocketComparisonDataset.Individual" />
+                    <MudSelectItem Value="@ERocketComparisonDataset.Family" />
+                    <MudSelectItem Value="@ERocketComparisonDataset.All" Disabled="IsDatasetTypeAllSelectItemDisabled()" />
                 </MudSelect>
-                @switch (_groupType)
+                @switch (_datasetType)
                 {
-                        case EComparisonGroup.All:
+                        case ERocketComparisonDataset.All:
                         break;
-                        case EComparisonGroup.Family:
+                        case ERocketComparisonDataset.Family:
                         {
                             <MudAutocomplete @ref="_familyNameAutocomplete" @bind-Value="@_familyName" T="string" Label="Select Family" 
                             SearchFunc="@SearchFamilies"  Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
                             break;
                         }
-                        case EComparisonGroup.Individual:
+                        case ERocketComparisonDataset.Individual:
                         {
                             <MudAutocomplete @ref="_rocketNameAutocomplete" @bind-Value="@_rocketName" T="string" Label="Select Rocket" 
                             SearchFunc="@SearchRockets" Clearable="true" ResetValueOnEmptyText="true" FullWidth="true" />
@@ -51,22 +51,22 @@
                     default:
                         break;
                 }
-                <MudButton Color="Color.Primary" Variant="Variant.Filled" FullWidth="true" OnClick="OnComparisonGroupAdded" Disabled="IsAddingNewComparisonGroupDisabled()">Add</MudButton>
-                @if (!IsCurrentComparisonGroupTypeInputValid() && IsLimitOfComparisonGroupsReached())
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" FullWidth="true" OnClick="OnAddDatasetClicked" Disabled="IsAddingNewDatasetDisabled()">Add</MudButton>
+                @if (!IsCurrentDatasetTypeInputValid() && IsLimitOfDatasetsReached())
                 {
                     <MudAlert Severity="Severity.Warning" Style="width: 100%;" Dense="true">
-                        Reached a maximum of <text>@_maxGroups</text> datasets
+                        Reached a maximum of <text>@_maxDatasets</text> datasets
                     </MudAlert>
                 }
             </MudForm>
             <MudDivider />
             <MudList Clickable="false">
-                @foreach (var comparisonGroup in _comparisonGroups)
+                @foreach (var dataset in _datasets)
                 {
-                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="@comparisonGroup.Color">
+                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconColor="@dataset.Color">
                         <div class="d-flex justify-space-between align-center">
-                            <MudText Typo="Typo.subtitle1">@comparisonGroup.Title</MudText>
-                            <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteGroupButtonClicked(comparisonGroup, e)"></MudIconButton>
+                            <MudText Typo="Typo.subtitle1">@dataset.Title</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="(e) => OnDeleteDatasetButtonClicked(dataset, e)"></MudIconButton>
                         </div>
                     </MudListItem>
                 }
@@ -91,17 +91,17 @@
 
     private MudAutocomplete<string>? _familyNameAutocomplete;
     private MudAutocomplete<string>? _rocketNameAutocomplete;
-    private MudSelect<EComparisonGroup>? _groupTypeSelect;
+    private MudSelect<ERocketComparisonDataset>? _datasetTypeSelect;
 
-    private int _maxGroups = 3;
-    private Dictionary<Color, bool> _groupColorsAvailability = new()
+    private int _maxDatasets = 3;
+    private Dictionary<Color, bool> _datasetColorsAvailability = new()
     {
         { Color.Primary, true },
         { Color.Secondary, true },
         { Color.Tertiary, true },
     };
 
-    private EComparisonGroup _groupType = EComparisonGroup.Individual;
+    private ERocketComparisonDataset _datasetType = ERocketComparisonDataset.Individual;
 
     private string? _familyName;
     private List<string> _familiesNames = new();
@@ -109,13 +109,13 @@
     private string? _rocketName;
     private List<string> _rocketsNames = new();
 
-    private class ComparisonGroupDisplay
+    private class DatasetDisplay
     {
-        public required ComparisonGroup Group { get; init; }
+        public required RocketsComparisonDataset Dataset { get; init; }
         public required string Title { get; init; }
         public required Color Color { get; init; }
     }
-    private List<ComparisonGroupDisplay> _comparisonGroups = new();
+    private List<DatasetDisplay> _datasets = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -177,24 +177,24 @@
         }
     }
 
-    private async Task OnComparisonGroupAdded()
+    private async Task OnAddDatasetClicked()
     {
-        if(IsAddingNewComparisonGroupDisabled())
+        if(IsAddingNewDatasetDisabled())
         {
             return;
         }
 
-        var color = _groupColorsAvailability.First(x => x.Value).Key;
-        _groupColorsAvailability[color] = false;
+        var color = _datasetColorsAvailability.First(x => x.Value).Key;
+        _datasetColorsAvailability[color] = false;
 
-        switch (_groupType)
+        switch (_datasetType)
         {
-            case EComparisonGroup.All:
+            case ERocketComparisonDataset.All:
                 {
                     var rocketsCount = _rocketsComparisonMeta!.TotalCount;
-                    _comparisonGroups.Add(new()
+                    _datasets.Add(new()
                     {
-                        Group = new AllComparisonGroup()
+                        Dataset = new AllRocketsComparisonDataset()
                         {
                             Id = Guid.NewGuid()
                         },
@@ -202,15 +202,15 @@
                         Color = color
                     });
 
-                    await _groupTypeSelect!.SelectOption(EComparisonGroup.Individual);
+                    await _datasetTypeSelect!.SelectOption(ERocketComparisonDataset.Individual);
                     break;
                 }
-            case EComparisonGroup.Family:
+            case ERocketComparisonDataset.Family:
                 {
                     var rocketsCount = _rocketsComparisonMeta!.FamilyRocketsCountByName.First(x => x.Key == _familyName).Value;
-                    _comparisonGroups.Add(new()
+                    _datasets.Add(new()
                     {
-                        Group = new FamilyComparisonGroup()
+                        Dataset = new FamilyRocketsComparisonDataset()
                         {
                             Id = Guid.NewGuid(),
                             FamilyName = _familyName!
@@ -223,11 +223,11 @@
                     _familyName = null;
                     break;
                 }
-            case EComparisonGroup.Individual:
+            case ERocketComparisonDataset.Individual:
                 {
-                    _comparisonGroups.Add(new()
+                    _datasets.Add(new()
                     {
-                        Group = new IndividualComparisonGroup()
+                        Dataset = new IndividualRocketsComparisonDataset()
                         {
                             Id = Guid.NewGuid(),
                             RocketId = _rocketsComparisonMeta!.RocketIdsByName.First(x => x.Key == _rocketName).Value,
@@ -250,18 +250,18 @@
 
     private async Task<IEnumerable<string>> SearchFamilies(string value)
     {
-        var filteredNames = _familiesNames.Except(_comparisonGroups
-            .Where(x => x.Group.Type == EComparisonGroup.Family)
-            .Select(x => (x.Group as FamilyComparisonGroup)!.FamilyName));
+        var filteredNames = _familiesNames.Except(_datasets
+            .Where(x => x.Dataset.Type == ERocketComparisonDataset.Family)
+            .Select(x => (x.Dataset as FamilyRocketsComparisonDataset)!.FamilyName));
 
         return GetNamesForSearch(filteredNames, value);
     }
 
     private async Task<IEnumerable<string>> SearchRockets(string value)
     {
-        var filteredNames = _rocketsNames.Except(_comparisonGroups
-            .Where(x => x.Group.Type == EComparisonGroup.Individual)
-            .Select(x => (x.Group as IndividualComparisonGroup)!.RocketName));
+        var filteredNames = _rocketsNames.Except(_datasets
+            .Where(x => x.Dataset.Type == ERocketComparisonDataset.Individual)
+            .Select(x => (x.Dataset as IndividualRocketsComparisonDataset)!.RocketName));
 
         return GetNamesForSearch(filteredNames, value);
     }
@@ -276,45 +276,45 @@
         return filteredNames.Where(x => x.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private async Task OnDeleteGroupButtonClicked(ComparisonGroupDisplay comparisonGroup, MouseEventArgs e)
+    private async Task OnDeleteDatasetButtonClicked(DatasetDisplay dataset, MouseEventArgs e)
     {
-        _groupColorsAvailability[comparisonGroup.Color] = true;
-        _comparisonGroups.Remove(comparisonGroup);
+        _datasetColorsAvailability[dataset.Color] = true;
+        _datasets.Remove(dataset);
 
         await UpdateChart();
     }
 
-    private bool IsAddingNewComparisonGroupDisabled()
+    private bool IsAddingNewDatasetDisabled()
     {
-        return IsLimitOfComparisonGroupsReached() || IsCurrentComparisonGroupTypeInputValid();
+        return IsLimitOfDatasetsReached() || IsCurrentDatasetTypeInputValid();
     }
 
-    private bool IsLimitOfComparisonGroupsReached()
+    private bool IsLimitOfDatasetsReached()
     {
-        return _comparisonGroups.Count >= _maxGroups;
+        return _datasets.Count >= _maxDatasets;
     }
 
-    private bool IsCurrentComparisonGroupTypeInputValid()
+    private bool IsCurrentDatasetTypeInputValid()
     {
-        if (_rocketsComparisonMeta is null || _groupTypeSelect is null)
+        if (_rocketsComparisonMeta is null || _datasetTypeSelect is null)
         {
             return true;
         }
 
-        return _groupType switch
+        return _datasetType switch
         {
-            EComparisonGroup.All => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All),
-            EComparisonGroup.Family => _comparisonGroups.Any(x => (x.Group as FamilyComparisonGroup)?.FamilyName == _familyName)
+            ERocketComparisonDataset.All => _datasets.Any(x => x.Dataset.Type == ERocketComparisonDataset.All),
+            ERocketComparisonDataset.Family => _datasets.Any(x => (x.Dataset as FamilyRocketsComparisonDataset)?.FamilyName == _familyName)
                 || !_rocketsComparisonMeta.FamilyRocketsCountByName.ContainsKey(_familyName ?? string.Empty)
                 || _familyNameAutocomplete is null,
-            EComparisonGroup.Individual => _comparisonGroups.Any(x => (x.Group as IndividualComparisonGroup)?.RocketName == _rocketName)
+            ERocketComparisonDataset.Individual => _datasets.Any(x => (x.Dataset as IndividualRocketsComparisonDataset)?.RocketName == _rocketName)
                 || !_rocketsComparisonMeta.RocketIdsByName.ContainsKey(_rocketName ?? string.Empty)
                 || _rocketNameAutocomplete is null,
             _ => true
         };
     }
 
-    private bool IsGroupTypeAllSelectItemDisabled() => _comparisonGroups.Any(x => x.Group.Type == EComparisonGroup.All);
+    private bool IsDatasetTypeAllSelectItemDisabled() => _datasets.Any(x => x.Dataset.Type == ERocketComparisonDataset.All);
 
     private async Task UpdateChart()
     {
@@ -324,27 +324,31 @@
         }
 
         var url = new UrlBuilder("api/rockets/comparison").Url;
-        var viewModel = await _requestHandler.HandleAPIRequest<RocketsComparisonVM, IEnumerable<ComparisonGroup>>(url, _comparisonGroups.Select(x => x.Group));
+        var chartVM = await _requestHandler.HandleAPIRequest<RocketsComparisonVM, IEnumerable<RocketsComparisonDataset>>(url, _datasets.Select(x => x.Dataset));
+        if(chartVM is null)
+        {
+            return;
+        }
 
         _config.Data.Datasets.Clear();
-        foreach(var (id, data) in viewModel.ComparisonGroupsData)
+        foreach(var (id, data) in chartVM.DatasetsById)
         {
-            var dataset = new RadarDataset<double>();
+            var chartDataset = new RadarDataset<double>();
             // TODO: Add Order attribute to and sort properties based on that?
             foreach(var (type, value) in data)
             {
-                dataset.Add(value);
+                chartDataset.Add(value);
             }
 
-            var comparisonGroup = _comparisonGroups.First(x => x.Group.Id == id);
+            var dataset = _datasets.First(x => x.Dataset.Id == id);
 
-            var color = comparisonGroup.Color;
-            dataset.BackgroundColor = ColorToString(color, 0.2F);
-            dataset.BorderColor = ColorToString(color, 1.0F);
+            var color = dataset.Color;
+            chartDataset.BackgroundColor = ColorToString(color, 0.2F);
+            chartDataset.BorderColor = ColorToString(color, 1.0F);
 
-            dataset.Label = comparisonGroup.Title;
+            chartDataset.Label = dataset.Title;
 
-            _config.Data.Datasets.Add(dataset);
+            _config.Data.Datasets.Add(chartDataset);
         }
 
         await _chart.Update();
