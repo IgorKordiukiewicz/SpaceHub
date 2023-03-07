@@ -85,7 +85,7 @@
         <MudItem xs="12" lg="4">
             <MudPaper>
                 <MudPaper Style="background-color: var(--mud-palette-dark);">
-                    <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@propertyType</MudText>
+                        <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@GetRocketComparisonPropertyDisplayName(propertyType)</MudText>
                 </MudPaper>
                 <MudTimeline TimelinePosition="TimelinePosition.Start">
                     <MudTimelineItem>
@@ -208,7 +208,7 @@
 
         foreach (var rocketPropertyType in Enum.GetValues<ERocketComparisonProperty>())
         {
-            _config.Data.Labels.Add(rocketPropertyType.ToString());
+            _config.Data.Labels.Add(GetRocketComparisonPropertyDisplayName(rocketPropertyType));
         }
     }
 
@@ -392,6 +392,11 @@
 
     private string GetPropertyDetailsText(DatasetDisplay dataset, ERocketComparisonProperty propertyType)
     {
+        if(dataset.DataByProperty is null)
+        {
+            return string.Empty;
+        }
+
         var rankText = dataset.DataByProperty[propertyType].Rank.GetValueOrDefault().ToString("F0");
         var valueText = dataset.DataByProperty[propertyType].Value.GetValueOrDefault().ToString("F1");
         return $"#{rankText} - {dataset.Title} - {valueText}";
@@ -408,4 +413,13 @@
             _ => "rgba(255, 255, 255, 1.0)"
         };
     }
+
+    private static string GetRocketComparisonPropertyDisplayName(ERocketComparisonProperty propertyType) => propertyType switch
+    {
+        ERocketComparisonProperty.LiftoffMass => "Liftoff Mass",
+        ERocketComparisonProperty.LiftoffThrust => "Liftoff Thrust",
+        ERocketComparisonProperty.CostPerKgToLeo => "Cost per kg to LEO",
+        ERocketComparisonProperty.CostPerKgToGeo => "Cost per kg to GEO",
+        _ => propertyType.ToString()
+    };
 }
