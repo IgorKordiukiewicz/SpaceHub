@@ -33,12 +33,12 @@ public class RocketComparisonCalculator
         return _properties[property].CalculateFractionAndRank(rockets);
     }
 
-    public IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<PropertyTopValue>> GetTopRockets(int count)
+    public IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<PropertyTopValue>> GetTopValues(int count)
     {
         var result = new Dictionary<ERocketComparisonProperty, IReadOnlyList<PropertyTopValue>>();
         foreach (var (propertyType, property) in _properties)
         {
-            result.Add(propertyType, property.GetTopRockets(count));
+            result.Add(propertyType, property.GetTopValues(count));
         }
         return result;
     }
@@ -70,7 +70,7 @@ public class RocketComparisonCalculator
             _rankMultiplier = 1.0 / (_valuesRanked.Count - 1);
         }
 
-        public List<PropertyTopValue> GetTopRockets(int count)
+        public List<PropertyTopValue> GetTopValues(int count)
         {
             var result = new List<PropertyTopValue>();
             for(int i = 0; i < count; ++i)

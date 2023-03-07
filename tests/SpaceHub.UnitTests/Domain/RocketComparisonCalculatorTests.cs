@@ -106,9 +106,9 @@ public class RocketComparisonCalculatorTests
     }
 
     [Fact]
-    public void GetTopRockets_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsAscending()
+    public void GetTopValues_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsAscending()
     {
-        var result = _calculator.GetTopRockets(2);
+        var result = _calculator.GetTopValues(2);
     
         var rocketsOrdered = _rockets.OrderByDescending(x => x.Length).ToList();
     
@@ -128,9 +128,9 @@ public class RocketComparisonCalculatorTests
     }
     
     [Fact]
-    public void GetTopRockets_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsDescending()
+    public void GetTopValues_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsDescending()
     {
-        var result = _calculator.GetTopRockets(3);
+        var result = _calculator.GetTopValues(3);
     
         var rocketsOrdered = _rockets.OrderByDescending(x => x.Length).ToList();
     
@@ -147,6 +147,30 @@ public class RocketComparisonCalculatorTests
             AssertTopValue(0, 1000, new[] { "Rocket 4" });
             AssertTopValue(1, 2000, new[] { "Rocket 1" });
             AssertTopValue(2, 3000, new[] { "Rocket 5", "Rocket 6" });
+        }
+    }
+
+    [Fact]
+    public void GetTopValues_ShouldReturnAtMostTheNumberOfDifferentValues_WhenCountParameterIsLargerThanCountOfDifferentValues()
+    {
+        var count = _rockets.DistinctBy(x => x.Length).Count();
+        var result = _calculator.GetTopValues(count + 10);
+
+        result[ERocketComparisonProperty.Length].Count.Should().Be(count);
+    }
+
+    [Fact]
+    public void GetTopValues_ShouldReturnDataForAllPropertyTypes()
+    {
+        var result = _calculator.GetTopValues(1);
+
+        using(new AssertionScope())
+        {
+            foreach(var propertyType in Enum.GetValues<ERocketComparisonProperty>())
+            {
+                result.ContainsKey(propertyType).Should().BeTrue();
+                result[propertyType].Should().NotBeEmpty();
+            }
         }
     }
 }

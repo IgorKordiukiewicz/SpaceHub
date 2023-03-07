@@ -41,9 +41,9 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
     private IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>> GetTopValuesByPropertyType(
         RocketComparisonCalculator comparisonCalculator, int count)
     {
-        var topRockets = comparisonCalculator.GetTopRockets(count);
+        var topValues = comparisonCalculator.GetTopValues(count);
         var result = new Dictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>>();
-        foreach (var (key, value) in topRockets)
+        foreach (var (key, value) in topValues)
         {
             var propertyValues = value.Select(x => new RocketPropertyValueVM()
             {
