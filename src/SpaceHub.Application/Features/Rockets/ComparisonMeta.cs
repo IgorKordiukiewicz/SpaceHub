@@ -1,9 +1,13 @@
-﻿using SpaceHub.Infrastructure.Data;
+﻿using MediatR;
+using SpaceHub.Contracts.Enums;
+using SpaceHub.Contracts.ViewModels;
+using SpaceHub.Domain;
+using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
 // TODO: add filters such as IsActive, FirstFlight <>
-public record GetRocketsComparisonMetaQuery() : IRequest<Result<RocketsComparisonMetaVM>>;
+public record GetRocketsComparisonMetaQuery(int TopRocketsCount) : IRequest<Result<RocketsComparisonMetaVM>>;
 
 internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsComparisonMetaQuery, Result<RocketsComparisonMetaVM>>
 {
@@ -16,9 +20,10 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
 
     public async Task<Result<RocketsComparisonMetaVM>> Handle(GetRocketsComparisonMetaQuery request, CancellationToken cancellationToken)
     {
-        var rockets = await _db.Rockets.AsQueryable()
-            .Select(x => new RocketShortInfoDto(x.ApiId, x.Family, x.Name, x.Variant))
-            .ToListAsync();
+        var allRockets = (await _db.Rockets.AsQueryable().ToListAsync()).Select(x => x.ToDomainModel());
+        var rockets = allRockets.Select(x => new RocketShortInfoDto(x.ApiId, x.Family, x.Name, x.Variant)).ToList();
+
+        var comparisonCalculator = new RocketComparisonCalculator(allRockets);
 
         return new RocketsComparisonMetaVM()
         {
@@ -28,8 +33,26 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
                 .ToDictionary(k => k.Key, v => v.Count()),
             RocketIdsByName = rockets.Select(x => (Id: x.Id, FullName: CreateFullRocketName(x)))
                 .GroupBy(x => x.FullName)
-                .ToDictionary(k => k.Key, v => v.First().Id)
+                .ToDictionary(k => k.Key, v => v.First().Id),
+            TopValuesByPropertyType = GetTopValuesByPropertyType(comparisonCalculator, request.TopRocketsCount)
         };
+    }
+
+    private IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>> GetTopValuesByPropertyType(
+        RocketComparisonCalculator comparisonCalculator, int count)
+    {
+        var topRockets = comparisonCalculator.GetTopRockets(count);
+        var result = new Dictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>>();
+        foreach (var (key, value) in topRockets)
+        {
+            var propertyValues = value.Select(x => new RocketPropertyValueVM()
+            {
+                Value = x.Value,
+                RocketsNames = x.Names
+            }).ToList();
+            result.Add(key, propertyValues);
+        }
+        return result;
     }
 
     private record RocketShortInfoDto(int Id, string Family, string Name, string Variant);

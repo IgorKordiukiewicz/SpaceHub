@@ -15,14 +15,27 @@ public class RocketComparisonCalculatorTests
     {
         _rockets = new()
         {
-            _fixture.Build<Rocket>().With(x => x.Length, 70.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 2000).With(r => r.LeoCapacity, 1).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 40.0).With(x => x.LiftoffMass, 100).With(x => x.LaunchCost, 4000).With(r => r.LeoCapacity, 1).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 90.0).With(x => x.LiftoffMass, 300).With(x => x.LaunchCost, 5000).With(r => r.LeoCapacity, 1).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 120.0).With(x => x.LiftoffMass, 200).With(x => x.LaunchCost, 3000).With(r => r.LeoCapacity, 1).Create(),
-            _fixture.Build<Rocket>().With(x => x.Length, 50.0).With(x => x.LiftoffMass, 700).With(x => x.LaunchCost, 1000).With(r => r.LeoCapacity, 1).Create(),
+            CreateRocket(70.0, 200, 2000, "Rocket 1"),
+            CreateRocket(40.0, 100, 4000, "Rocket 2"),
+            CreateRocket(90.0, 300, 5000, "Rocket 3"),
+            CreateRocket(50.0, 700, 1000, "Rocket 4"),
+            CreateRocket(120.0, 200, 3000, "Rocket 5"),
+            CreateRocket(120.0, 200, 3000, "Rocket 5"),
+            CreateRocket(120.0, 200, 3000, "Rocket 6"),
         };
 
         _calculator = new(_rockets);
+    }
+
+    private Rocket CreateRocket(double length, int liftoffMass, long launchCost, string name)
+    {
+        return _fixture.Build<Rocket>()
+            .With(x => x.Length, length)
+            .With(x => x.LiftoffMass, liftoffMass)
+            .With(x => x.LaunchCost, launchCost)
+            .With(x => x.LeoCapacity, 1)
+            .With(x => x.Name, name)
+            .Create();
     }
 
     [Fact]
@@ -89,6 +102,51 @@ public class RocketComparisonCalculatorTests
         {
             result.Fraction.Should().BeApproximately(expectedFraction, _precision);
             result.Rank.Should().BeApproximately(expectedRank, _precision);
+        }
+    }
+
+    [Fact]
+    public void GetTopRockets_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsAscending()
+    {
+        var result = _calculator.GetTopRockets(2);
+    
+        var rocketsOrdered = _rockets.OrderByDescending(x => x.Length).ToList();
+    
+        using(new AssertionScope())
+        {
+            var topValues = result[ERocketComparisonProperty.Length];
+            topValues.Count.Should().Be(2);
+
+            void AssertTopValue(int index, double expectedValue, string[] expectedNames)
+            {
+                topValues![index].Value.Should().BeApproximately(expectedValue, _precision);
+                topValues![index].Names.Should().BeEquivalentTo(expectedNames);
+            }
+            AssertTopValue(0, 120.0, new[] { "Rocket 5", "Rocket 6" });
+            AssertTopValue(1, 90.0, new[] { "Rocket 3" });
+        }
+    }
+    
+    [Fact]
+    public void GetTopRockets_ShouldReturnCorrectlyOrderedItems_WhenPropertyOrderingIsDescending()
+    {
+        var result = _calculator.GetTopRockets(3);
+    
+        var rocketsOrdered = _rockets.OrderByDescending(x => x.Length).ToList();
+    
+        using (new AssertionScope())
+        {
+            var topValues = result[ERocketComparisonProperty.CostPerKgToLeo];
+            topValues.Count.Should().Be(3);
+
+            void AssertTopValue(int index, int expectedValue, string[] expectedNames)
+            {
+                topValues![index].Value.Should().Be(expectedValue);
+                topValues![index].Names.Should().BeEquivalentTo(expectedNames);
+            }
+            AssertTopValue(0, 1000, new[] { "Rocket 4" });
+            AssertTopValue(1, 2000, new[] { "Rocket 1" });
+            AssertTopValue(2, 3000, new[] { "Rocket 5", "Rocket 6" });
         }
     }
 }

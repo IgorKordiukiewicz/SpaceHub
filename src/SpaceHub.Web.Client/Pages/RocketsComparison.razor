@@ -127,6 +127,7 @@
     private MudAutocomplete<string>? _rocketNameAutocomplete;
     private MudSelect<ERocketComparisonDataset>? _datasetTypeSelect;
 
+    private int _topRocketsCount = 3;
     private int _maxDatasets = 3;
     private Dictionary<Color, bool> _datasetColorsAvailability = new()
     {
@@ -155,7 +156,7 @@
     protected override async Task OnInitializedAsync()
     {
         _requestHandler = new(_httpClient, _dialogService);
-        var url = new UrlBuilder("api/rockets/comparison_meta").Url;
+        var url = new UrlBuilder("api/rockets/comparison_meta").AddParameter("topRocketsCount", _topRocketsCount).Url;
 
         _rocketsComparisonMeta = await _requestHandler.HandleAPIRequest<RocketsComparisonMetaVM>(url);
 
@@ -369,7 +370,7 @@
         foreach(var (id, data) in chartVM.DatasetsById)
         {
             var chartDataset = new RadarDataset<double>();
-            // TODO: Add Order attribute to and sort properties based on that?
+            // TODO: Add Order attribute to and sort which properties to display in what order based on that?
             foreach(var (type, datasetVM) in data)
             {
                 chartDataset.Add(datasetVM.Fraction);
