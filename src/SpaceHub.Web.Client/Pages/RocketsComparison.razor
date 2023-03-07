@@ -93,7 +93,7 @@
                             #1
                         </MudText>
                     </MudTimelineItem>
-                    @foreach (var dataset in _datasets)
+                    @foreach (var dataset in GetDatasetsOrderedByProperty(propertyType))
                     {
                         @if(dataset.DataByProperty?[propertyType].Rank is not null)
                         {
@@ -400,6 +400,16 @@
         var rankText = dataset.DataByProperty[propertyType].Rank.GetValueOrDefault().ToString("F0");
         var valueText = dataset.DataByProperty[propertyType].Value.GetValueOrDefault().ToString("F1");
         return $"#{rankText} - {dataset.Title} - {valueText}";
+    }
+
+    private List<DatasetDisplay> GetDatasetsOrderedByProperty(ERocketComparisonProperty propertyType)
+    {
+        if(_datasets.Any(x => x.DataByProperty is null))
+        {
+            return _datasets;
+        }
+
+        return _datasets.OrderBy(x => x.DataByProperty![propertyType].Rank).ToList();
     }
 
     private static string ColorToString(Color color, float alpha)
