@@ -17,7 +17,6 @@ public class RocketComparisonCalculator
             { ERocketComparisonProperty.LiftoffThrust, new(rockets, x => x.LiftoffThrust) },
             { ERocketComparisonProperty.CostPerKgToLeo, new(rockets, x => x.CostPerKgToLeo, true) },
             { ERocketComparisonProperty.CostPerKgToGeo, new(rockets, x => x.CostPerKgToGeo, true) },
-            { ERocketComparisonProperty.SuccessfulLaunches, new(rockets, x => x.SuccessfulLaunches) },
         };
     }
 

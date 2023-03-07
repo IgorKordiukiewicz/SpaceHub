@@ -8,5 +8,4 @@ public enum ERocketComparisonProperty
     LiftoffThrust,
     CostPerKgToLeo,
     CostPerKgToGeo,
-    SuccessfulLaunches
 }
