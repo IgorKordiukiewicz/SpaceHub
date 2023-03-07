@@ -23,7 +23,7 @@
 
 @if(_rocketsComparisonMeta is not null)
 {
-<MudGrid>
+<MudGrid Class="mt-3">
     <MudItem xs="12" lg="3">
         <MudPaper Class="pa-4" Style="height: 100%;">
             <MudForm Class="gap-4 d-flex flex-wrap mb-4">
@@ -335,9 +335,9 @@
         {
             var chartDataset = new RadarDataset<double>();
             // TODO: Add Order attribute to and sort properties based on that?
-            foreach(var (type, value) in data)
+            foreach(var (type, datasetVM) in data)
             {
-                chartDataset.Add(value);
+                chartDataset.Add(datasetVM.Fraction);
             }
 
             var dataset = _datasets.First(x => x.Dataset.Id == id);

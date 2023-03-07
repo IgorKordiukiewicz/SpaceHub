@@ -29,7 +29,7 @@ public class RocketComparisonCalculatorTests
     public void CalculateFraction_ShouldReturnZero_WhenPropertyIsInvalid()
     {
         var property = (ERocketComparisonProperty)(-1);
-        var result = _calculator.CalculateFraction(property, _rockets);
+        var result = _calculator.CalculatePropertyRanking(property, _rockets);
 
         result.Should().BeApproximately(0.0, _precision);
     }
@@ -38,7 +38,7 @@ public class RocketComparisonCalculatorTests
     [Fact]
     public void CalculateFraction_ShouldReturnZero_WhenRocketsHaveNullPropertyValues()
     {
-        var result = _calculator.CalculateFraction(ERocketComparisonProperty.Length, new Rocket[]
+        var result = _calculator.CalculatePropertyRanking(ERocketComparisonProperty.Length, new Rocket[]
         {
             _fixture.Build<Rocket>().With(x => x.Length, (double?)null).Create(),
             _fixture.Build<Rocket>().With(x => x.Length, (double?)null).Create()
@@ -56,7 +56,7 @@ public class RocketComparisonCalculatorTests
     [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.75)] 
     public void CalculateFraction_ShouldReturnCorrectFractionForOneRocket_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
     {
-        var result = _calculator.CalculateFraction(property, new Rocket[] { _rockets[0] });
+        var result = _calculator.CalculatePropertyRanking(property, new Rocket[] { _rockets[0] });
 
         result.Should().BeApproximately(expectedResult, _precision);
     }
@@ -70,7 +70,7 @@ public class RocketComparisonCalculatorTests
     [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125)]
     public void CalculateFraction_ShouldReturnCorrectFractionForGroupOfRockets_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
     {
-        var result = _calculator.CalculateFraction(property, new Rocket[] { _rockets[1], _rockets[2] });
+        var result = _calculator.CalculatePropertyRanking(property, new Rocket[] { _rockets[1], _rockets[2] });
 
         result.Should().BeApproximately(expectedResult, _precision);
     }

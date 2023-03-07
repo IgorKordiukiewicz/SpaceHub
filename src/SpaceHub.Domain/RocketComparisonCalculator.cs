@@ -20,14 +20,16 @@ public class RocketComparisonCalculator
         };
     }
 
-    public double CalculateFraction(ERocketComparisonProperty property, IEnumerable<Rocket> rockets)
+    public record PropertyRanking(double? Value = null, double Fraction = 0.0, double? Rank = null);
+
+    public PropertyRanking CalculatePropertyRanking(ERocketComparisonProperty property, IEnumerable<Rocket> rockets)
     {
         if(!_properties.ContainsKey(property))
         {
-            return 0.0;
+            return new();
         }
 
-        return _properties[property].CalculateFraction(rockets);
+        return _properties[property].CalculateFractionAndRank(rockets);
     }
 
     private class Property
@@ -53,16 +55,21 @@ public class RocketComparisonCalculator
             _rankMultiplier = 1.0 / (_valuesRanked.Count - 1);
         }
 
-        public double CalculateFraction(IEnumerable<Rocket> rockets)
+        public PropertyRanking CalculateFractionAndRank(IEnumerable<Rocket> rockets)
         {
             // TODO: Is calculating average of a group the correct approach?
             var avg = rockets.Average(_property);
             if (avg is null)
             {
-                return 0.0;
+                return new();
             }
 
             var rank = CalculateRank(ConvertProperty(avg.Value));
+            return new(avg, CalculateFraction(rank), rank);
+        }
+
+        private double CalculateFraction(double rank)
+        {
             var rankFraction = _rankMultiplier * rank;
             return _descending ? (1.0 - rankFraction) : rankFraction;
         }

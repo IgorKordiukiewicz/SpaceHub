@@ -22,7 +22,7 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
         var allRockets = (await _db.Rockets.AsQueryable().ToListAsync()).Select(x => x.ToDomainModel());
         var comparisonCalculator = new RocketComparisonCalculator(allRockets);
 
-        var groupsData = new Dictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, double>>();
+        var groupsData = new Dictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>>();
         var propertiesTypes = Enum.GetValues<ERocketComparisonProperty>();
 
         foreach (var comparisonGroup in request.ComparisonGroups)
@@ -35,10 +35,16 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
                 _ => new List<Rocket>()
             };
 
-            var groupData = new Dictionary<ERocketComparisonProperty, double>();
+            var groupData = new Dictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>();
             foreach(var propertyType in propertiesTypes)
             {
-                groupData.Add(propertyType, comparisonCalculator.CalculateFraction(propertyType, groupRockets));
+                var (value, fraction, rank) = comparisonCalculator.CalculatePropertyRanking(propertyType, groupRockets);
+                groupData.Add(propertyType, new RocketComparisonDatasetVM()
+                {
+                    Value = value,
+                    Fraction = fraction,
+                    Rank = rank,
+                });
             }
             groupsData.Add(comparisonGroup.Id, groupData);
         }
