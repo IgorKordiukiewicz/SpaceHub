@@ -45,12 +45,14 @@ public class RocketComparisonCalculator
             _descending = descending;
 
             // TODO: Improve performance?
-            _valuesRanked = rockets.Select(x => ConvertProperty(property(x).GetValueOrDefault()))
+            var valuesRanked = rockets.Select(x => ConvertProperty(property(x).GetValueOrDefault()))
                 .Where(x => x > 0)
                 .GroupBy(x => x)
-                .Select(x => x.Key)
-                .Order()
-                .ToList();
+                .Select(x => x.Key);
+
+            _valuesRanked = descending 
+                ? valuesRanked.Order().ToList() // Ordered from lowest to highest so 1.0 is highest
+                : valuesRanked.OrderDescending().ToList(); // Ordered from highest to lowest
 
             _rankMultiplier = 1.0 / (_valuesRanked.Count - 1);
         }
@@ -64,17 +66,16 @@ public class RocketComparisonCalculator
                 return new();
             }
 
-            var rank = CalculateRank(ConvertProperty(avg.Value));
-            return new(avg, CalculateFraction(rank), rank);
+            var rankIndex = CalculateRankIndex(ConvertProperty(avg.Value));
+            return new(avg, CalculateFraction(rankIndex), rankIndex + 1);
         }
 
-        private double CalculateFraction(double rank)
+        private double CalculateFraction(double rankIndex)
         {
-            var rankFraction = _rankMultiplier * rank;
-            return _descending ? (1.0 - rankFraction) : rankFraction;
+            return 1.0 - (_rankMultiplier * rankIndex);
         }
 
-        private double CalculateRank(long value)
+        private double CalculateRankIndex(long value)
         {
             // TODO: Improve performance?
             for (int i = 0; i < _valuesRanked.Count; ++i)
@@ -84,9 +85,13 @@ public class RocketComparisonCalculator
                     return i;
                 }
 
-                if (i + 1 < _valuesRanked.Count && value > _valuesRanked[i] && value < _valuesRanked[i + 1])
+                if(i + 1 < _valuesRanked.Count)
                 {
-                    return i + 0.5;
+                    if((_descending && value > _valuesRanked[i] && value < _valuesRanked[i + 1])
+                        || (!_descending && value < _valuesRanked[i] && value > _valuesRanked[i + 1]))
+                    {
+                        return i + 0.5;
+                    }
                 }
             }
 
@@ -94,6 +99,6 @@ public class RocketComparisonCalculator
         }
 
         private static long ConvertProperty(double property)
-            => (long)property * 10;
+            => (long)(property * 10);
     }
 }

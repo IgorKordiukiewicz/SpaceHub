@@ -26,17 +26,21 @@ public class RocketComparisonCalculatorTests
     }
 
     [Fact]
-    public void CalculateFraction_ShouldReturnZero_WhenPropertyIsInvalid()
+    public void CalculatePropertyRanking_ShouldReturnDefaultRanking_WhenPropertyIsInvalid()
     {
         var property = (ERocketComparisonProperty)(-1);
         var result = _calculator.CalculatePropertyRanking(property, _rockets);
 
-        result.Should().BeApproximately(0.0, _precision);
+        using(new AssertionScope())
+        {
+            result.Value.Should().BeNull();
+            result.Rank.Should().BeNull();
+            result.Fraction.Should().BeApproximately(0.0, _precision);
+        }
     }
 
-
     [Fact]
-    public void CalculateFraction_ShouldReturnZero_WhenRocketsHaveNullPropertyValues()
+    public void CalculatePropertyRanking_ShouldReturnDefaultRanking_WhenRocketsHaveNullPropertyValues()
     {
         var result = _calculator.CalculatePropertyRanking(ERocketComparisonProperty.Length, new Rocket[]
         {
@@ -44,34 +48,47 @@ public class RocketComparisonCalculatorTests
             _fixture.Build<Rocket>().With(x => x.Length, (double?)null).Create()
         });
 
-        result.Should().BeApproximately(0.0, _precision);
+        using (new AssertionScope())
+        {
+            result.Value.Should().BeNull();
+            result.Rank.Should().BeNull();
+            result.Fraction.Should().BeApproximately(0.0, _precision);
+        }
     }
 
     [Theory]
     // Value [70] : 0.0 - 40, 0.25 - 50, 0.5 - [70], 0.75 - 90, 1.0 - 120
-    [InlineData(ERocketComparisonProperty.Length, 0.5)] 
+    [InlineData(ERocketComparisonProperty.Length, 0.5, 3.0)] 
     // Value [200] : 0.0 - 100, 0.33 - [200], 0.67 - 300, 1.0 - 700
-    [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33)]
+    [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33, 3.0)]
     // Value [2000] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - [2000], 1.0 - 1000 (descending)
-    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.75)] 
-    public void CalculateFraction_ShouldReturnCorrectFractionForOneRocket_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
+    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.75, 2.0)] 
+    public void CalculatePropertyRanking_ShouldReturnCorrectFractionAndRankForOneRocket_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedFraction, double expectedRank)
     {
         var result = _calculator.CalculatePropertyRanking(property, new Rocket[] { _rockets[0] });
 
-        result.Should().BeApproximately(expectedResult, _precision);
+        using(new AssertionScope())
+        {
+            result.Fraction.Should().BeApproximately(expectedFraction, _precision);
+            result.Rank.Should().BeApproximately(expectedRank, _precision);
+        }
     }
 
     [Theory]
     // Value [(90 + 40) / 2 = 65] : 0.0 - 40, 0.25 - 50, 0.5 - 70, 0.75 - 90, 1.0 - 120 -> between 0.25 & 0.5 -> 0.375
-    [InlineData(ERocketComparisonProperty.Length, 0.375)]
+    [InlineData(ERocketComparisonProperty.Length, 0.375, 3.5)]
     // Value [(100 + 300) / 2 = 200] : 0.0 - 100, 0.33 - [200], 0.67 - 300, 1.0 - 700
-    [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33)]
+    [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33, 3.0)]
     // Value [(4000 + 5000) / 2 = 4500] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - [2000], 1.0 - 1000 (descending) -> between 0.0 & 0.25 -> 0.125
-    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125)]
-    public void CalculateFraction_ShouldReturnCorrectFractionForGroupOfRockets_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedResult)
+    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125, 1.5)]
+    public void CalculatePropertyRanking_ShouldReturnCorrectFractionAndRankForGroupOfRockets_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedFraction, double expectedRank)
     {
         var result = _calculator.CalculatePropertyRanking(property, new Rocket[] { _rockets[1], _rockets[2] });
 
-        result.Should().BeApproximately(expectedResult, _precision);
+        using (new AssertionScope())
+        {
+            result.Fraction.Should().BeApproximately(expectedFraction, _precision);
+            result.Rank.Should().BeApproximately(expectedRank, _precision);
+        }
     }
 }

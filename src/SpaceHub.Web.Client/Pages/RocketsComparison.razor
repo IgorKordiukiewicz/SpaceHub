@@ -79,6 +79,40 @@
             </Chart>
         </MudPaper>
     </MudItem>
+
+    @foreach(var propertyType in Enum.GetValues<ERocketComparisonProperty>())
+    {
+        <MudItem xs="12" lg="4">
+            <MudPaper>
+                <MudPaper Style="background-color: var(--mud-palette-dark);">
+                    <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@propertyType</MudText>
+                </MudPaper>
+                <MudTimeline TimelinePosition="TimelinePosition.Start">
+                    <MudTimelineItem>
+                        <MudText>
+                            #1
+                        </MudText>
+                    </MudTimelineItem>
+                    @foreach (var dataset in _datasets)
+                    {
+                        @if(dataset.DataByProperty?[propertyType].Rank is not null)
+                        {
+                            <MudTimelineItem Color="@dataset.Color">
+                                <MudText>
+                                    @GetPropertyDetailsText(dataset, propertyType)
+                                </MudText>
+                            </MudTimelineItem>
+                        }     
+                    }
+                    <MudTimelineItem>
+                        <MudText>
+                            #483 
+                        </MudText>
+                    </MudTimelineItem>
+                </MudTimeline>
+            </MudPaper>
+        </MudItem>
+    }
 </MudGrid>
 }
 
@@ -114,6 +148,7 @@
         public required RocketsComparisonDataset Dataset { get; init; }
         public required string Title { get; init; }
         public required Color Color { get; init; }
+        public IReadOnlyDictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>? DataByProperty { get; set; }
     }
     private List<DatasetDisplay> _datasets = new();
 
@@ -341,6 +376,7 @@
             }
 
             var dataset = _datasets.First(x => x.Dataset.Id == id);
+            dataset.DataByProperty = data;
 
             var color = dataset.Color;
             chartDataset.BackgroundColor = ColorToString(color, 0.2F);
@@ -352,6 +388,13 @@
         }
 
         await _chart.Update();
+    }
+
+    private string GetPropertyDetailsText(DatasetDisplay dataset, ERocketComparisonProperty propertyType)
+    {
+        var rankText = dataset.DataByProperty[propertyType].Rank.GetValueOrDefault().ToString("F0");
+        var valueText = dataset.DataByProperty[propertyType].Value.GetValueOrDefault().ToString("F1");
+        return $"#{rankText} - {dataset.Title} - {valueText}";
     }
 
     private static string ColorToString(Color color, float alpha)
