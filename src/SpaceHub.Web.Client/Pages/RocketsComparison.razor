@@ -88,11 +88,19 @@
                         <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@propertyType.ToUserFriendlyString()</MudText>
                 </MudPaper>
                 <MudTimeline TimelinePosition="TimelinePosition.Start">
-                    <MudTimelineItem>
-                        <MudText>
-                            #1
-                        </MudText>
-                    </MudTimelineItem>
+                    @if(_rocketsComparisonMeta is not null)
+                    {
+                        @for (int i = 0; i < _topValuesCount; ++i)
+                        {
+                            <!--Local variable required, using i instead od idx below results in not the expected value-->
+                            var idx = i;
+                            <MudTimelineItem>
+                            <MudText>
+                                    @GetTopValueText(idx + 1, _rocketsComparisonMeta.TopValuesByPropertyType[propertyType][idx])
+                            </MudText>
+                            </MudTimelineItem>
+                        }
+                    }   
                     @foreach (var dataset in GetDatasetsOrderedByProperty(propertyType))
                     {
                         @if(dataset.DataByProperty?[propertyType].Rank is not null)
@@ -104,11 +112,6 @@
                             </MudTimelineItem>
                         }     
                     }
-                    <MudTimelineItem>
-                        <MudText>
-                            #483 
-                        </MudText>
-                    </MudTimelineItem>
                 </MudTimeline>
             </MudPaper>
         </MudItem>
@@ -127,7 +130,7 @@
     private MudAutocomplete<string>? _rocketNameAutocomplete;
     private MudSelect<ERocketComparisonDataset>? _datasetTypeSelect;
 
-    private int _topRocketsCount = 3;
+    private int _topValuesCount = 3;
     private int _maxDatasets = 3;
     private Dictionary<Color, bool> _datasetColorsAvailability = new()
     {
@@ -156,7 +159,7 @@
     protected override async Task OnInitializedAsync()
     {
         _requestHandler = new(_httpClient, _dialogService);
-        var url = new UrlBuilder("api/rockets/comparison_meta").AddParameter("topRocketsCount", _topRocketsCount).Url;
+        var url = new UrlBuilder("api/rockets/comparison_meta").AddParameter("topValuesCount", _topValuesCount).Url;
 
         _rocketsComparisonMeta = await _requestHandler.HandleAPIRequest<RocketsComparisonMetaVM>(url);
 
@@ -411,5 +414,11 @@
         }
 
         return _datasets.OrderBy(x => x.DataByProperty![propertyType].Rank).ToList();
+    }
+
+    private string GetTopValueText(int rank, RocketPropertyValueVM item)
+    {
+        var namesText = item.RocketsNames.Count == 1 ? item.RocketsNames.First() : item.RocketsNames.First() + " & ...";
+        return $"#{rank} - {namesText} - {item.Value}";
     }
 }

@@ -46,9 +46,9 @@ public static class EndpointsExtension
             return result.ToHttpResult();
         });
 
-        app.MapGet("/api/rockets/comparison_meta", async (IMediator mediator, int topRocketsCount) =>
+        app.MapGet("/api/rockets/comparison_meta", async (IMediator mediator, int topValuesCount) =>
         {
-            var result = await mediator.Send(new GetRocketsComparisonMetaQuery(topRocketsCount));
+            var result = await mediator.Send(new GetRocketsComparisonMetaQuery(topValuesCount));
             return result.ToHttpResult();
         });
     }

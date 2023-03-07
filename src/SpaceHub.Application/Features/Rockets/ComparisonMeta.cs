@@ -7,7 +7,7 @@ using SpaceHub.Infrastructure.Data;
 namespace SpaceHub.Application.Features.Rockets;
 
 // TODO: add filters such as IsActive, FirstFlight <>
-public record GetRocketsComparisonMetaQuery(int TopRocketsCount) : IRequest<Result<RocketsComparisonMetaVM>>;
+public record GetRocketsComparisonMetaQuery(int TopValuesCount) : IRequest<Result<RocketsComparisonMetaVM>>;
 
 internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsComparisonMetaQuery, Result<RocketsComparisonMetaVM>>
 {
@@ -34,7 +34,7 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
             RocketIdsByName = rockets.Select(x => (Id: x.Id, FullName: CreateFullRocketName(x)))
                 .GroupBy(x => x.FullName)
                 .ToDictionary(k => k.Key, v => v.First().Id),
-            TopValuesByPropertyType = GetTopValuesByPropertyType(comparisonCalculator, request.TopRocketsCount)
+            TopValuesByPropertyType = GetTopValuesByPropertyType(comparisonCalculator, request.TopValuesCount)
         };
     }
 
