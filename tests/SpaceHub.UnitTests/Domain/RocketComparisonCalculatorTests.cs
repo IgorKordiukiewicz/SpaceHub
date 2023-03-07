@@ -79,8 +79,8 @@ public class RocketComparisonCalculatorTests
     [InlineData(ERocketComparisonProperty.Length, 0.375, 3.5)]
     // Value [(100 + 300) / 2 = 200] : 0.0 - 100, 0.33 - [200], 0.67 - 300, 1.0 - 700
     [InlineData(ERocketComparisonProperty.LiftoffMass, 0.33, 3.0)]
-    // Value [(4000 + 5000) / 2 = 4500] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - [2000], 1.0 - 1000 (descending) -> between 0.0 & 0.25 -> 0.125
-    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125, 1.5)]
+    // Value [(4000 + 5000) / 2 = 4500] : 0.0 - 5000, 0.25 - 4000, 0.5 - 3000, 0.75 - 2000, 1.0 - 1000 (descending) -> between 0.0 & 0.25 -> 0.125
+    [InlineData(ERocketComparisonProperty.CostPerKgToLeo, 0.125, 4.5)]
     public void CalculatePropertyRanking_ShouldReturnCorrectFractionAndRankForGroupOfRockets_WhenPropertyIsValid(ERocketComparisonProperty property, double expectedFraction, double expectedRank)
     {
         var result = _calculator.CalculatePropertyRanking(property, new Rocket[] { _rockets[1], _rockets[2] });

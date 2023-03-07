@@ -85,7 +85,7 @@
         <MudItem xs="12" lg="4">
             <MudPaper>
                 <MudPaper Style="background-color: var(--mud-palette-dark);">
-                        <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@GetRocketComparisonPropertyDisplayName(propertyType)</MudText>
+                        <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@propertyType.ToUserFriendlyString()</MudText>
                 </MudPaper>
                 <MudTimeline TimelinePosition="TimelinePosition.Start">
                     <MudTimelineItem>
@@ -208,7 +208,7 @@
 
         foreach (var rocketPropertyType in Enum.GetValues<ERocketComparisonProperty>())
         {
-            _config.Data.Labels.Add(GetRocketComparisonPropertyDisplayName(rocketPropertyType));
+            _config.Data.Labels.Add(rocketPropertyType.ToUserFriendlyString());
         }
     }
 
@@ -379,8 +379,8 @@
             dataset.DataByProperty = data;
 
             var color = dataset.Color;
-            chartDataset.BackgroundColor = ColorToString(color, 0.2F);
-            chartDataset.BorderColor = ColorToString(color, 1.0F);
+            chartDataset.BackgroundColor = color.ToRGBAString(0.2F);
+            chartDataset.BorderColor = color.ToRGBAString();
 
             chartDataset.Label = dataset.Title;
 
@@ -411,25 +411,4 @@
 
         return _datasets.OrderBy(x => x.DataByProperty![propertyType].Rank).ToList();
     }
-
-    private static string ColorToString(Color color, float alpha)
-    {
-        var alphaStr = alpha.ToString("0.0#", CultureInfo.InvariantCulture);
-        return color switch
-        {
-            Color.Primary => $"rgba(119, 107, 231, {alphaStr})",
-            Color.Secondary => $"rgba(255, 64, 129, {alphaStr})",
-            Color.Tertiary => $"rgba(30, 200, 165, {alphaStr})",
-            _ => "rgba(255, 255, 255, 1.0)"
-        };
-    }
-
-    private static string GetRocketComparisonPropertyDisplayName(ERocketComparisonProperty propertyType) => propertyType switch
-    {
-        ERocketComparisonProperty.LiftoffMass => "Liftoff Mass",
-        ERocketComparisonProperty.LiftoffThrust => "Liftoff Thrust",
-        ERocketComparisonProperty.CostPerKgToLeo => "Cost per kg to LEO",
-        ERocketComparisonProperty.CostPerKgToGeo => "Cost per kg to GEO",
-        _ => propertyType.ToString()
-    };
 }
