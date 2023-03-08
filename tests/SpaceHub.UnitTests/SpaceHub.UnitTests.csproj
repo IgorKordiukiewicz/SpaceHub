@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\src\SpaceHub.Application\SpaceHub.Application.csproj" />
     <ProjectReference Include="..\..\src\SpaceHub.Domain\SpaceHub.Domain.csproj" />
     <ProjectReference Include="..\..\src\SpaceHub.Infrastructure\SpaceHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\SpaceHub.Web.Client\SpaceHub.Web.Client.csproj" />
   </ItemGroup>
 
 </Project>
