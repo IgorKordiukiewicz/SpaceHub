@@ -1,6 +1,6 @@
 ﻿using SpaceHub.Contracts.Models;
 
-namespace SpaceHub.UnitTests.Contracts.Utils;
+namespace SpaceHub.UnitTests.Contracts.Models;
 
 public class PaginationTests
 {
