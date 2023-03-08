@@ -1,4 +1,5 @@
-﻿using SpaceHub.Contracts.Enums;
+﻿using FluentValidation;
+using SpaceHub.Contracts.Enums;
 using System.Text.Json.Serialization;
 
 namespace SpaceHub.Contracts.Models;
@@ -12,6 +13,19 @@ public abstract record RocketsComparisonDataset
     public required Guid Id { get; init; }
 }
 
+public class RocketComparisonDatasetValidator : AbstractValidator<RocketsComparisonDataset>
+{
+    public RocketComparisonDatasetValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x).SetInheritanceValidator(v =>
+        {
+            v.Add(new IndividualRocketsComparisonDatasetValidator());
+            v.Add(new FamilyRocketsComparisonDatasetValidator());
+        });
+    }
+}
+
 public record IndividualRocketsComparisonDataset : RocketsComparisonDataset
 {
     public required int RocketId { get; init; }
@@ -19,10 +33,27 @@ public record IndividualRocketsComparisonDataset : RocketsComparisonDataset
     public override ERocketComparisonDataset Type => ERocketComparisonDataset.Individual;
 }
 
+public class IndividualRocketsComparisonDatasetValidator : AbstractValidator<IndividualRocketsComparisonDataset>
+{
+    public IndividualRocketsComparisonDatasetValidator()
+    {
+        RuleFor(x => x.RocketId).NotEmpty();
+        RuleFor(x => x.RocketName).NotEmpty();
+    }
+}
+
 public record FamilyRocketsComparisonDataset : RocketsComparisonDataset
 {
     public required string FamilyName { get; init; }
     public override ERocketComparisonDataset Type => ERocketComparisonDataset.Family;
+}
+
+public class FamilyRocketsComparisonDatasetValidator : AbstractValidator<FamilyRocketsComparisonDataset>
+{
+    public FamilyRocketsComparisonDatasetValidator()
+    {
+        RuleFor(x => x.FamilyName).NotEmpty();
+    }
 }
 
 public record AllRocketsComparisonDataset : RocketsComparisonDataset

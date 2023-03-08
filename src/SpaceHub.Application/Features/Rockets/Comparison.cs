@@ -8,6 +8,14 @@ namespace SpaceHub.Application.Features.Rockets;
 
 public record GetRocketsComparisonQuery(IEnumerable<RocketsComparisonDataset> ComparisonGroups) : IRequest<Result<RocketsComparisonVM>>;
 
+public class GetRocketsComparisonQueryValidator : AbstractValidator<GetRocketsComparisonQuery>
+{
+    public GetRocketsComparisonQueryValidator()
+    {
+        RuleForEach(x => x.ComparisonGroups).SetValidator(new RocketComparisonDatasetValidator());
+    }
+}
+
 internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsComparisonQuery, Result<RocketsComparisonVM>>
 {
     private readonly DbContext _db;

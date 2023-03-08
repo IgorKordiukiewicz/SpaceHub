@@ -9,6 +9,14 @@ namespace SpaceHub.Application.Features.Rockets;
 // TODO: add filters such as IsActive, FirstFlight <>
 public record GetRocketsComparisonMetaQuery(int TopValuesCount) : IRequest<Result<RocketsComparisonMetaVM>>;
 
+public class GetRocketsComparisonMetaQueryValidator : AbstractValidator<GetRocketsComparisonMetaQuery>
+{
+    public GetRocketsComparisonMetaQueryValidator()
+    {
+        RuleFor(x => x.TopValuesCount).GreaterThan(0);
+    }
+}
+
 internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsComparisonMetaQuery, Result<RocketsComparisonMetaVM>>
 {
     private readonly DbContext _db;
