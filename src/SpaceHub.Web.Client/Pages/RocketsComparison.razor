@@ -87,30 +87,14 @@
                 <MudPaper Style="background-color: var(--mud-palette-dark);">
                         <MudText Typo="Typo.h5" Class="pa-3" Align="Align.Center">@propertyType.ToUserFriendlyString()</MudText>
                 </MudPaper>
-                <MudTimeline TimelinePosition="TimelinePosition.Start">
-                    @if(_rocketsComparisonMeta is not null)
+                <MudTimeline TimelinePosition="TimelinePosition.Start">  
+                    @foreach (var (text, color) in GetPropertyDetailsItems(propertyType))
                     {
-                        @for (int i = 0; i < _topValuesCount; ++i)
-                        {
-                            <!--Local variable required, using i instead od idx below results in not the expected value-->
-                            var idx = i;
-                            <MudTimelineItem>
+                        <MudTimelineItem Color="@color">
                             <MudText>
-                                    @GetTopValueText(idx + 1, _rocketsComparisonMeta.TopValuesByPropertyType[propertyType][idx])
+                                @text
                             </MudText>
-                            </MudTimelineItem>
-                        }
-                    }   
-                    @foreach (var dataset in GetDatasetsOrderedByProperty(propertyType))
-                    {
-                        @if(dataset.DataByProperty?[propertyType].Rank is not null)
-                        {
-                            <MudTimelineItem Color="@dataset.Color">
-                                <MudText>
-                                    @GetPropertyDetailsText(dataset, propertyType)
-                                </MudText>
-                            </MudTimelineItem>
-                        }     
+                        </MudTimelineItem>
                     }
                 </MudTimeline>
             </MudPaper>
@@ -394,31 +378,45 @@
         await _chart.Update();
     }
 
-    private string GetPropertyDetailsText(DatasetDisplay dataset, ERocketComparisonProperty propertyType)
+    private List<(string, Color)> GetPropertyDetailsItems(ERocketComparisonProperty propertyType)
     {
-        if(dataset.DataByProperty is null)
+        var result = new List<(string, Color)>();
+        if (_rocketsComparisonMeta is null)
         {
-            return string.Empty;
+            return result;
         }
 
-        var rankText = dataset.DataByProperty[propertyType].Rank.GetValueOrDefault().ToString("F0");
-        var valueText = dataset.DataByProperty[propertyType].Value.GetValueOrDefault().ToString("F1");
-        return $"#{rankText} - {dataset.Title} - {valueText}";
-    }
+        var datasetsByRank = _datasets.Where(x => x.DataByProperty is not null && x.DataByProperty[propertyType].Rank is not null)
+            .ToDictionary(k => (int)k.DataByProperty![propertyType].Rank!.Value, v => v);
 
-    private List<DatasetDisplay> GetDatasetsOrderedByProperty(ERocketComparisonProperty propertyType)
-    {
-        if(_datasets.Any(x => x.DataByProperty is null))
+        void AddFromDataset(DatasetDisplay dataset)
         {
-            return _datasets;
+            var rankText = dataset.DataByProperty![propertyType].Rank.GetValueOrDefault().ToString("0.#");
+            var valueText = dataset.DataByProperty![propertyType].Value.GetValueOrDefault().ToString("0.#");
+            result!.Add(($"#{rankText} - {dataset.Title} - {valueText}", dataset.Color));
         }
 
-        return _datasets.OrderBy(x => x.DataByProperty![propertyType].Rank).ToList();
-    }
+        for (int i = 0; i < _rocketsComparisonMeta.TopValuesByPropertyType[propertyType].Count; ++i)
+        {
+            int rank = i + 1;
+            if (datasetsByRank.TryGetValue(rank, out var dataset))
+            {
+                AddFromDataset(dataset);
+                datasetsByRank.Remove(rank);
+            }
+            else
+            {
+                var topValue = _rocketsComparisonMeta.TopValuesByPropertyType[propertyType][i];
+                var namesText = topValue.RocketsNames.Count == 1 ? topValue.RocketsNames.First() : topValue.RocketsNames.First() + " & ...";
+                result.Add(($"#{rank} - {namesText} - {topValue.Value.ToString("0.#")}", Color.Default));
+            }
+        }
 
-    private string GetTopValueText(int rank, RocketPropertyValueVM item)
-    {
-        var namesText = item.RocketsNames.Count == 1 ? item.RocketsNames.First() : item.RocketsNames.First() + " & ...";
-        return $"#{rank} - {namesText} - {item.Value}";
+        foreach(var (rank, dataset) in datasetsByRank.OrderBy(x => x.Key))
+        {
+            AddFromDataset(dataset);
+        }
+
+        return result;
     }
 }
