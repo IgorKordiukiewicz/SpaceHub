@@ -8,7 +8,7 @@ public static class Application
 {
     public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
     {
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
