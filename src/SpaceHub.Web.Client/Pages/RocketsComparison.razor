@@ -386,14 +386,18 @@
             return result;
         }
 
+        var unit = propertyType.GetUnit();
+        var unitSuffix = !string.IsNullOrEmpty(unit) ? $" {unit}" : string.Empty;
+        var valueFormat = "{0:#,0.##}";
+
         var datasetsByRank = _datasets.Where(x => x.DataByProperty is not null && x.DataByProperty[propertyType].Rank is not null)
             .ToDictionary(k => (int)k.DataByProperty![propertyType].Rank!.Value, v => v);
 
         void AddFromDataset(DatasetDisplay dataset)
         {
             var rankText = dataset.DataByProperty![propertyType].Rank.GetValueOrDefault().ToString("0.#");
-            var valueText = dataset.DataByProperty![propertyType].Value.GetValueOrDefault().ToString("0.#");
-            result!.Add(($"#{rankText} - {dataset.Title} - {valueText}", dataset.Color));
+            var valueText = string.Format(valueFormat, dataset.DataByProperty![propertyType].Value.GetValueOrDefault());
+            result!.Add(($"#{rankText} - {dataset.Title} - {valueText}" + unitSuffix, dataset.Color));
         }
 
         for (int i = 0; i < _rocketsComparisonMeta.TopValuesByPropertyType[propertyType].Count; ++i)
@@ -408,7 +412,7 @@
             {
                 var topValue = _rocketsComparisonMeta.TopValuesByPropertyType[propertyType][i];
                 var namesText = topValue.RocketsNames.Count == 1 ? topValue.RocketsNames.First() : topValue.RocketsNames.First() + " & ...";
-                result.Add(($"#{rank} - {namesText} - {topValue.Value.ToString("0.#")}", Color.Default));
+                result.Add(($"#{rank} - {namesText} - {string.Format(valueFormat, topValue.Value)}" + unitSuffix, Color.Default));
             }
         }
 

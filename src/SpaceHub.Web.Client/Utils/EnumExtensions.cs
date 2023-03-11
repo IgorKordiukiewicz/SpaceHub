@@ -1,6 +1,8 @@
 ﻿using MudBlazor;
+using SpaceHub.Contracts.Attributes;
 using SpaceHub.Contracts.Enums;
 using System.Globalization;
+using System.Reflection;
 
 namespace SpaceHub.Web.Client.Utils;
 
@@ -25,5 +27,10 @@ public static class EnumExtensions
             Color.Tertiary => $"rgba(30, 200, 165, {alphaStr})",
             _ => "rgba(255, 255, 255, 1.0)"
         };
+    }
+
+    public static string GetUnit(this Enum enumValue)
+    {
+        return enumValue.GetType().GetMember(enumValue.ToString()).First().GetCustomAttribute<UnitAttribute>()?.Unit ?? string.Empty;
     }
 }
