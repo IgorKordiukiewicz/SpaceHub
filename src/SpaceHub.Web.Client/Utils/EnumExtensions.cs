@@ -1,8 +1,6 @@
 ﻿using MudBlazor;
-using SpaceHub.Contracts.Attributes;
 using SpaceHub.Contracts.Enums;
 using System.Globalization;
-using System.Reflection;
 
 namespace SpaceHub.Web.Client.Utils;
 
@@ -17,6 +15,15 @@ public static class EnumExtensions
         _ => property.ToString()
     };
 
+    public static string GetUnit(this ERocketComparisonProperty property) => property switch
+    {
+        ERocketComparisonProperty.Length | ERocketComparisonProperty.Diameter => "m",
+        ERocketComparisonProperty.LiftoffMass => "T",
+        ERocketComparisonProperty.LiftoffThrust => "kN",
+        ERocketComparisonProperty.CostPerKgToLeo | ERocketComparisonProperty.CostPerKgToGeo => "$",
+        _ => string.Empty
+    };
+
     public static string ToRGBAString(this Color color, float alpha = 1.0F)
     {
         var alphaStr = alpha.ToString("0.0#", CultureInfo.InvariantCulture);
@@ -27,10 +34,5 @@ public static class EnumExtensions
             Color.Tertiary => $"rgba(30, 200, 165, {alphaStr})",
             _ => "rgba(255, 255, 255, 1.0)"
         };
-    }
-
-    public static string GetUnit(this Enum enumValue)
-    {
-        return enumValue.GetType().GetMember(enumValue.ToString()).First().GetCustomAttribute<UnitAttribute>()?.Unit ?? string.Empty;
     }
 }
