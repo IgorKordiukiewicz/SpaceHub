@@ -391,7 +391,8 @@
         var valueFormat = "{0:#,0.##}";
 
         var datasetsByRank = _datasets.Where(x => x.DataByProperty is not null && x.DataByProperty[propertyType].Rank is not null)
-            .ToDictionary(k => (int)k.DataByProperty![propertyType].Rank!.Value, v => v);
+            .GroupBy(x => (int)x.DataByProperty![propertyType].Rank!.Value)
+            .ToDictionary(k => k.Key, v => v.ToList());
 
         void AddFromDataset(DatasetDisplay dataset)
         {
@@ -403,10 +404,13 @@
         for (int i = 0; i < _rocketsComparisonMeta.TopValuesByPropertyType[propertyType].Count; ++i)
         {
             int rank = i + 1;
-            if (datasetsByRank.TryGetValue(rank, out var dataset))
+            if (datasetsByRank.TryGetValue(rank, out var datasets))
             {
-                AddFromDataset(dataset);
-                datasetsByRank.Remove(rank);
+                foreach(var dataset in datasets)
+                {
+                    AddFromDataset(dataset);
+                    datasetsByRank.Remove(rank);
+                }
             }
             else
             {
@@ -416,9 +420,13 @@
             }
         }
 
-        foreach(var (rank, dataset) in datasetsByRank.OrderBy(x => x.Key))
+        foreach(var (rank, datasets) in datasetsByRank.OrderBy(x => x.Key))
         {
-            AddFromDataset(dataset);
+            foreach(var dataset in datasets)
+            {
+                AddFromDataset(dataset);
+            }
+            
         }
 
         return result;
