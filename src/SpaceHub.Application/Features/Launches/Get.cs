@@ -45,8 +45,9 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
         var count = await query.CountAsync();
         var totalPagesCount = request.Pagination.GetPagesCount(count);
         
-        var launches = await query.Skip(request.Pagination.Offset)
+        var launches = (await query.Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
+            .ToListAsync())
             .Select(x => new LaunchVM
             {
                 Id = x.ApiId,
@@ -58,8 +59,9 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
                 AgencyName = x.AgencyName,
                 PadLocationName = x.Pad.LocationName,
                 Upcoming = x.Date > now, // TODO: Move to domain?
-                TimeToLaunch = x.Date - now
-            }).ToListAsync();
+                TimeToLaunch = x.Date - now,
+                VideosUrls = x.Videos.Select(xx => xx.Url).ToList()
+            }).ToList();
 
         return Result.Ok(new LaunchesVM(launches, totalPagesCount));
     }

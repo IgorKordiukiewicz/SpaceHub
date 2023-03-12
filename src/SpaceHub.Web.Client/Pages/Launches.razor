@@ -109,6 +109,14 @@
                                     </MudPaper>
                                 </MudItem>
                                 <RocketCard Rocket="@details.Data.Rocket" Nested="@true"/>
+                                <MudItem xs="12">
+                                <div class="d-flex flex-grow-1 gap-2 mx-6 mb-1">
+                                    @foreach (var videoUrl in launch.VideosUrls)
+                                    {
+                                        <MudButton StartIcon="@Icons.Custom.Brands.YouTube" Color="Color.Error" Variant="Variant.Filled" Href="@videoUrl" Target="_blank" Class="flex-grow-1"></MudButton>
+                                    }
+                                </div>
+                                </MudItem>
                             </MudGrid>
                         }
                     </MudPaper>

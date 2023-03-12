@@ -14,4 +14,5 @@ public class LaunchVM
     public required string PadLocationName { get; init; }
     public required bool Upcoming { get; init; }
     public TimeSpan? TimeToLaunch { get; set; }
+    public IReadOnlyList<string> VideosUrls { get; init; } = Array.Empty<string>();
 }

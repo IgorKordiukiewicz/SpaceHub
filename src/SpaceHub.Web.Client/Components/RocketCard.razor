@@ -61,7 +61,7 @@
     [Parameter]
     public RocketVM Rocket { get; set; }
 
-    private string GetItemClass() => Nested ? "mx-6 mt-2 mb-4" : "mb-10";
+    private string GetItemClass() => Nested ? "mx-6 mt-2 mb-1" : "mb-10";
 
     private string FormatValue<T>(T? value) => string.Format("{0:#,0.##}", value);
 }
