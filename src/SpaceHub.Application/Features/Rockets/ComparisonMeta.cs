@@ -1,12 +1,9 @@
-﻿using MediatR;
-using SpaceHub.Contracts.Enums;
-using SpaceHub.Contracts.ViewModels;
+﻿using SpaceHub.Contracts.Enums;
 using SpaceHub.Domain;
 using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
-// TODO: add filters such as IsActive, FirstFlight <>
 public record GetRocketsComparisonMetaQuery(int TopValuesCount) : IRequest<Result<RocketsComparisonMetaVM>>;
 
 public class GetRocketsComparisonMetaQueryValidator : AbstractValidator<GetRocketsComparisonMetaQuery>

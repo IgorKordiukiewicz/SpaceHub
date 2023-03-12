@@ -58,7 +58,7 @@ internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<Lau
                 MissionDescription = x.Mission != null ? x.Mission.Description : string.Empty,
                 AgencyName = x.AgencyName,
                 PadLocationName = x.Pad.LocationName,
-                Upcoming = x.Date > now, // TODO: Move to domain?
+                Upcoming = x.Date > now,
                 TimeToLaunch = x.Date - now,
                 VideosUrls = x.Videos.Select(xx => xx.Url).ToList()
             }).ToList();

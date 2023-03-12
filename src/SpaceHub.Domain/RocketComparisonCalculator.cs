@@ -56,7 +56,6 @@ public class RocketComparisonCalculator
             _property = property;
             _descending = descending;
 
-            // TODO: Improve performance?
             var valuesRanked = rockets.Select(x => (Value: RealValueToCalculationValue(property(x).GetValueOrDefault()), Name: x.Name))
                 .Where(x => x.Value > 0)
                 .GroupBy(x => x.Value);
@@ -88,7 +87,6 @@ public class RocketComparisonCalculator
 
         public PropertyRanking CalculateFractionAndRank(IEnumerable<Rocket> rockets)
         {
-            // TODO: Is calculating average of a group the correct approach?
             var avg = rockets.Average(_property);
             if (avg is null)
             {
@@ -106,7 +104,6 @@ public class RocketComparisonCalculator
 
         private double CalculateRankIndex(long value)
         {
-            // TODO: Improve performance?
             for (int i = 0; i < _valuesRanked.Count; ++i)
             {
                 if (value == _valuesRanked[i])

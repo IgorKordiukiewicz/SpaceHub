@@ -1,6 +1,5 @@
 ﻿namespace SpaceHub.Domain;
 
-// TODO: Consider removing Helper domain classes and instead use domain models (but is it worth to add additional layer of models?)
 public static class ArticleHelper
 {
     public static bool ArticleMatchesSearchCriteria(string searchValue, string title, string summary)
