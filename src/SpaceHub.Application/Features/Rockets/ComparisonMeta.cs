@@ -33,9 +33,6 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
         return new RocketsComparisonMetaVM()
         {
             TotalCount = rockets.Count,
-            FamilyRocketsCountByName = rockets.Where(x => !string.IsNullOrEmpty(x.Family))
-                .GroupBy(x => x.Family)
-                .ToDictionary(k => k.Key, v => v.Count()),
             RocketIdsByName = rockets.Select(x => (Id: x.Id, FullName: CreateFullRocketName(x)))
                 .GroupBy(x => x.FullName)
                 .ToDictionary(k => k.Key, v => v.First().Id),

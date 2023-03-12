@@ -23,14 +23,14 @@ public class RocketComparisonCalculator
         };
     }
 
-    public PropertyRanking CalculatePropertyRanking(ERocketComparisonProperty property, IEnumerable<Rocket> rockets)
+    public PropertyRanking CalculatePropertyRanking(ERocketComparisonProperty property, Rocket rocket)
     {
         if(!_properties.ContainsKey(property))
         {
             return new();
         }
 
-        return _properties[property].CalculateFractionAndRank(rockets);
+        return _properties[property].CalculateFractionAndRank(rocket);
     }
 
     public IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<PropertyTopValue>> GetTopValues(int count)
@@ -46,7 +46,6 @@ public class RocketComparisonCalculator
     private class Property
     {
         private readonly Func<Rocket, double?> _property;
-        private readonly bool _descending;
         private readonly List<long> _valuesRanked;
         private readonly double _rankMultiplier;
         private readonly Dictionary<long, IEnumerable<string>> _namesByValue;
@@ -54,7 +53,6 @@ public class RocketComparisonCalculator
         public Property(IEnumerable<Rocket> rockets, Func<Rocket, double?> property, bool descending = false)
         {
             _property = property;
-            _descending = descending;
 
             var valuesRanked = rockets.Select(x => (Value: RealValueToCalculationValue(property(x).GetValueOrDefault()), Name: x.Name))
                 .Where(x => x.Value > 0)
@@ -85,16 +83,16 @@ public class RocketComparisonCalculator
             return result;
         }
 
-        public PropertyRanking CalculateFractionAndRank(IEnumerable<Rocket> rockets)
+        public PropertyRanking CalculateFractionAndRank(Rocket rocket)
         {
-            var avg = rockets.Average(_property);
-            if (avg is null)
+            var value = _property(rocket);
+            if(value is null)
             {
                 return new();
             }
 
-            var rankIndex = CalculateRankIndex(RealValueToCalculationValue(avg.Value));
-            return new(avg, CalculateFraction(rankIndex), rankIndex + 1);
+            var rankIndex = CalculateRankIndex(RealValueToCalculationValue(value.Value));
+            return new(value, CalculateFraction(rankIndex), rankIndex + 1);
         }
 
         private double CalculateFraction(double rankIndex)
@@ -109,15 +107,6 @@ public class RocketComparisonCalculator
                 if (value == _valuesRanked[i])
                 {
                     return i;
-                }
-
-                if(i + 1 < _valuesRanked.Count)
-                {
-                    if((_descending && value > _valuesRanked[i] && value < _valuesRanked[i + 1])
-                        || (!_descending && value < _valuesRanked[i] && value > _valuesRanked[i + 1]))
-                    {
-                        return i + 0.5;
-                    }
                 }
             }
 

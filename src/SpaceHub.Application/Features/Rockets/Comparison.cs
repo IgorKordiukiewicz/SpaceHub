@@ -6,13 +6,13 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
-public record GetRocketsComparisonQuery(IEnumerable<RocketsComparisonDataset> ComparisonGroups) : IRequest<Result<RocketsComparisonVM>>;
+public record GetRocketsComparisonQuery(IEnumerable<ComparisonDataset> Datasets) : IRequest<Result<RocketsComparisonVM>>;
 
 public class GetRocketsComparisonQueryValidator : AbstractValidator<GetRocketsComparisonQuery>
 {
     public GetRocketsComparisonQueryValidator()
     {
-        RuleForEach(x => x.ComparisonGroups).SetValidator(new RocketComparisonDatasetValidator());
+        RuleForEach(x => x.Datasets).SetValidator(new ComparisonDatasetValidator());
     }
 }
 
@@ -33,20 +33,14 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
         var groupsData = new Dictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>>();
         var propertiesTypes = Enum.GetValues<ERocketComparisonProperty>();
 
-        foreach (var comparisonGroup in request.ComparisonGroups)
+        foreach (var dataset in request.Datasets)
         {
-            var groupRockets = comparisonGroup switch
-            {
-                IndividualRocketsComparisonDataset individual => allRockets.Where(x => x.ApiId == individual.RocketId).ToList(),
-                FamilyRocketsComparisonDataset family => allRockets.Where(x => string.Equals(x.Family, family.FamilyName, StringComparison.OrdinalIgnoreCase)).ToList(),
-                AllRocketsComparisonDataset all => allRockets.ToList(),
-                _ => new List<Rocket>()
-            };
+            var rocket = allRockets.FirstOrDefault(x => x.ApiId == dataset.RocketId);
 
             var groupData = new Dictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>();
             foreach(var propertyType in propertiesTypes)
             {
-                var (value, fraction, rank) = comparisonCalculator.CalculatePropertyRanking(propertyType, groupRockets);
+                var (value, fraction, rank) = comparisonCalculator.CalculatePropertyRanking(propertyType, rocket);
                 groupData.Add(propertyType, new RocketComparisonDatasetVM()
                 {
                     Value = value,
@@ -54,7 +48,7 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
                     Rank = rank,
                 });
             }
-            groupsData.Add(comparisonGroup.Id, groupData);
+            groupsData.Add(dataset.Id, groupData);
         }
 
         return new RocketsComparisonVM()
