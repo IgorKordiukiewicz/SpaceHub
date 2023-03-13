@@ -1,10 +1,10 @@
 ﻿@using MudBlazor
 
 <MudNavMenu>
-    <MudNavLink Icon="@Icons.Filled.Newspaper" Href="/news" Match="NavLinkMatch.All">News</MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.RocketLaunch" Href="/launches">Launches</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Newspaper" Href="/news" Match="NavLinkMatch.All">News</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.RocketLaunch" Href="/launches">Launches</MudNavLink>
     <MudNavGroup Icon="@Icons.Material.Filled.Rocket" Expanded="true" Title="Rockets">
-        <MudNavLink Icon="@Icons.Material.Filled.Search" Href="/rockets">Search</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.Filled.BarChart" Href="/rockets/comparison">Compare</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Search" Href="/rockets" Match="NavLinkMatch.All">Search</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.BarChart" Href="/rockets/comparison" Match="NavLinkMatch.All">Compare</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
