@@ -59,7 +59,7 @@
     public bool Nested { get; set; }
 
     [Parameter]
-    public RocketVM Rocket { get; set; }
+    public required RocketVM Rocket { get; set; }
 
     private string GetItemClass() => Nested ? "mx-6 mt-2 mb-1" : "mb-10";
 

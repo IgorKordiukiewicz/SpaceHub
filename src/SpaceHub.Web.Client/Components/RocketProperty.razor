@@ -14,13 +14,13 @@
 
 @code {
     [Parameter]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 
     [Parameter]
-    public string? Value{ get; set; }
+    public string? Value { get; set; }
 
     [Parameter]
-    public string? UnitSymbol{ get; set; }
+    public string? UnitSymbol { get; set; }
 
     private string GetPropertyValueDisplay()
     {

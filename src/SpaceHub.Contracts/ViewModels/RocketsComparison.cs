@@ -9,8 +9,8 @@ public record RocketsComparisonVM
 
 public record RocketComparisonDatasetVM
 {
-    public required double? Value { get; init; }
+    public double? Value { get; init; }
     public required double Fraction { get; init; }
-    public required double? Rank { get; init; }
+    public double? Rank { get; init; }
 }
 
