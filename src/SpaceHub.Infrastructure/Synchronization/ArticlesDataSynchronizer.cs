@@ -1,25 +1,28 @@
-﻿using SpaceHub.Infrastructure.Api;
+﻿using FluentResults;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
+using SpaceHub.Infrastructure.Extensions;
+using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
-namespace SpaceHub.Application.Features.News;
+namespace SpaceHub.Infrastructure.Synchronization;
 
-public record UpdateArticlesCommand() : IRequest<Result>;
-
-internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Result>
+public class ArticlesDataSynchronizer : IDataSynchronizer<ArticleModel>
 {
     private readonly DbContext _db;
     private readonly IArticleApi _api;
 
-    public UpdateArticlesHandler(DbContext db, IArticleApi api)
+    public ArticlesDataSynchronizer(DbContext db, IArticleApi api)
     {
         _db = db;
         _api = api;
     }
 
-    public async Task<Result> Handle(UpdateArticlesCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Synchronize()
     {
         var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
             .Where(x => x.CollectionType == ECollection.Articles)
@@ -28,7 +31,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Re
 
         var now = DateTime.UtcNow;
         var response = await _api.GetArticlesPublishedBetween(lastUpdateTime.ToQueryParameter(), now.ToQueryParameter());
-        if(!response.GetContentOrError().TryPickT0(out var articles, out var error))
+        if (!response.GetContentOrError().TryPickT0(out var articles, out var error))
         {
             return Result.Fail(error);
         }
@@ -41,7 +44,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Re
                 newArticles.Add(CreateModel(article));
             }
 
-            if(newArticles.Any())
+            if (newArticles.Any())
             {
                 await _db.Articles.InsertManyAsync(newArticles);
             }
@@ -54,7 +57,7 @@ internal class UpdateArticlesHandler : IRequestHandler<UpdateArticlesCommand, Re
         return Result.Ok();
     }
 
-    private ArticleModel CreateModel(ArticleResponse response)
+    private static ArticleModel CreateModel(ArticleResponse response)
     {
         return new ArticleModel()
         {

@@ -2,6 +2,9 @@
 using Refit;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
+using SpaceHub.Infrastructure.Data.Models;
+using SpaceHub.Infrastructure.Synchronization;
+using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
 namespace SpaceHub.Infrastructure;
 
@@ -23,6 +26,10 @@ public static class Infrastructure
         });
 
         services.AddSingleton<DbContext>();
+        services.AddScoped<IDataSynchronizer<ArticleModel>, ArticlesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<AgencyModel>, AgenciesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<LaunchModel>, LaunchesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<RocketModel>, RocketsDataSynchronizer>();
 
         return services;
     }

@@ -1,14 +1,12 @@
 ﻿using Hangfire;
 using Hangfire.Mongo;
-using Hangfire.Mongo.Migration.Strategies.Backup;
 using Hangfire.Mongo.Migration.Strategies;
+using Hangfire.Mongo.Migration.Strategies.Backup;
+using MediatR;
 using MongoDB.Driver;
 using SpaceHub.Infrastructure;
-using MediatR;
-using SpaceHub.Application.Features.News;
-using SpaceHub.Application.Features.Launches;
-using SpaceHub.Application.Features.Rockets;
-using SpaceHub.Application.Features.Agencies;
+using SpaceHub.Infrastructure.Data.Models;
+using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
 namespace SpaceHub.Web.Server;
 
@@ -45,26 +43,30 @@ public static class Hangfire
         using var scope = app.ApplicationServices.CreateScope();
         var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        var articlesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<ArticleModel>>();
+        var agenciesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<AgencyModel>>();
+        var launchesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<LaunchModel>>();
+        var rocketsSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<RocketModel>>();
 
         var utcZone = TimeZoneInfo.Utc;
         recurringJobManager.AddOrUpdate(
             "Update articles",
-            () => mediator.Send(new UpdateArticlesCommand(), CancellationToken.None),
+            () => articlesSynchronizer.Synchronize(),
             "0 * * * *", 
             utcZone);
         recurringJobManager.AddOrUpdate(
             "Update launches",
-            () => mediator.Send(new UpdateLaunchesCommand(), CancellationToken.None),
+            () => launchesSynchronizer.Synchronize(),
             "30 0,8,16 * * *",
             utcZone);
         recurringJobManager.AddOrUpdate(
             "Update rockets",
-            () => mediator.Send(new UpdateRocketsCommand(), CancellationToken.None),
+            () => rocketsSynchronizer.Synchronize(),
             "0 1 * * *",
             utcZone);
         recurringJobManager.AddOrUpdate(
             "Update agencies",
-            () => mediator.Send(new UpdateAgenciesCommand(), CancellationToken.None),
+            () => agenciesSynchronizer.Synchronize(),
             "0 1 * * *",
             utcZone);
     }

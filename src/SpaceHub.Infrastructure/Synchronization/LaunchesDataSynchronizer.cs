@@ -1,55 +1,44 @@
-﻿using SpaceHub.Infrastructure.Api;
+﻿using MongoDB.Driver;
+using Refit;
+using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
 using System.Globalization;
 
-namespace SpaceHub.Application.Features.Launches;
+namespace SpaceHub.Infrastructure.Synchronization;
 
-public record UpdateLaunchesCommand() : IRequest<Result>;
-
-internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand, Result>
+public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetailResponse, LaunchDetailResponse, LaunchModel, string>
 {
-    private readonly DbContext _db;
-    private readonly ILaunchApi _api;
-    private const int MaxLaunchesPerRequest = 25;
-
-    public UpdateLaunchesHandler(DbContext db, ILaunchApi api)
+    public LaunchesDataSynchronizer(DbContext db, ILaunchApi api)
+        : base(db, api)
     {
-        _db = db;
-        _api = api;
     }
 
-    public async Task<Result> Handle(UpdateLaunchesCommand request, CancellationToken cancellationToken)
-    {
-        var lastUpdateTime = await _db.CollectionsLastUpdates.AsQueryable()
-            .Where(x => x.CollectionType == ECollection.Launches)
-            .Select(x => x.LastUpdate)
-            .SingleAsync();
+    protected override ECollection CollectionType => ECollection.Launches;
 
-        var startDate = lastUpdateTime.ToQueryParameter();
-        var endDate = DateTime.UtcNow.ToQueryParameter();
+    protected override int MaxItemsPerRequest => 25;
 
-        var updateService = new DataUpdateService<LaunchesDetailResponse, LaunchDetailResponse, LaunchModel, string>
-        {
-            GetItemsCountFunc = () => _api.GetLaunchesUpdatedBetweenCount(startDate, endDate),
-            GetItemsFunc = idx => _api.GetLaunchesUpdatedBetween(startDate, endDate, MaxLaunchesPerRequest, idx * MaxLaunchesPerRequest),
-            UpdateModelFunc = CreateUpdateModel,
-            InsertModelFunc = CreateInsertModel,
-            ResponseItemIdSelector = responseItem => responseItem.Id,
-            ResponseItemsSelector = response => response.Launches,
-            CollectionSelector = db => db.Launches,
-            ExistingIds = _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet(),
-            MaxItemsPerRequest = MaxLaunchesPerRequest,
-            CollectionType = ECollection.Launches,
-            Db = _db
-        };
+    protected override HashSet<string> CreateExistingIdsHashSet()
+        => _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet();
 
-        return await updateService.Handle();
-    }
+    protected override string GetResponseItemId(LaunchDetailResponse item)
+        => item.Id;
 
-    private UpdateOneModel<LaunchModel> CreateUpdateModel(LaunchDetailResponse response)
+    protected override Task<IApiResponse<LaunchesDetailResponse>> GetItems(int index)
+        => _api.GetLaunchesUpdatedBetween(_startDateParameter, _endDateParameter, MaxItemsPerRequest, index * MaxItemsPerRequest);
+
+    protected override Task<IApiResponse<MultiElementResponse>> GetItemsCount()
+        => _api.GetLaunchesUpdatedBetweenCount(_startDateParameter, _endDateParameter);
+
+    protected override IReadOnlyList<LaunchDetailResponse> SelectResponseItems(LaunchesDetailResponse response)
+        => response.Launches;
+
+    protected override IMongoCollection<LaunchModel> GetCollection(DbContext db)
+        => db.Launches;
+
+    protected override UpdateOneModel<LaunchModel> CreateUpdateModel(LaunchDetailResponse response)
     {
         var filter = Builders<LaunchModel>.Filter.Eq(x => x.ApiId, response.Id);
         var update = Builders<LaunchModel>.Update
@@ -60,7 +49,7 @@ internal class UpdateLaunchesHandler : IRequestHandler<UpdateLaunchesCommand, Re
         return new UpdateOneModel<LaunchModel>(filter, update);
     }
 
-    private InsertOneModel<LaunchModel> CreateInsertModel(LaunchDetailResponse response)
+    protected override InsertOneModel<LaunchModel> CreateInsertModel(LaunchDetailResponse response)
     {
         LaunchMissionModel? mission = null;
         if (response.Mission is not null)

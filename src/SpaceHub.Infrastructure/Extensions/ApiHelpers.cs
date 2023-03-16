@@ -1,8 +1,8 @@
 ﻿using OneOf;
 using Refit;
-using SpaceHub.Application.Errors;
+using SpaceHub.Infrastructure.Errors;
 
-namespace SpaceHub.Application.Common;
+namespace SpaceHub.Infrastructure.Extensions;
 
 public static class ApiHelpers
 {

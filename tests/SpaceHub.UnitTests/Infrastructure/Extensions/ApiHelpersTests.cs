@@ -1,6 +1,6 @@
-﻿using SpaceHub.Application.Common;
+﻿using SpaceHub.Infrastructure.Extensions;
 
-namespace SpaceHub.UnitTests.Application.Common;
+namespace SpaceHub.UnitTests.Infrastructure.Extensions;
 
 public class ApiHelpersTests
 {
