@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.Web.Client", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHub.Web.Server", "src\SpaceHub.Web.Server\SpaceHub.Web.Server.csproj", "{FE1B032F-AC92-4D25-A347-DA46A72E9C9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceHub.IntegrationTests", "tests\SpaceHub.IntegrationTests\SpaceHub.IntegrationTests.csproj", "{67BBEC5D-50E2-4F10-A385-025CB2C667F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{FE1B032F-AC92-4D25-A347-DA46A72E9C9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE1B032F-AC92-4D25-A347-DA46A72E9C9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE1B032F-AC92-4D25-A347-DA46A72E9C9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67BBEC5D-50E2-4F10-A385-025CB2C667F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67BBEC5D-50E2-4F10-A385-025CB2C667F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67BBEC5D-50E2-4F10-A385-025CB2C667F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67BBEC5D-50E2-4F10-A385-025CB2C667F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{B5B86F43-29B5-4A18-AAFC-D9D12C24C00A} = {21D0037C-03CC-45CE-A421-0A9582125F3C}
 		{FBB23566-9DD0-49C5-B722-899914D3A170} = {AC456FF0-70F4-44A1-BCC5-EBD40E62C9D3}
 		{FE1B032F-AC92-4D25-A347-DA46A72E9C9B} = {AC456FF0-70F4-44A1-BCC5-EBD40E62C9D3}
+		{67BBEC5D-50E2-4F10-A385-025CB2C667F5} = {FC3357C6-17A2-49FF-8D91-A24A2F178A7C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A8BC419D-779E-4A27-9F47-866A96E2DD67}
