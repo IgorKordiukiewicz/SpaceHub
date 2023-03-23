@@ -5,6 +5,7 @@ public class InfrastructureSettings
     public ApisSettings Api { get; set; } = new();
     public ConnectionStrings ConnectionStrings { get; set; } = new();
     public string DatabaseName { get; set; } = string.Empty;
+    public bool HangfireEnabled { get; set; }
 }
 
 public class ApisSettings

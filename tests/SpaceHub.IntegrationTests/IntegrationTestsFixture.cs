@@ -2,9 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using SpaceHub.Infrastructure;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
@@ -19,11 +21,12 @@ public class IntegrationTestsFixture : IDisposable
     {
         var appFactory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.ConfigureAppConfiguration((_, config) =>
+            builder.ConfigureTestServices(services =>
             {
-                config.AddInMemoryCollection(new Dictionary<string, string?>
+                services.Configure<InfrastructureSettings>(config =>
                 {
-                    { "InfrastructureSettings:DatabaseName", "SpaceHubTests" }
+                    config.DatabaseName = "SpaceHubTests";
+                    config.HangfireEnabled = false;
                 });
             });
 

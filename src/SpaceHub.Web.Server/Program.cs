@@ -1,4 +1,5 @@
 using Hangfire;
+using Microsoft.Extensions.Options;
 using SpaceHub.Application;
 using SpaceHub.Infrastructure;
 using SpaceHub.Web.Server;
@@ -38,8 +39,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseHangfireDashboard();
-app.AddJobs();
+infrastructureSettings = app.Services.GetRequiredService<IOptions<InfrastructureSettings>>().Value;
+if(infrastructureSettings.HangfireEnabled)
+{
+    app.UseHangfireDashboard();
+    app.AddJobs();
+}
+
 
 app.MapRazorPages();
 app.MapControllers();
