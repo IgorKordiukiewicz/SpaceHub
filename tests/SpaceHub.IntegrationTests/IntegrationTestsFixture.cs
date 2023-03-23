@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Bogus;
+using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,17 +36,43 @@ public class IntegrationTestsFixture : IDisposable
     {
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+        ResetDbData(db);
 
+        db.Articles.InsertMany(new Faker<ArticleModel>()
+            .RuleFor(x => x.PublishDate, f => f.Date.Recent())
+            .RuleFor(x => x.Title, f => string.Join(" ", f.Lorem.Words()))
+            .RuleFor(x => x.Summary, f => f.Lorem.Word())
+            .Generate(15));
+    }
+
+    public void Dispose()
+    {
+        using var scope = _services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+        ResetDbData(db);
+    }
+
+    public async Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request)
+    {
+        using var scope = _services.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        return await mediator.Send(request);
+    }
+
+    public async Task<IReadOnlyList<TModel>> GetAsync<TModel>() where TModel : class
+    {
+        using var scope = _services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+        return await db.GetCollection<TModel>().AsQueryable().ToListAsync();
+    }
+
+    private static void ResetDbData(DbContext db)
+    {
         db.Agencies.DeleteMany(Builders<AgencyModel>.Filter.Empty);
         db.Articles.DeleteMany(Builders<ArticleModel>.Filter.Empty);
         db.Launches.DeleteMany(Builders<LaunchModel>.Filter.Empty);
         db.Rockets.DeleteMany(Builders<RocketModel>.Filter.Empty);
         db.CollectionsLastUpdates.DeleteMany(Builders<CollectionLastUpdateModel>.Filter.Empty);
-    }
-
-    public void Dispose()
-    {
-        //
     }
 }
 

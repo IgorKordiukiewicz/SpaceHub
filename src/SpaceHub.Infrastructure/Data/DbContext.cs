@@ -8,6 +8,14 @@ public class DbContext
 {
     private readonly MongoClient _client;
     private readonly IMongoDatabase _db;
+    private readonly Dictionary<Type, string> _collectionsNamesByType = new()
+    {
+        { typeof(ArticleModel), nameof(Articles) },
+        { typeof(LaunchModel), nameof(Launches) },
+        { typeof(RocketModel), nameof(Rockets) },
+        { typeof(AgencyModel), nameof(Agencies) },
+        { typeof(CollectionLastUpdateModel), nameof(CollectionsLastUpdates) },
+    };
 
     public IMongoCollection<ArticleModel> Articles { get; set; }
     public IMongoCollection<LaunchModel> Launches { get; set; }
@@ -24,10 +32,20 @@ public class DbContext
         _client = new MongoClient(connectionString);
         _db = _client.GetDatabase(dbName);
 
-        Articles = _db.GetCollection<ArticleModel>("Articles");
-        Launches = _db.GetCollection<LaunchModel>("Launches");
-        Rockets = _db.GetCollection<RocketModel>("Rockets");
-        Agencies = _db.GetCollection<AgencyModel>("Agencies");
-        CollectionsLastUpdates = _db.GetCollection<CollectionLastUpdateModel>("CollectionsLastUpdates");
+        Articles = _db.GetCollection<ArticleModel>(_collectionsNamesByType[typeof(ArticleModel)]);
+        Launches = _db.GetCollection<LaunchModel>(_collectionsNamesByType[typeof(LaunchModel)]);
+        Rockets = _db.GetCollection<RocketModel>(_collectionsNamesByType[typeof(RocketModel)]);
+        Agencies = _db.GetCollection<AgencyModel>(_collectionsNamesByType[typeof(AgencyModel)]);
+        CollectionsLastUpdates = _db.GetCollection<CollectionLastUpdateModel>(_collectionsNamesByType[typeof(CollectionLastUpdateModel)]);
+    }
+
+    public IMongoCollection<TDocument> GetCollection<TDocument>() where TDocument : class
+    {
+        if(!_collectionsNamesByType.TryGetValue(typeof(TDocument), out var collectionName))
+        {
+            throw new ArgumentOutOfRangeException(typeof(TDocument).ToString(), "Collection with this document type does not exist.");
+        }
+
+        return _db.GetCollection<TDocument>(collectionName);
     }
 }
