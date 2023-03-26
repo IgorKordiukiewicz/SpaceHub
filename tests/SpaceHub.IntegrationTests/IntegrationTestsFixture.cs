@@ -86,11 +86,10 @@ public class IntegrationTestsFixture : IDisposable
     }
 
     public async Task<IReadOnlyList<TModel>> GetAsync<TModel>() where TModel : class
-    {
-        using var scope = _services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
-        return await db.GetCollection<TModel>().AsQueryable().ToListAsync();
-    }
+        => await ExecuteDbScopeAsync(async db =>
+        {
+            return await db.GetCollection<TModel>().AsQueryable().ToListAsync();
+        });
 
     public async Task<IReadOnlyList<TModel>> GetAsync<TModel>(Func<TModel, bool> predicate) where TModel : class
     {
@@ -98,10 +97,16 @@ public class IntegrationTestsFixture : IDisposable
     }
 
     public async Task<TModel> FirstAsync<TModel>() where TModel : class
+        => await ExecuteDbScopeAsync(async db =>
+        {
+            return await db.GetCollection<TModel>().AsQueryable().FirstAsync();
+        });
+
+    private async Task<TModel> ExecuteDbScopeAsync<TModel>(Func<DbContext, Task<TModel>> func) where TModel : class
     {
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
-        return await db.GetCollection<TModel>().AsQueryable().FirstAsync();
+        return await func(db);
     }
 
     private static void ResetDbData(DbContext db)
