@@ -32,7 +32,7 @@ public class NewsTests
             result.Value.TotalPagesCount.Should().Be(pagination.GetPagesCount(articles.Count));
             result.Value.Articles.Count.Should().Be(pagination.ItemsPerPage);
 
-            var expectedArticles = articles.OrderByDescending(x => x.PublishDate).Select(x => x.Title).Take(pagination.ItemsPerPage).ToList();
+            var expectedArticles = articles.OrderByDescending(x => x.PublishDate).Select(x => x.Title).Take(result.Value.Articles.Count).ToList();
             var actualArticles = result.Value.Articles.OrderByDescending(x => x.PublishDate).Select(x => x.Title).ToList();
             actualArticles.Should().BeEquivalentTo(expectedArticles, options => options.WithStrictOrdering());
         }
@@ -41,17 +41,16 @@ public class NewsTests
     [Fact]
     public async Task GetNews_ShouldReturnArticlesMatchingSearchCriteria_WhenSearchValueIsProvided()
     {
-        var articles = await _fixture.GetAsync<ArticleModel>();
-        var expectedMatchingArticle = articles[0];
+        var article = await _fixture.FirstAsync<ArticleModel>();
         var pagination = new Pagination();
-        var result = await _fixture.SendRequest(new GetNewsQuery(expectedMatchingArticle.Title, pagination));
+        var result = await _fixture.SendRequest(new GetNewsQuery(article.Title, pagination));
 
         using(new AssertionScope())
         {
             result.IsSuccess.Should().BeTrue();
             result.Value.TotalPagesCount.Should().Be(1);
             result.Value.Articles.Count.Should().Be(1);
-            result.Value.Articles[0].Title.Should().Be(expectedMatchingArticle.Title);
+            result.Value.Articles[0].Title.Should().Be(article.Title);
         }
     }
 }

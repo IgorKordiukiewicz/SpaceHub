@@ -19,15 +19,17 @@ public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
 internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
 {
     private readonly DbContext _db;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public GetLaunchesHandler(DbContext db)
+    public GetLaunchesHandler(DbContext db, IDateTimeProvider dateTimeProvider)
     {
         _db = db;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<LaunchesVM>> Handle(GetLaunchesQuery request, CancellationToken cancellationToken)
     {
-        var now = DateTime.UtcNow;
+        var now = _dateTimeProvider.Now();
 
         var query = _db.Launches.AsQueryable()
             .Where(x => x.Name.ToLower().Contains(request.SearchValue.ToLower()));

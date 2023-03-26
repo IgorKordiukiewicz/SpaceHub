@@ -6,12 +6,18 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using SpaceHub.Application.Common;
 using SpaceHub.Infrastructure;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
 
 namespace SpaceHub.IntegrationTests;
+
+public class TestDateTimeProvider : IDateTimeProvider
+{
+    public DateTime Now() => new(2023, 3, 15);
+}
 
 public class IntegrationTestsFixture : IDisposable
 {
@@ -28,6 +34,8 @@ public class IntegrationTestsFixture : IDisposable
                     config.DatabaseName = "SpaceHubTests";
                     config.HangfireEnabled = false;
                 });
+
+                services.AddScoped<IDateTimeProvider, TestDateTimeProvider>();
             });
 
             builder.UseEnvironment("Development");
@@ -41,11 +49,26 @@ public class IntegrationTestsFixture : IDisposable
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
         ResetDbData(db);
 
+        string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
+
         db.Articles.InsertMany(new Faker<ArticleModel>()
             .RuleFor(x => x.PublishDate, f => f.Date.Recent())
-            .RuleFor(x => x.Title, f => string.Join(" ", f.Lorem.Words()))
+            .RuleFor(x => x.Title, f => GenerateWords(f))
             .RuleFor(x => x.Summary, f => f.Lorem.Word())
             .Generate(15));
+
+        var date = new DateTime(2023, 3, 15);
+        void InsertLaunches(bool upcoming)
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
+                .RuleFor(x => x.Name, f => GenerateWords(f))
+                .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
+                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
+                .Generate(15));
+        }
+        InsertLaunches(true);
+        InsertLaunches(false);
     }
 
     public void Dispose()
@@ -67,6 +90,18 @@ public class IntegrationTestsFixture : IDisposable
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
         return await db.GetCollection<TModel>().AsQueryable().ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<TModel>> GetAsync<TModel>(Func<TModel, bool> predicate) where TModel : class
+    {
+        return (await GetAsync<TModel>()).Where(predicate).ToList();
+    }
+
+    public async Task<TModel> FirstAsync<TModel>() where TModel : class
+    {
+        using var scope = _services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+        return await db.GetCollection<TModel>().AsQueryable().FirstAsync();
     }
 
     private static void ResetDbData(DbContext db)

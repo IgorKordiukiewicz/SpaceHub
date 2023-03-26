@@ -17,6 +17,8 @@ public static class Application
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResultLoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+        services.AddScoped<IDateTimeProvider, DateTimeProvider>();
+
         return services;
     }
 }
