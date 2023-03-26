@@ -25,11 +25,9 @@ public class NewsTests
     {
         _fixture.SeedDb(db =>
         {
-            string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
-
             db.Articles.InsertMany(new Faker<ArticleModel>()
                 .RuleFor(x => x.PublishDate, f => f.Date.Recent())
-                .RuleFor(x => x.Title, f => GenerateWords(f))
+                .RuleFor(x => x.Title, f => f.JoinedWords())
                 .RuleFor(x => x.Summary, f => f.Lorem.Word())
                 .Generate(15));
         });

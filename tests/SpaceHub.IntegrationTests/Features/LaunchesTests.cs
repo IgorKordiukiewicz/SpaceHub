@@ -98,13 +98,12 @@ public class LaunchesTests
 
     private static void SeedGetLaunchesWithoutSearchValueData(DbContext db)
     {
-        string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
         var date = new DateTime(2023, 3, 15);
         void InsertLaunches(bool upcoming)
         {
             db.Launches.InsertMany(new Faker<LaunchModel>()
                 .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
-                .RuleFor(x => x.Name, f => GenerateWords(f))
+                .RuleFor(x => x.Name, f => f.JoinedWords())
                 .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
                 .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
                 .Generate(15));
