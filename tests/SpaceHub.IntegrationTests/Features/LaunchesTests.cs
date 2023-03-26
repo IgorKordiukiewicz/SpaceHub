@@ -1,9 +1,12 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using SpaceHub.Application.Common;
+using SpaceHub.Application.Errors;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
+using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
 
@@ -19,12 +22,14 @@ public class LaunchesTests
     {
         _fixture = fixture;
 
-        _fixture.InitDb();
+        _fixture.ResetDb();
     }
 
     [Fact]
     public async Task GetLaunches_ShouldReturnUpcomingLaunchesOrderedByDate_WhenTimeFrameIsUpcomingAndSearchValueIsEmpty()
     {
+        _fixture.SeedDb(SeedGetLaunchesWithoutSearchValueData);
+
         var launches = await _fixture.GetAsync<LaunchModel>(x => x.Date > _dateTimeProvider.Now());
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Upcoming, string.Empty, pagination));
@@ -44,6 +49,8 @@ public class LaunchesTests
     [Fact]
     public async Task GetLaunches_ShouldReturnPreviousLaunchesOrderedByDateDescending_WhenTimeFrameIsPreviousAndSearchValueIsEmpty()
     {
+        _fixture.SeedDb(SeedGetLaunchesWithoutSearchValueData);
+
         var launches = await _fixture.GetAsync<LaunchModel>(x => x.Date <= _dateTimeProvider.Now());
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Previous, string.Empty, pagination));
@@ -63,16 +70,46 @@ public class LaunchesTests
     [Fact]
     public async Task GetLaunches_ShouldReturnLaunchesFilteredBySearchValue_WhenSearchValueIsProvided()
     {
-        var launch = await _fixture.FirstAsync<LaunchModel>();
-        var timeFrame = launch.Date > _dateTimeProvider.Now() ? ETimeFrame.Upcoming : ETimeFrame.Previous;
-        var result = await _fixture.SendRequest(new GetLaunchesQuery(timeFrame, launch.Name, new()));
+        _fixture.SeedDb(db =>
+        {
+            void InsertLaunch(string name)
+            {
+                db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
+                .RuleFor(x => x.Name, f => name)
+                .RuleFor(x => x.Date, f => f.Date.Future(1, _dateTimeProvider.Now()))
+                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
+                .Generate(1));
+            }
+            InsertLaunch("foo");
+            InsertLaunch("bar");
+        });
+
+        var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Upcoming, "fo", new()));
 
         using(new AssertionScope())
         {
             result.IsSuccess.Should().BeTrue();
             result.Value.TotalPagesCount.Should().Be(1);
             result.Value.Launches.Count.Should().Be(1);
-            result.Value.Launches[0].Name.Should().Be(launch.Name);
+            result.Value.Launches[0].Name.Should().Be("foo");
         }
+    }
+
+    private static void SeedGetLaunchesWithoutSearchValueData(DbContext db)
+    {
+        string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
+        var date = new DateTime(2023, 3, 15);
+        void InsertLaunches(bool upcoming)
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
+                .RuleFor(x => x.Name, f => GenerateWords(f))
+                .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
+                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
+                .Generate(15));
+        }
+        InsertLaunches(true);
+        InsertLaunches(false);
     }
 }

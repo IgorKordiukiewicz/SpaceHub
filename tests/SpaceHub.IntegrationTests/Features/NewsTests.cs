@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Contracts.Models;
@@ -16,12 +17,23 @@ public class NewsTests
     {
         _fixture = fixture;
 
-        _fixture.InitDb();
+        _fixture.ResetDb();
     }
 
     [Fact]
     public async Task GetNews_ShouldReturnArticlesOrderedByDate_WhenSearchValueIsEmpty()
     {
+        _fixture.SeedDb(db =>
+        {
+            string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
+
+            db.Articles.InsertMany(new Faker<ArticleModel>()
+                .RuleFor(x => x.PublishDate, f => f.Date.Recent())
+                .RuleFor(x => x.Title, f => GenerateWords(f))
+                .RuleFor(x => x.Summary, f => f.Lorem.Word())
+                .Generate(15));
+        });
+
         var articles = await _fixture.GetAsync<ArticleModel>();
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetNewsQuery(string.Empty, pagination));
@@ -41,16 +53,29 @@ public class NewsTests
     [Fact]
     public async Task GetNews_ShouldReturnArticlesMatchingSearchCriteria_WhenSearchValueIsProvided()
     {
-        var article = await _fixture.FirstAsync<ArticleModel>();
+        _fixture.SeedDb(db =>
+        {
+            void InsertArticle(string title)
+            {
+                db.Articles.InsertMany(new Faker<ArticleModel>()
+                .RuleFor(x => x.PublishDate, f => f.Date.Recent())
+                .RuleFor(x => x.Title, f => title)
+                .RuleFor(x => x.Summary, f => string.Empty)
+                .Generate(1));
+            }
+            InsertArticle("Foo");
+            InsertArticle("Bar");
+        });
+
         var pagination = new Pagination();
-        var result = await _fixture.SendRequest(new GetNewsQuery(article.Title, pagination));
+        var result = await _fixture.SendRequest(new GetNewsQuery("Fo", pagination));
 
         using(new AssertionScope())
         {
             result.IsSuccess.Should().BeTrue();
             result.Value.TotalPagesCount.Should().Be(1);
             result.Value.Articles.Count.Should().Be(1);
-            result.Value.Articles[0].Title.Should().Be(article.Title);
+            result.Value.Articles[0].Title.Should().Be("Foo");
         }
     }
 }

@@ -43,39 +43,28 @@ public class IntegrationTestsFixture : IDisposable
         _services = appFactory.Services;
     }
 
-    public void InitDb()
+    public void ResetDb()
     {
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
-        ResetDbData(db);
 
-        string GenerateWords(Faker faker, int count = 3) => string.Join(" ", faker.Lorem.Words(3));
+        db.Agencies.DeleteMany(Builders<AgencyModel>.Filter.Empty);
+        db.Articles.DeleteMany(Builders<ArticleModel>.Filter.Empty);
+        db.Launches.DeleteMany(Builders<LaunchModel>.Filter.Empty);
+        db.Rockets.DeleteMany(Builders<RocketModel>.Filter.Empty);
+        db.CollectionsLastUpdates.DeleteMany(Builders<CollectionLastUpdateModel>.Filter.Empty);
+    }
 
-        db.Articles.InsertMany(new Faker<ArticleModel>()
-            .RuleFor(x => x.PublishDate, f => f.Date.Recent())
-            .RuleFor(x => x.Title, f => GenerateWords(f))
-            .RuleFor(x => x.Summary, f => f.Lorem.Word())
-            .Generate(15));
-
-        var date = new DateTime(2023, 3, 15);
-        void InsertLaunches(bool upcoming)
-        {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
-                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
-                .RuleFor(x => x.Name, f => GenerateWords(f))
-                .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
-                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
-                .Generate(15));
-        }
-        InsertLaunches(true);
-        InsertLaunches(false);
+    public void SeedDb(Action<DbContext> action)
+    {
+        using var scope = _services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
+        action(db);
     }
 
     public void Dispose()
     {
-        using var scope = _services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DbContext>();
-        ResetDbData(db);
+        ResetDb();
     }
 
     public async Task<TResponse> SendRequest<TResponse>(IRequest<TResponse> request)
@@ -96,26 +85,11 @@ public class IntegrationTestsFixture : IDisposable
         return (await GetAsync<TModel>()).Where(predicate).ToList();
     }
 
-    public async Task<TModel> FirstAsync<TModel>() where TModel : class
-        => await ExecuteDbScopeAsync(async db =>
-        {
-            return await db.GetCollection<TModel>().AsQueryable().FirstAsync();
-        });
-
     private async Task<TModel> ExecuteDbScopeAsync<TModel>(Func<DbContext, Task<TModel>> func) where TModel : class
     {
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
         return await func(db);
-    }
-
-    private static void ResetDbData(DbContext db)
-    {
-        db.Agencies.DeleteMany(Builders<AgencyModel>.Filter.Empty);
-        db.Articles.DeleteMany(Builders<ArticleModel>.Filter.Empty);
-        db.Launches.DeleteMany(Builders<LaunchModel>.Filter.Empty);
-        db.Rockets.DeleteMany(Builders<RocketModel>.Filter.Empty);
-        db.CollectionsLastUpdates.DeleteMany(Builders<CollectionLastUpdateModel>.Filter.Empty);
     }
 }
 
