@@ -2,7 +2,7 @@
 using Refit;
 using SpaceHub.Infrastructure.Errors;
 
-namespace SpaceHub.Infrastructure.Extensions;
+namespace SpaceHub.Infrastructure.Api;
 
 public static class ApiHelpers
 {
@@ -17,5 +17,10 @@ public static class ApiHelpers
         }
 
         return response.Content;
+    }
+
+    public static string ToQueryParameter(this DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy-MM-ddTHH:mm:ss");
     }
 }

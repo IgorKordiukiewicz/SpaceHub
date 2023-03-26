@@ -10,7 +10,6 @@ using SpaceHub.Infrastructure.Enums;
 using OneOf;
 using SpaceHub.Infrastructure.Errors;
 using SpaceHub.Infrastructure.Synchronization.Interfaces;
-using SpaceHub.Infrastructure.Extensions;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 

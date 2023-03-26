@@ -6,7 +6,6 @@ using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Enums;
-using SpaceHub.Infrastructure.Extensions;
 using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
 namespace SpaceHub.Infrastructure.Synchronization;

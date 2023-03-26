@@ -2,7 +2,7 @@
 
 namespace SpaceHub.UnitTests.Infrastructure.Api;
 
-public class ApiExtensionsTests
+public class ApiHelpersTests
 {
     [Theory]
     [InlineData(2022, 1, 1, 10, 15, 0, "2022-01-01T10:15:00")]
@@ -16,4 +16,15 @@ public class ApiExtensionsTests
         result.Should().Be(expected);
     }
 
+    [Theory]
+    [InlineData(0, 10, 0)]
+    [InlineData(5, 10, 1)]
+    [InlineData(10, 10, 1)]
+    [InlineData(11, 10, 2)]
+    public void GetRequiredRequestsCount_Should_CalculateRequiredRequestsCountCorrectly(int itemsCount, int maxItemsPerRequest, int expectedResult)
+    {
+        var result = ApiHelpers.GetRequiredRequestsCount(itemsCount, maxItemsPerRequest);
+
+        result.Should().Be(expectedResult);
+    }
 }
