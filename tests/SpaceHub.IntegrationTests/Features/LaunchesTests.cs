@@ -96,6 +96,114 @@ public class LaunchesTests
         }
     }
 
+    [Fact]
+    public async Task GetLaunchDetails_ShouldReturnRecordNotFoundError_WhenLaunchIsNotFound()
+    {
+        _fixture.SeedDb(db =>
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, "1")
+                .Generate(1));
+        });
+
+        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery("0"));
+
+        using(new AssertionScope())
+        {
+            result.IsSuccess.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors[0].Should().BeOfType<RecordNotFoundError>();
+        }
+    }
+
+    [Fact]
+    public async Task GetLaunchDetails_ShouldReturnRecordNotFoundError_WhenAgencyIsNotFound()
+    {
+        var launchId = "1";
+        _fixture.SeedDb(db =>
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, launchId)
+                .RuleFor(x => x.AgencyApiId, 0)
+                .Generate(1));
+
+            db.Agencies.InsertMany(new Faker<AgencyModel>()
+                .RuleFor(x => x.ApiId, 1)
+                .Generate(1));
+        });
+
+        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery(launchId));
+
+        using (new AssertionScope())
+        {
+            result.IsSuccess.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors[0].Should().BeOfType<RecordNotFoundError>();
+        }
+    }
+
+    [Fact]
+    public async Task GetLaunchDetails_ShouldReturnRecordNotFoundError_WhenRocketIsNotFound()
+    {
+        var launchId = "1";
+        _fixture.SeedDb(db =>
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, launchId)
+                .RuleFor(x => x.AgencyApiId, 1)
+                .RuleFor(x => x.RocketApiId, 0)
+                .Generate(1));
+
+            db.Agencies.InsertMany(new Faker<AgencyModel>()
+                .RuleFor(x => x.ApiId, 1)
+                .Generate(1));
+
+            db.Rockets.InsertMany(new Faker<RocketModel>()
+                .RuleFor(x => x.ApiId, 1)
+                .Generate(1));
+        });
+
+        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery(launchId));
+
+        using (new AssertionScope())
+        {
+            result.IsSuccess.Should().BeFalse();
+            result.Errors.Count.Should().Be(1);
+            result.Errors[0].Should().BeOfType<RecordNotFoundError>();
+        }
+    }
+
+    [Fact]
+    public async Task GetLaunchDetails_ShouldReturnSuccess_WhenLaunchAndItsAgencyAndRocketAreFound()
+    {
+        var launchId = "1";
+        _fixture.SeedDb(db =>
+        {
+            db.Launches.InsertMany(new Faker<LaunchModel>()
+                .RuleFor(x => x.ApiId, launchId)
+                .RuleFor(x => x.AgencyApiId, 1)
+                .RuleFor(x => x.RocketApiId, 1)
+                .Generate(1));
+
+            db.Agencies.InsertMany(new Faker<AgencyModel>()
+                .RuleFor(x => x.ApiId, 1)
+                .Generate(1));
+
+            db.Rockets.InsertMany(new Faker<RocketModel>()
+                .RuleFor(x => x.ApiId, 1)
+                .Generate(1));
+        });
+
+        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery(launchId));
+
+        using (new AssertionScope())
+        {
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Agency.Should().NotBeNull();
+            result.Value.Rocket.Should().NotBeNull();
+        }
+    }
+
     private static void SeedGetLaunchesWithoutSearchValueData(DbContext db)
     {
         var date = new DateTime(2023, 3, 15);
