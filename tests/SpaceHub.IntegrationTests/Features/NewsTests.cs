@@ -65,8 +65,7 @@ public class NewsTests
             InsertArticle("Bar");
         });
 
-        var pagination = new Pagination();
-        var result = await _fixture.SendRequest(new GetNewsQuery("Fo", pagination));
+        var result = await _fixture.SendRequest(new GetNewsQuery("fo", new()));
 
         using(new AssertionScope())
         {

@@ -81,8 +81,8 @@ public class LaunchesTests
                 .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
                 .Generate(1));
             }
-            InsertLaunch("foo");
-            InsertLaunch("bar");
+            InsertLaunch("Foo");
+            InsertLaunch("Bar");
         });
 
         var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Upcoming, "fo", new()));
@@ -92,7 +92,7 @@ public class LaunchesTests
             result.IsSuccess.Should().BeTrue();
             result.Value.TotalPagesCount.Should().Be(1);
             result.Value.Launches.Count.Should().Be(1);
-            result.Value.Launches[0].Name.Should().Be("foo");
+            result.Value.Launches[0].Name.Should().Be("Foo");
         }
     }
 
