@@ -64,16 +64,6 @@ public static class EndpointsExtension
         return GetErrorResult(handlerResult.Errors);
     }
 
-    private static IResult ToHttpResult(this Result handlerResult)
-    {
-        if(!handlerResult.IsFailed)
-        {
-            return Results.Ok();
-        }
-
-        return GetErrorResult(handlerResult.Errors);
-    }
-
     private static IResult GetErrorResult(List<IError> errors)
     {
         var error = errors.FirstOrDefault();

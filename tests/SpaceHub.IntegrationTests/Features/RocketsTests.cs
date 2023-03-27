@@ -14,7 +14,6 @@ namespace SpaceHub.IntegrationTests.Features;
 public class RocketsTests
 {
     private readonly IntegrationTestsFixture _fixture;
-    private readonly double _precision = 0.01;
     private readonly ERocketComparisonProperty[] _rocketComparisonPropertyTypes = Enum.GetValues<ERocketComparisonProperty>();
 
     public RocketsTests(IntegrationTestsFixture fixture)

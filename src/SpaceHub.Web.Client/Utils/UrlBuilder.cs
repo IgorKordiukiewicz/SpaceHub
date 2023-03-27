@@ -2,7 +2,7 @@
 
 public class UrlBuilder
 {
-    private string _route = string.Empty;
+    private readonly string _route = string.Empty;
     private string _queryParameters = string.Empty;
 
     public string Url => _route + _queryParameters;

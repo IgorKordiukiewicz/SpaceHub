@@ -30,7 +30,7 @@ public class RocketComparisonCalculator
             return new();
         }
 
-        return _properties[property].CalculateFractionAndRank(rocket);
+        return _properties[property].CalculateRanking(rocket);
     }
 
     public IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<PropertyTopValue>> GetTopValues(int count)
@@ -83,7 +83,7 @@ public class RocketComparisonCalculator
             return result;
         }
 
-        public PropertyRanking CalculateFractionAndRank(Rocket rocket)
+        public PropertyRanking CalculateRanking(Rocket rocket)
         {
             var value = _property(rocket);
             if(value is null)
@@ -93,24 +93,24 @@ public class RocketComparisonCalculator
 
             var rankIndex = CalculateRankIndex(RealValueToCalculationValue(value.Value));
             return new(value, CalculateFraction(rankIndex), rankIndex + 1);
-        }
 
-        private double CalculateFraction(double rankIndex)
-        {
-            return 1.0 - (_rankMultiplier * rankIndex);
-        }
-
-        private double CalculateRankIndex(long value)
-        {
-            for (int i = 0; i < _valuesRanked.Count; ++i)
+            double CalculateRankIndex(long value)
             {
-                if (value == _valuesRanked[i])
+                for (int i = 0; i < _valuesRanked.Count; ++i)
                 {
-                    return i;
+                    if (value == _valuesRanked[i])
+                    {
+                        return i;
+                    }
                 }
+
+                return 0.0;
             }
 
-            return 0.0;
+            double CalculateFraction(double rankIndex)
+            {
+                return 1.0 - (_rankMultiplier * rankIndex);
+            }
         }
 
         private static long RealValueToCalculationValue(double value)

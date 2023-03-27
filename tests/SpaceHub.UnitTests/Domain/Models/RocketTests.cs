@@ -70,13 +70,13 @@ public class RocketTests
         rocket.LaunchSuccess.Should().Be(expected);
     }
 
-    private Expression<Func<Rocket, int?>> GetOrbitCapacityProperty(OrbitType orbitType) => orbitType switch
+    private static Expression<Func<Rocket, int?>> GetOrbitCapacityProperty(OrbitType orbitType) => orbitType switch
     {
         OrbitType.LEO => x => x.LeoCapacity,
-        OrbitType.GEO => (x => x.GeoCapacity)
+        OrbitType.GEO => x => x.GeoCapacity
     };
 
-    private int? GetCostPerKgToOrbit(Rocket rocket, OrbitType orbitType) => orbitType switch
+    private static int? GetCostPerKgToOrbit(Rocket rocket, OrbitType orbitType) => orbitType switch
     {
         OrbitType.LEO => rocket.CostPerKgToLeo,
         OrbitType.GEO => rocket.CostPerKgToGeo
