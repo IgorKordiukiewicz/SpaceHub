@@ -4,6 +4,7 @@ using FluentAssertions.Execution;
 using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
+using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
 
@@ -14,6 +15,7 @@ public class RocketsTests
 {
     private readonly IntegrationTestsFixture _fixture;
     private readonly double _precision = 0.01;
+    private readonly ERocketComparisonProperty[] _rocketComparisonPropertyTypes = Enum.GetValues<ERocketComparisonProperty>();
 
     public RocketsTests(IntegrationTestsFixture fixture)
     {
@@ -81,22 +83,7 @@ public class RocketsTests
     [Fact]
     public async Task GetRocketsComparisonMeta_ShouldReturnCorrectRocketsMetadata()
     {
-        _fixture.SeedDb(db =>
-        {
-            int id = 0;
-            int value = 1;
-            db.Rockets.InsertMany(new Faker<RocketModel>()
-                .RuleFor(x => x.ApiId, f => id++)
-                .RuleFor(x => x.Name, f => f.JoinedWords())
-                .RuleFor(x => x.Length, f => value++)
-                .RuleFor(x => x.Diameter, f => value++)
-                .RuleFor(x => x.LiftoffMass, f => value++)
-                .RuleFor(x => x.ThrustAtLiftoff, f => value++)
-                .RuleFor(x => x.GeoCapacity, f => value++)
-                .RuleFor(x => x.LeoCapacity, f => value++)
-                .RuleFor(x => x.LaunchCost, f => 10000)
-                .Generate(5));
-        });
+        _fixture.SeedDb(SeedRocketsComparisonData);
 
         var topValuesCount = 2;
         var rockets = await _fixture.GetAsync<RocketModel>();
@@ -109,12 +96,61 @@ public class RocketsTests
             result.Value.RocketIdsByName.Should().BeEquivalentTo(rockets.ToDictionary(k => k.Name, v => v.ApiId));
 
             var topValues = result.Value.TopValuesByPropertyType;
-            var rocketComparisonPropertyTypes = Enum.GetValues<ERocketComparisonProperty>();
-            topValues.Keys.Should().BeEquivalentTo(rocketComparisonPropertyTypes);
-            foreach(var propertyType in rocketComparisonPropertyTypes)
+            topValues.Keys.Should().BeEquivalentTo(_rocketComparisonPropertyTypes);
+            foreach(var propertyType in _rocketComparisonPropertyTypes)
             {
                 topValues[propertyType].Count.Should().Be(topValuesCount);
             }
         }
+    }
+
+    [Fact]
+    public async Task GetRocketsComparison_ShouldReturnCorrectComparisonData()
+    {
+        _fixture.SeedDb(SeedRocketsComparisonData);
+
+        var rockets = await _fixture.GetAsync<RocketModel>();
+        var datasets = new List<ComparisonDataset>();
+        void AddDataset(int index)
+        {
+            datasets.Add(new ComparisonDataset()
+            {
+                Id = Guid.NewGuid(),
+                RocketId = rockets[index].ApiId,
+                RocketName = rockets[index].Name
+            });
+        }
+        AddDataset(0);
+        AddDataset(1);
+
+        var result = await _fixture.SendRequest(new GetRocketsComparisonQuery(datasets));
+
+        using(new AssertionScope())
+        {
+            result.IsSuccess.Should().BeTrue();
+            result.Value.DatasetsById.Keys.Should().BeEquivalentTo(datasets.Select(x => x.Id));
+
+            foreach(var dataset in result.Value.DatasetsById.Values)
+            {
+                dataset.Keys.Should().BeEquivalentTo(_rocketComparisonPropertyTypes);
+            }
+        }
+    }
+
+    private static void SeedRocketsComparisonData(DbContext db)
+    {
+        int id = 1;
+        int value = 1;
+        db.Rockets.InsertMany(new Faker<RocketModel>()
+            .RuleFor(x => x.ApiId, f => id++)
+            .RuleFor(x => x.Name, f => f.JoinedWords())
+            .RuleFor(x => x.Length, f => value++)
+            .RuleFor(x => x.Diameter, f => value++)
+            .RuleFor(x => x.LiftoffMass, f => value++)
+            .RuleFor(x => x.ThrustAtLiftoff, f => value++)
+            .RuleFor(x => x.GeoCapacity, f => value++)
+            .RuleFor(x => x.LeoCapacity, f => value++)
+            .RuleFor(x => x.LaunchCost, f => 10000)
+            .Generate(5));
     }
 }

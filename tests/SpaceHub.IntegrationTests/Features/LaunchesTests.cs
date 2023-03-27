@@ -214,6 +214,7 @@ public class LaunchesTests
                 .RuleFor(x => x.Name, f => f.JoinedWords())
                 .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
                 .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
+                .RuleFor(x => x.Videos, f => new Faker<LaunchVideoModel>().Generate(2))
                 .Generate(15));
         }
         InsertLaunches(true);
