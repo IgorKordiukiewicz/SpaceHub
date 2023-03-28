@@ -42,7 +42,6 @@ public static class Hangfire
     {
         using var scope = app.ApplicationServices.CreateScope();
         var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
         var articlesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<ArticleModel>>();
         var agenciesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<AgencyModel>>();
         var launchesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<LaunchModel>>();
