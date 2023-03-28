@@ -55,60 +55,67 @@ public abstract class LaunchApiDataSynchronizer<TResponse, TResponseItem, TModel
 
         _existingsIds = CreateExistingIdsHashSet();
 
-        var writes = new List<WriteModel<TModel>>();
-        foreach (var item in items)
-        {
-            if (_existingsIds.Contains(GetResponseItemId(item)))
-            {
-                writes.Add(CreateUpdateModel(item));
-            }
-            else
-            {
-                writes.Add(CreateInsertModel(item));
-            }
-        }
+        var writes = CreateWriteModels();
 
         if (writes.Any())
         {
             _ = await GetCollection(_db).BulkWriteAsync(writes);
         }
+
         _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == CollectionType,
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
 
         return Result.Ok();
-    }
 
-    private async Task<OneOf<List<TResponseItem>, ApiError>> GetItemsFromApi()
-    {
-        var countResponse = await GetItemsCount();
-        if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
+        async Task<OneOf<List<TResponseItem>, ApiError>> GetItemsFromApi()
         {
-            return countResponseError;
-        }
-
-        var count = countResponseContent.Count;
-        int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxItemsPerRequest);
-
-        var tasks = new List<Task<IApiResponse<TResponse>>>();
-        for (int i = 0; i < requestsRequired; ++i)
-        {
-            tasks.Add(GetItems(i));
-        }
-        await Task.WhenAll(tasks);
-
-        var result = new List<TResponseItem>();
-        foreach (var task in tasks)
-        {
-            if (!task.Result.GetContentOrError().TryPickT0(out var itemResponseContent, out var itemResponseError))
+            var countResponse = await GetItemsCount();
+            if (!countResponse.GetContentOrError().TryPickT0(out var countResponseContent, out var countResponseError))
             {
-                return itemResponseError;
+                return countResponseError;
             }
 
-            result.AddRange(SelectResponseItems(itemResponseContent));
+            var count = countResponseContent.Count;
+            int requestsRequired = ApiHelpers.GetRequiredRequestsCount(count, MaxItemsPerRequest);
+
+            var tasks = new List<Task<IApiResponse<TResponse>>>();
+            for (int i = 0; i < requestsRequired; ++i)
+            {
+                tasks.Add(GetItems(i));
+            }
+            await Task.WhenAll(tasks);
+
+            var result = new List<TResponseItem>();
+            foreach (var task in tasks)
+            {
+                if (!task.Result.GetContentOrError().TryPickT0(out var itemResponseContent, out var itemResponseError))
+                {
+                    return itemResponseError;
+                }
+
+                result.AddRange(SelectResponseItems(itemResponseContent));
+            }
+
+            return result;
         }
 
-        return result;
+        List<WriteModel<TModel>> CreateWriteModels()
+        {
+            var result = new List<WriteModel<TModel>>();
+            foreach (var item in items)
+            {
+                if (_existingsIds.Contains(GetResponseItemId(item)))
+                {
+                    result.Add(CreateUpdateModel(item));
+                }
+                else
+                {
+                    result.Add(CreateInsertModel(item));
+                }
+            }
+            return result;
+        }
     }
 
     protected abstract HashSet<TId> CreateExistingIdsHashSet();

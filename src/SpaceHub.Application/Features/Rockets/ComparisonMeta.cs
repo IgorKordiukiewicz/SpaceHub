@@ -59,7 +59,7 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
 
     private record RocketShortInfoDto(int Id, string Family, string Name, string Variant);
 
-    private string CreateFullRocketName(RocketShortInfoDto rocketDto)
+    private static string CreateFullRocketName(RocketShortInfoDto rocketDto)
     {
         return rocketDto.Name + (!string.IsNullOrEmpty(rocketDto.Variant) ? " | " + rocketDto.Variant : string.Empty);
     }

@@ -54,18 +54,18 @@ public class ArticlesDataSynchronizer : IDataSynchronizer<ArticleModel>
             Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, now));
 
         return Result.Ok();
-    }
 
-    private static ArticleModel CreateModel(ArticleResponse response)
-    {
-        return new ArticleModel()
+        static ArticleModel CreateModel(ArticleResponse response)
         {
-            Title = response.Title,
-            Summary = response.Summary,
-            ImageUrl = response.ImageUrl,
-            NewsSite = response.NewsSite,
-            PublishDate = response.PublishDate,
-            Url = response.Url,
-        };
+            return new ArticleModel()
+            {
+                Title = response.Title,
+                Summary = response.Summary,
+                ImageUrl = response.ImageUrl,
+                NewsSite = response.NewsSite,
+                PublishDate = response.PublishDate,
+                Url = response.Url,
+            };
+        }
     }
 }
