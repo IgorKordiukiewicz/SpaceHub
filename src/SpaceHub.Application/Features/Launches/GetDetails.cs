@@ -4,7 +4,7 @@ using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
-public record GetLaunchDetailsQuery(string Id) : IRequest<Result<LaunchDetailsVM>>;
+public record GetLaunchDetailsQuery(Guid Id) : IRequest<Result<LaunchDetailsVM>>;
 
 public class GetLaunchDetailsQueryValidator : AbstractValidator<GetLaunchDetailsQuery>
 {

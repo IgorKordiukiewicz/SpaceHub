@@ -2,7 +2,7 @@
 
 public class Launch
 {
-    public required string ApiId { get; init; }
+    public required Guid ApiId { get; init; }
     public required string Name { get; init; }
     public required string Status { get; set; }
     public DateTime Date { get; set; }

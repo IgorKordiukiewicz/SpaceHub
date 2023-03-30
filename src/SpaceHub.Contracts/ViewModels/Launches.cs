@@ -4,7 +4,7 @@ public record LaunchesVM(IReadOnlyList<LaunchVM> Launches, int TotalPagesCount);
 
 public class LaunchVM
 {
-    public required string Id { get; init; }
+    public required Guid Id { get; init; }
     public required string Name { get; init; }
     public required string Status { get; init; }
     public DateTime? Date { get; init; }

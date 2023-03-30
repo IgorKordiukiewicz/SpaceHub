@@ -27,7 +27,7 @@ public static class EndpointsExtension
             return result.ToHttpResult();
         });
 
-        app.MapGet("/api/launches/{id}", async (IMediator mediator, string id) =>
+        app.MapGet("/api/launches/{id}", async (IMediator mediator, Guid id) =>
         {
             var result = await mediator.Send(new GetLaunchDetailsQuery(id));
             return result.ToHttpResult();

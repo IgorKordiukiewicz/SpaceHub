@@ -76,7 +76,7 @@ public class LaunchesTests
             void InsertLaunch(string name)
             {
                 db.Launches.InsertMany(new Faker<Launch>()
-                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
+                .RuleFor(x => x.ApiId, f => f.Random.Guid())
                 .RuleFor(x => x.Name, f => name)
                 .RuleFor(x => x.Date, f => f.Date.Future(1, _dateTimeProvider.Now()))
                 .RuleFor(x => x.Pad, f => new Faker<LaunchPad>().Generate())
@@ -103,11 +103,11 @@ public class LaunchesTests
         _fixture.SeedDb(db =>
         {
             db.Launches.InsertMany(new Faker<Launch>()
-                .RuleFor(x => x.ApiId, "1")
+                .RuleFor(x => x.ApiId, Guid.NewGuid())
                 .Generate(1));
         });
 
-        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery("0"));
+        var result = await _fixture.SendRequest(new GetLaunchDetailsQuery(Guid.NewGuid()));
 
         using(new AssertionScope())
         {
@@ -120,7 +120,7 @@ public class LaunchesTests
     [Fact]
     public async Task GetLaunchDetails_ShouldReturnRecordNotFoundError_WhenAgencyIsNotFound()
     {
-        var launchId = "1";
+        var launchId = Guid.NewGuid();
         _fixture.SeedDb(db =>
         {
             db.Launches.InsertMany(new Faker<Launch>()
@@ -146,7 +146,7 @@ public class LaunchesTests
     [Fact]
     public async Task GetLaunchDetails_ShouldReturnRecordNotFoundError_WhenRocketIsNotFound()
     {
-        var launchId = "1";
+        var launchId = Guid.NewGuid();
         _fixture.SeedDb(db =>
         {
             db.Launches.InsertMany(new Faker<Launch>()
@@ -177,7 +177,7 @@ public class LaunchesTests
     [Fact]
     public async Task GetLaunchDetails_ShouldReturnSuccess_WhenLaunchAndItsAgencyAndRocketAreFound()
     {
-        var launchId = "1";
+        var launchId = Guid.NewGuid();
         _fixture.SeedDb(db =>
         {
             db.Launches.InsertMany(new Faker<Launch>()
@@ -211,7 +211,7 @@ public class LaunchesTests
         void InsertLaunches(bool upcoming)
         {
             db.Launches.InsertMany(new Faker<Launch>()
-                .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
+                .RuleFor(x => x.ApiId, f => f.Random.Guid())
                 .RuleFor(x => x.Name, f => f.JoinedWords())
                 .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
                 .RuleFor(x => x.Pad, f => new Faker<LaunchPad>().Generate())

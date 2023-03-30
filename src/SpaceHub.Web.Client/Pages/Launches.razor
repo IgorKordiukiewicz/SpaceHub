@@ -144,7 +144,7 @@
         public bool Visible { get; set; } = false;
     }
 
-    private Dictionary<string, LaunchDetails> _launchesDetails = new();
+    private Dictionary<Guid, LaunchDetails> _launchesDetails = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -182,7 +182,7 @@
         _ => Color.Default
     };
 
-    private async Task ToggleLaunchDetails(string id)
+    private async Task ToggleLaunchDetails(Guid id)
     {
         if(!_launchesDetails.TryGetValue(id, out var launchDetails))
         {
@@ -205,7 +205,7 @@
         }
     }
 
-    private Color GetExpanderColor(string id)
+    private Color GetExpanderColor(Guid id)
     {
         var unexpandedColor = Color.Dark;
         var expandedColor = Color.Primary;
@@ -217,7 +217,7 @@
         return launchDetails.Visible ? expandedColor : unexpandedColor;
     }
 
-    private string GetExpanderIcon(string id)
+    private string GetExpanderIcon(Guid id)
     {
         var unexpandedIcon = Icons.Material.Filled.ExpandMore;
         var expandedIcon = Icons.Material.Filled.ExpandLess;

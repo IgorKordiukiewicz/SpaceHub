@@ -4,7 +4,7 @@ namespace SpaceHub.Infrastructure.Api.Responses;
 public record LaunchResponse
 {
     [JsonPropertyName("id")]
-    public string Id { get; init; }
+    public Guid Id { get; init; }
     
     [JsonPropertyName("name")]
     public string Name { get; init; }

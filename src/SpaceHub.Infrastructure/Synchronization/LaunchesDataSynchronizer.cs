@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 
-public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetailResponse, LaunchDetailResponse, Launch, string>
+public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetailResponse, LaunchDetailResponse, Launch, Guid>
 {
     public LaunchesDataSynchronizer(DbContext db, ILaunchApi api)
         : base(db, api)
@@ -21,10 +21,10 @@ public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetail
 
     protected override int MaxItemsPerRequest => 25;
 
-    protected override HashSet<string> CreateExistingIdsHashSet()
+    protected override HashSet<Guid> CreateExistingIdsHashSet()
         => _db.Launches.AsQueryable().Select(x => x.ApiId).ToHashSet();
 
-    protected override string GetResponseItemId(LaunchDetailResponse item)
+    protected override Guid GetResponseItemId(LaunchDetailResponse item)
         => item.Id;
 
     protected override Task<IApiResponse<LaunchesDetailResponse>> GetItems(int index)
