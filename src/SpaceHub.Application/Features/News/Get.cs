@@ -34,7 +34,7 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
         var filteredArticles = new List<Article>();
         foreach (var article in articles)
         {
-            if(!ArticleHelper.ArticleMatchesSearchCriteria(request.SearchValue, article.Title, article.Summary))
+            if(!article.MatchesSearch(request.SearchValue))
             {
                 continue;
             }
