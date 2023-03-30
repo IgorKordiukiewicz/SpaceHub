@@ -27,7 +27,7 @@ internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsCompariso
 
     public async Task<Result<RocketsComparisonVM>> Handle(GetRocketsComparisonQuery request, CancellationToken cancellationToken)
     {
-        var allRockets = (await _db.Rockets.AsQueryable().ToListAsync()).Select(x => x.ToDomainModel());
+        var allRockets = await _db.Rockets.AsQueryable().ToListAsync();
         var comparisonCalculator = new RocketComparisonCalculator(allRockets);
 
         var groupsData = new Dictionary<Guid, IReadOnlyDictionary<ERocketComparisonProperty, RocketComparisonDatasetVM>>();

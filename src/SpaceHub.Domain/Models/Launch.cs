@@ -1,11 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿namespace SpaceHub.Domain.Models;
 
-namespace SpaceHub.Infrastructure.Data.Models;
-
-public class LaunchModel
+public class Launch
 {
-    [BsonId]
     public required string ApiId { get; init; }
     public required string Name { get; init; }
     public required string Status { get; set; }
@@ -13,15 +9,15 @@ public class LaunchModel
     public DateTime? WindowStart { get; set; }
     public DateTime? WindowEnd { get; set; }
     public required string ImageUrl { get; init; }
-    public LaunchMissionModel? Mission { get; init; }
-    public required LaunchPadModel Pad { get; init; }
-    public List<LaunchVideoModel> Videos { get; init; } = new();
+    public LaunchMission? Mission { get; init; }
+    public required LaunchPad Pad { get; init; }
+    public List<LaunchVideo> Videos { get; init; } = new();
     public required string AgencyName { get; init; }
     public required int AgencyApiId { get; init; }
     public required int RocketApiId { get; init; }
 }
 
-public class LaunchMissionModel
+public class LaunchMission
 {
     public required string Name { get; init; }
     public required string Type { get; init; }
@@ -29,7 +25,7 @@ public class LaunchMissionModel
     public string OrbitName { get; init; } = string.Empty;
 }
 
-public class LaunchPadModel
+public class LaunchPad
 {
     public required string Name { get; init; }
     public required string LocationName { get; init; }
@@ -41,7 +37,7 @@ public class LaunchPadModel
     public string MapUrl { get; init; } = string.Empty;
 }
 
-public class LaunchVideoModel
+public class LaunchVideo
 {
     public string? Title { get; init; }
     public required string Url { get; init; }

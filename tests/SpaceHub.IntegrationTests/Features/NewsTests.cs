@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using SpaceHub.Application.Features.News;
 using SpaceHub.Contracts.Models;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
 
@@ -25,14 +26,14 @@ public class NewsTests
     {
         _fixture.SeedDb(db =>
         {
-            db.Articles.InsertMany(new Faker<ArticleModel>()
+            db.Articles.InsertMany(new Faker<Article>()
                 .RuleFor(x => x.PublishDate, f => f.Date.Recent())
                 .RuleFor(x => x.Title, f => f.JoinedWords())
                 .RuleFor(x => x.Summary, f => f.Lorem.Word())
                 .Generate(15));
         });
 
-        var articles = await _fixture.GetAsync<ArticleModel>();
+        var articles = await _fixture.GetAsync<Article>();
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetNewsQuery(string.Empty, pagination));
 
@@ -55,7 +56,7 @@ public class NewsTests
         {
             void InsertArticle(string title)
             {
-                db.Articles.InsertMany(new Faker<ArticleModel>()
+                db.Articles.InsertMany(new Faker<Article>()
                 .RuleFor(x => x.PublishDate, f => f.Date.Recent())
                 .RuleFor(x => x.Title, f => title)
                 .RuleFor(x => x.Summary, f => string.Empty)

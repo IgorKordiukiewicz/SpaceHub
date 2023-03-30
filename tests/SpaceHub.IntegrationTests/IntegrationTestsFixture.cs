@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using SpaceHub.Application.Common;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
@@ -48,11 +49,11 @@ public class IntegrationTestsFixture : IDisposable
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DbContext>();
 
-        db.Agencies.DeleteMany(Builders<AgencyModel>.Filter.Empty);
-        db.Articles.DeleteMany(Builders<ArticleModel>.Filter.Empty);
-        db.Launches.DeleteMany(Builders<LaunchModel>.Filter.Empty);
-        db.Rockets.DeleteMany(Builders<RocketModel>.Filter.Empty);
-        db.CollectionsLastUpdates.DeleteMany(Builders<CollectionLastUpdateModel>.Filter.Empty);
+        db.Agencies.DeleteMany(Builders<Agency>.Filter.Empty);
+        db.Articles.DeleteMany(Builders<Article>.Filter.Empty);
+        db.Launches.DeleteMany(Builders<Launch>.Filter.Empty);
+        db.Rockets.DeleteMany(Builders<Rocket>.Filter.Empty);
+        db.CollectionsLastUpdates.DeleteMany(Builders<CollectionLastUpdate>.Filter.Empty);
     }
 
     public void SeedDb(Action<DbContext> action)

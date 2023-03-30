@@ -36,10 +36,10 @@ internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, 
         {
             return Result.Fail<LaunchDetailsVM>(new RecordNotFoundError($"Agency with id {launch.AgencyApiId} not found."));
         }
-        
-        var rocket = (await _db.Rockets.AsQueryable()
+
+        var rocket = await _db.Rockets.AsQueryable()
             .Where(x => x.ApiId == launch.RocketApiId)
-            .FirstOrDefaultAsync())?.ToDomainModel();
+            .FirstOrDefaultAsync();
         if (rocket is null)
         {
             return Result.Fail<LaunchDetailsVM>(new RecordNotFoundError($"Rocket with id {launch.RocketApiId} not found."));

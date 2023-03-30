@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -10,7 +11,7 @@ using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 
-public class ArticlesDataSynchronizer : IDataSynchronizer<ArticleModel>
+public class ArticlesDataSynchronizer : IDataSynchronizer<Article>
 {
     private readonly DbContext _db;
     private readonly IArticleApi _api;
@@ -37,7 +38,7 @@ public class ArticlesDataSynchronizer : IDataSynchronizer<ArticleModel>
 
         if (articles.Any())
         {
-            var newArticles = new List<ArticleModel>();
+            var newArticles = new List<Article>();
             foreach (var article in articles)
             {
                 newArticles.Add(CreateModel(article));
@@ -51,13 +52,13 @@ public class ArticlesDataSynchronizer : IDataSynchronizer<ArticleModel>
 
         _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == ECollection.Articles,
-            Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, now));
+            Builders<CollectionLastUpdate>.Update.Set(x => x.LastUpdate, now));
 
         return Result.Ok();
 
-        static ArticleModel CreateModel(ArticleResponse response)
+        static Article CreateModel(ArticleResponse response)
         {
-            return new ArticleModel()
+            return new Article()
             {
                 Title = response.Title,
                 Summary = response.Summary,

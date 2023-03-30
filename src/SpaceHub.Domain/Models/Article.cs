@@ -1,12 +1,8 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿namespace SpaceHub.Domain.Models;
 
-namespace SpaceHub.Infrastructure.Data.Models;
-
-public class ArticleModel
+public class Article
 {
-    [BsonId]
-    public ObjectId Id { get; init; }
+    public Guid Id { get; init; }
     public required string Title { get; init; }
     public required string Summary { get; init; }
     public required string ImageUrl { get; init; }

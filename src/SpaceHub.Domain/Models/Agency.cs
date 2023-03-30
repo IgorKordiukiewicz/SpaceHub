@@ -1,10 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿namespace SpaceHub.Domain.Models;
 
-namespace SpaceHub.Infrastructure.Data.Models;
-
-public class AgencyModel
+public class Agency
 {
-    [BsonId]
     public required int ApiId { get; init; }
     public required string Name { get; init; }
     public required string Type { get; init; }

@@ -35,10 +35,9 @@ internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<Rocke
         var count = await query.CountAsync();
         var totalPagesCount = request.Pagination.GetPagesCount(count);
 
-        var rockets = (await query.Skip(request.Pagination.Offset)
+        var rockets = await query.Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
-            .ToListAsync())
-            .Select(x => x.ToDomainModel()); // Select has to be after querying the data, because MongoDB's LINQ doesn't work with extension methods in Select
+            .ToListAsync();
 
         if (!rockets.Any())
         {

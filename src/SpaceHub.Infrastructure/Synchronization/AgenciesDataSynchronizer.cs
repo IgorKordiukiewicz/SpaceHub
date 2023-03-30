@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using Refit;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -8,7 +9,7 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 
-public class AgenciesDataSynchronizer : LaunchApiDataSynchronizer<AgenciesDetailResponse, AgencyDetailResponse, AgencyModel, int>
+public class AgenciesDataSynchronizer : LaunchApiDataSynchronizer<AgenciesDetailResponse, AgencyDetailResponse, Agency, int>
 {
     public AgenciesDataSynchronizer(DbContext db, ILaunchApi api)
         : base(db, api)
@@ -34,24 +35,24 @@ public class AgenciesDataSynchronizer : LaunchApiDataSynchronizer<AgenciesDetail
     protected override IReadOnlyList<AgencyDetailResponse> SelectResponseItems(AgenciesDetailResponse response)
         => response.Agencies;
 
-    protected override IMongoCollection<AgencyModel> GetCollection(DbContext db)
+    protected override IMongoCollection<Agency> GetCollection(DbContext db)
         => db.Agencies;
 
-    protected override UpdateOneModel<AgencyModel> CreateUpdateModel(AgencyDetailResponse response)
+    protected override UpdateOneModel<Agency> CreateUpdateModel(AgencyDetailResponse response)
     {
-        var filter = Builders<AgencyModel>.Filter.Eq(x => x.ApiId, response.Id);
-        var update = Builders<AgencyModel>.Update
+        var filter = Builders<Agency>.Filter.Eq(x => x.ApiId, response.Id);
+        var update = Builders<Agency>.Update
             .Set(x => x.Administrator, response.Administrator)
             .Set(x => x.TotalLaunches, response.TotalLaunchCount)
             .Set(x => x.SuccessfulLaunches, response.SuccessfulLaunches);
-        return new UpdateOneModel<AgencyModel>(filter, update);
+        return new UpdateOneModel<Agency>(filter, update);
     }
 
-    protected override InsertOneModel<AgencyModel> CreateInsertModel(AgencyDetailResponse response)
+    protected override InsertOneModel<Agency> CreateInsertModel(AgencyDetailResponse response)
     {
         int? foundingYear = int.TryParse(response.FoundingYear, out var val) ? val : null;
 
-        return new InsertOneModel<AgencyModel>(new AgencyModel
+        return new InsertOneModel<Agency>(new Agency
         {
             ApiId = response.Id,
             Name = response.Name,

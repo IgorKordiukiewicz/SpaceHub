@@ -4,8 +4,8 @@ using FluentAssertions.Execution;
 using SpaceHub.Application.Features.Rockets;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data;
-using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
 
 namespace SpaceHub.IntegrationTests.Features;
@@ -29,13 +29,13 @@ public class RocketsTests
         _fixture.SeedDb(db =>
         {
             int id = 0;
-            db.Rockets.InsertMany(new Faker<RocketModel>()
+            db.Rockets.InsertMany(new Faker<Rocket>()
                 .RuleFor(x => x.ApiId, f => id++)
                 .RuleFor(x => x.Name, f => f.JoinedWords())
                 .Generate(15));
         });
 
-        var rockets = await _fixture.GetAsync<RocketModel>();
+        var rockets = await _fixture.GetAsync<Rocket>();
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetRocketsQuery(string.Empty, pagination));
 
@@ -59,7 +59,7 @@ public class RocketsTests
             int id = 0;
             void InsertRocket(string name)
             {
-                db.Rockets.InsertMany(new Faker<RocketModel>()
+                db.Rockets.InsertMany(new Faker<Rocket>()
                     .RuleFor(x => x.ApiId, f => id++)
                     .RuleFor(x => x.Name, f => name)
                     .Generate(1));
@@ -85,7 +85,7 @@ public class RocketsTests
         _fixture.SeedDb(SeedRocketsComparisonData);
 
         var topValuesCount = 2;
-        var rockets = await _fixture.GetAsync<RocketModel>();
+        var rockets = await _fixture.GetAsync<Rocket>();
         var result = await _fixture.SendRequest(new GetRocketsComparisonMetaQuery(topValuesCount));
 
         using(new AssertionScope())
@@ -108,7 +108,7 @@ public class RocketsTests
     {
         _fixture.SeedDb(SeedRocketsComparisonData);
 
-        var rockets = await _fixture.GetAsync<RocketModel>();
+        var rockets = await _fixture.GetAsync<Rocket>();
         var datasets = new List<ComparisonDataset>();
         void AddDataset(int index)
         {
@@ -140,13 +140,13 @@ public class RocketsTests
     {
         int id = 1;
         int value = 1;
-        db.Rockets.InsertMany(new Faker<RocketModel>()
+        db.Rockets.InsertMany(new Faker<Rocket>()
             .RuleFor(x => x.ApiId, f => id++)
             .RuleFor(x => x.Name, f => f.JoinedWords())
             .RuleFor(x => x.Length, f => value++)
             .RuleFor(x => x.Diameter, f => value++)
             .RuleFor(x => x.LiftoffMass, f => value++)
-            .RuleFor(x => x.ThrustAtLiftoff, f => value++)
+            .RuleFor(x => x.LiftoffThrust, f => value++)
             .RuleFor(x => x.GeoCapacity, f => value++)
             .RuleFor(x => x.LeoCapacity, f => value++)
             .RuleFor(x => x.LaunchCost, f => 10000)

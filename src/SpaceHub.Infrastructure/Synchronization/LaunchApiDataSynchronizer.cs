@@ -64,7 +64,7 @@ public abstract class LaunchApiDataSynchronizer<TResponse, TResponseItem, TModel
 
         _ = await _db.CollectionsLastUpdates.UpdateOneAsync(
             x => x.CollectionType == CollectionType,
-            Builders<CollectionLastUpdateModel>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
+            Builders<CollectionLastUpdate>.Update.Set(x => x.LastUpdate, DateTime.UtcNow));
 
         return Result.Ok();
 

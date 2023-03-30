@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using Refit;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -8,7 +9,7 @@ using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 
-public class RocketsDataSynchronizer : LaunchApiDataSynchronizer<RocketsDetailResponse, RocketConfigDetailResponse, RocketModel, int>
+public class RocketsDataSynchronizer : LaunchApiDataSynchronizer<RocketsDetailResponse, RocketConfigDetailResponse, Rocket, int>
 {
     public RocketsDataSynchronizer(DbContext db, ILaunchApi api)
         : base(db, api)
@@ -34,26 +35,26 @@ public class RocketsDataSynchronizer : LaunchApiDataSynchronizer<RocketsDetailRe
     protected override IReadOnlyList<RocketConfigDetailResponse> SelectResponseItems(RocketsDetailResponse response)
         => response.Rockets;
 
-    protected override IMongoCollection<RocketModel> GetCollection(DbContext db)
+    protected override IMongoCollection<Rocket> GetCollection(DbContext db)
         => db.Rockets;
 
-    protected override UpdateOneModel<RocketModel> CreateUpdateModel(RocketConfigDetailResponse response)
+    protected override UpdateOneModel<Rocket> CreateUpdateModel(RocketConfigDetailResponse response)
     {
-        var filter = Builders<RocketModel>.Filter.Eq(x => x.ApiId, response.Id);
-        var update = Builders<RocketModel>.Update
+        var filter = Builders<Rocket>.Filter.Eq(x => x.ApiId, response.Id);
+        var update = Builders<Rocket>.Update
             .Set(x => x.Active, response.Active)
             .Set(x => x.SuccessfulLaunches, response.SuccessfulLaunches)
             .Set(x => x.TotalLaunches, response.TotalLaunchCount)
             .Set(x => x.ConsecutiveSuccessfulLaunches, response.ConsecutiveSuccessfulLaunches)
             .Set(x => x.PendingLaunches, response.PendingLaunches);
-        return new UpdateOneModel<RocketModel>(filter, update);
+        return new UpdateOneModel<Rocket>(filter, update);
     }
 
-    protected override InsertOneModel<RocketModel> CreateInsertModel(RocketConfigDetailResponse response)
+    protected override InsertOneModel<Rocket> CreateInsertModel(RocketConfigDetailResponse response)
     {
         long? launchCost = long.TryParse(response.LaunchCost, out var val) ? val : null;
 
-        return new InsertOneModel<RocketModel>(new RocketModel
+        return new InsertOneModel<Rocket>(new Rocket
         {
             ApiId = response.Id,
             Name = response.Name,
@@ -70,7 +71,7 @@ public class RocketsDataSynchronizer : LaunchApiDataSynchronizer<RocketsDetailRe
             MaxStages = response.MaxStage,
             LaunchCost = launchCost,
             LiftoffMass = response.LaunchMass,
-            ThrustAtLiftoff = response.ThrustAtLiftoff,
+            LiftoffThrust = response.ThrustAtLiftoff,
             LeoCapacity = response.LeoCapacity,
             GeoCapacity = response.GeoCapacity,
             SuccessfulLaunches = response.SuccessfulLaunches,

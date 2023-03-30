@@ -6,6 +6,7 @@ using SpaceHub.Application.Errors;
 using SpaceHub.Application.Features.Launches;
 using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
 using Xunit;
@@ -30,7 +31,7 @@ public class LaunchesTests
     {
         _fixture.SeedDb(SeedGetLaunchesWithoutSearchValueData);
 
-        var launches = await _fixture.GetAsync<LaunchModel>(x => x.Date > _dateTimeProvider.Now());
+        var launches = await _fixture.GetAsync<Launch>(x => x.Date > _dateTimeProvider.Now());
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Upcoming, string.Empty, pagination));
 
@@ -51,7 +52,7 @@ public class LaunchesTests
     {
         _fixture.SeedDb(SeedGetLaunchesWithoutSearchValueData);
 
-        var launches = await _fixture.GetAsync<LaunchModel>(x => x.Date <= _dateTimeProvider.Now());
+        var launches = await _fixture.GetAsync<Launch>(x => x.Date <= _dateTimeProvider.Now());
         var pagination = new Pagination();
         var result = await _fixture.SendRequest(new GetLaunchesQuery(ETimeFrame.Previous, string.Empty, pagination));
 
@@ -74,11 +75,11 @@ public class LaunchesTests
         {
             void InsertLaunch(string name)
             {
-                db.Launches.InsertMany(new Faker<LaunchModel>()
+                db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
                 .RuleFor(x => x.Name, f => name)
                 .RuleFor(x => x.Date, f => f.Date.Future(1, _dateTimeProvider.Now()))
-                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
+                .RuleFor(x => x.Pad, f => new Faker<LaunchPad>().Generate())
                 .Generate(1));
             }
             InsertLaunch("Foo");
@@ -101,7 +102,7 @@ public class LaunchesTests
     {
         _fixture.SeedDb(db =>
         {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
+            db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, "1")
                 .Generate(1));
         });
@@ -122,12 +123,12 @@ public class LaunchesTests
         var launchId = "1";
         _fixture.SeedDb(db =>
         {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
+            db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, launchId)
                 .RuleFor(x => x.AgencyApiId, 0)
                 .Generate(1));
 
-            db.Agencies.InsertMany(new Faker<AgencyModel>()
+            db.Agencies.InsertMany(new Faker<Agency>()
                 .RuleFor(x => x.ApiId, 1)
                 .Generate(1));
         });
@@ -148,17 +149,17 @@ public class LaunchesTests
         var launchId = "1";
         _fixture.SeedDb(db =>
         {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
+            db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, launchId)
                 .RuleFor(x => x.AgencyApiId, 1)
                 .RuleFor(x => x.RocketApiId, 0)
                 .Generate(1));
 
-            db.Agencies.InsertMany(new Faker<AgencyModel>()
+            db.Agencies.InsertMany(new Faker<Agency>()
                 .RuleFor(x => x.ApiId, 1)
                 .Generate(1));
 
-            db.Rockets.InsertMany(new Faker<RocketModel>()
+            db.Rockets.InsertMany(new Faker<Rocket>()
                 .RuleFor(x => x.ApiId, 1)
                 .Generate(1));
         });
@@ -179,17 +180,17 @@ public class LaunchesTests
         var launchId = "1";
         _fixture.SeedDb(db =>
         {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
+            db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, launchId)
                 .RuleFor(x => x.AgencyApiId, 1)
                 .RuleFor(x => x.RocketApiId, 1)
                 .Generate(1));
 
-            db.Agencies.InsertMany(new Faker<AgencyModel>()
+            db.Agencies.InsertMany(new Faker<Agency>()
                 .RuleFor(x => x.ApiId, 1)
                 .Generate(1));
 
-            db.Rockets.InsertMany(new Faker<RocketModel>()
+            db.Rockets.InsertMany(new Faker<Rocket>()
                 .RuleFor(x => x.ApiId, 1)
                 .Generate(1));
         });
@@ -209,12 +210,12 @@ public class LaunchesTests
         var date = new DateTime(2023, 3, 15);
         void InsertLaunches(bool upcoming)
         {
-            db.Launches.InsertMany(new Faker<LaunchModel>()
+            db.Launches.InsertMany(new Faker<Launch>()
                 .RuleFor(x => x.ApiId, f => f.Random.Number(int.MaxValue).ToString())
                 .RuleFor(x => x.Name, f => f.JoinedWords())
                 .RuleFor(x => x.Date, f => upcoming ? f.Date.Future(1, date) : f.Date.Past(1, date))
-                .RuleFor(x => x.Pad, f => new Faker<LaunchPadModel>().Generate())
-                .RuleFor(x => x.Videos, f => new Faker<LaunchVideoModel>().Generate(2))
+                .RuleFor(x => x.Pad, f => new Faker<LaunchPad>().Generate())
+                .RuleFor(x => x.Videos, f => new Faker<LaunchVideo>().Generate(2))
                 .Generate(15));
         }
         InsertLaunches(true);

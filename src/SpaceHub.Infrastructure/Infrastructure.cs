@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Refit;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
 using SpaceHub.Infrastructure.Data.Models;
@@ -26,10 +27,10 @@ public static class Infrastructure
         });
 
         services.AddSingleton<DbContext>();
-        services.AddScoped<IDataSynchronizer<ArticleModel>, ArticlesDataSynchronizer>();
-        services.AddScoped<IDataSynchronizer<AgencyModel>, AgenciesDataSynchronizer>();
-        services.AddScoped<IDataSynchronizer<LaunchModel>, LaunchesDataSynchronizer>();
-        services.AddScoped<IDataSynchronizer<RocketModel>, RocketsDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<Article>, ArticlesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<Agency>, AgenciesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<Launch>, LaunchesDataSynchronizer>();
+        services.AddScoped<IDataSynchronizer<Rocket>, RocketsDataSynchronizer>();
 
         return services;
     }

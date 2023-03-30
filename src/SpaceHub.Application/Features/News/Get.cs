@@ -1,7 +1,7 @@
 ﻿using SpaceHub.Contracts.Models;
 using SpaceHub.Domain;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data;
-using SpaceHub.Infrastructure.Data.Models;
 
 namespace SpaceHub.Application.Features.News;
 
@@ -31,7 +31,7 @@ internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>
             .OrderByDescending(x => x.PublishDate)
             .ToListAsync();
 
-        var filteredArticles = new List<ArticleModel>();
+        var filteredArticles = new List<Article>();
         foreach (var article in articles)
         {
             if(!ArticleHelper.ArticleMatchesSearchCriteria(request.SearchValue, article.Title, article.Summary))

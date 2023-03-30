@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using Refit;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Api.Responses;
 using SpaceHub.Infrastructure.Data;
@@ -9,7 +10,7 @@ using System.Globalization;
 
 namespace SpaceHub.Infrastructure.Synchronization;
 
-public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetailResponse, LaunchDetailResponse, LaunchModel, string>
+public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetailResponse, LaunchDetailResponse, Launch, string>
 {
     public LaunchesDataSynchronizer(DbContext db, ILaunchApi api)
         : base(db, api)
@@ -35,23 +36,23 @@ public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetail
     protected override IReadOnlyList<LaunchDetailResponse> SelectResponseItems(LaunchesDetailResponse response)
         => response.Launches;
 
-    protected override IMongoCollection<LaunchModel> GetCollection(DbContext db)
+    protected override IMongoCollection<Launch> GetCollection(DbContext db)
         => db.Launches;
 
-    protected override UpdateOneModel<LaunchModel> CreateUpdateModel(LaunchDetailResponse response)
+    protected override UpdateOneModel<Launch> CreateUpdateModel(LaunchDetailResponse response)
     {
-        var filter = Builders<LaunchModel>.Filter.Eq(x => x.ApiId, response.Id);
-        var update = Builders<LaunchModel>.Update
+        var filter = Builders<Launch>.Filter.Eq(x => x.ApiId, response.Id);
+        var update = Builders<Launch>.Update
             .Set(x => x.Status, response.Status.Name)
             .Set(x => x.Date, response.Date)
             .Set(x => x.WindowStart, response.WindowStart)
             .Set(x => x.WindowEnd, response.WindowEnd);
-        return new UpdateOneModel<LaunchModel>(filter, update);
+        return new UpdateOneModel<Launch>(filter, update);
     }
 
-    protected override InsertOneModel<LaunchModel> CreateInsertModel(LaunchDetailResponse response)
+    protected override InsertOneModel<Launch> CreateInsertModel(LaunchDetailResponse response)
     {
-        LaunchMissionModel? mission = null;
+        LaunchMission? mission = null;
         if (response.Mission is not null)
         {
             mission = new()
@@ -63,7 +64,7 @@ public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetail
             };
         }
 
-        var videos = new List<LaunchVideoModel>();
+        var videos = new List<LaunchVideo>();
         if (response.Videos is not null)
         {
             foreach (var video in response.Videos)
@@ -76,7 +77,7 @@ public class LaunchesDataSynchronizer : LaunchApiDataSynchronizer<LaunchesDetail
             }
         }
 
-        return new InsertOneModel<LaunchModel>(new LaunchModel()
+        return new InsertOneModel<Launch>(new Launch()
         {
             ApiId = response.Id,
             Name = response.Name,

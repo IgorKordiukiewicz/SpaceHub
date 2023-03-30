@@ -1,15 +1,10 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using SpaceHub.Infrastructure.Enums;
 
 namespace SpaceHub.Infrastructure.Data.Models;
 
-public class CollectionLastUpdateModel
+public class CollectionLastUpdate
 {
     [BsonId]
     public ObjectId Id { get; init; }

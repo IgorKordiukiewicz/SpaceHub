@@ -4,6 +4,7 @@ using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
 using MediatR;
 using MongoDB.Driver;
+using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure;
 using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Synchronization.Interfaces;
@@ -42,10 +43,10 @@ public static class Hangfire
     {
         using var scope = app.ApplicationServices.CreateScope();
         var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-        var articlesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<ArticleModel>>();
-        var agenciesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<AgencyModel>>();
-        var launchesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<LaunchModel>>();
-        var rocketsSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<RocketModel>>();
+        var articlesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<Article>>();
+        var agenciesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<Agency>>();
+        var launchesSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<Launch>>();
+        var rocketsSynchronizer = scope.ServiceProvider.GetRequiredService<IDataSynchronizer<Rocket>>();
 
         var utcZone = TimeZoneInfo.Utc;
         recurringJobManager.AddOrUpdate(
