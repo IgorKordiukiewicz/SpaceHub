@@ -1,6 +1,5 @@
-﻿using SpaceHub.Contracts.Models;
-using SpaceHub.Domain.Models;
-using SpaceHub.Infrastructure.Data;
+﻿using SpaceHub.Application.Interfaces;
+using SpaceHub.Contracts.Models;
 
 namespace SpaceHub.Application.Features.Rockets;
 
@@ -17,9 +16,9 @@ public class GetRocketsQueryValidator : AbstractValidator<GetRocketsQuery>
 
 internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<RocketsVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
 
-    public GetRocketsHandler(DbContext db)
+    public GetRocketsHandler(IDbContext db)
     {
         _db = db;
     }

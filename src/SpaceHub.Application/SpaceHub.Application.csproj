@@ -19,7 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SpaceHub.Contracts\SpaceHub.Contracts.csproj" />
     <ProjectReference Include="..\SpaceHub.Domain\SpaceHub.Domain.csproj" />
-    <ProjectReference Include="..\SpaceHub.Infrastructure\SpaceHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

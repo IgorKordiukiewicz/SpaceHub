@@ -1,6 +1,6 @@
-﻿using SpaceHub.Contracts.Enums;
+﻿using SpaceHub.Application.Interfaces;
+using SpaceHub.Contracts.Enums;
 using SpaceHub.Domain;
-using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
@@ -16,9 +16,9 @@ public class GetRocketsComparisonMetaQueryValidator : AbstractValidator<GetRocke
 
 internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsComparisonMetaQuery, Result<RocketsComparisonMetaVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
 
-    public GetRocketsComparisonMetaHandler(DbContext db)
+    public GetRocketsComparisonMetaHandler(IDbContext db)
     {
         _db = db;
     }
@@ -40,7 +40,7 @@ internal class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocketsCompa
         };
     }
 
-    private IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>> GetTopValuesByPropertyType(
+    private static IReadOnlyDictionary<ERocketComparisonProperty, IReadOnlyList<RocketPropertyValueVM>> GetTopValuesByPropertyType(
         RocketComparisonCalculator comparisonCalculator, int count)
     {
         var topValues = comparisonCalculator.GetTopValues(count);

@@ -1,8 +1,7 @@
-﻿using SpaceHub.Contracts.Enums;
+﻿using SpaceHub.Application.Interfaces;
+using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
 using SpaceHub.Domain;
-using SpaceHub.Domain.Models;
-using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Rockets;
 
@@ -18,9 +17,9 @@ public class GetRocketsComparisonQueryValidator : AbstractValidator<GetRocketsCo
 
 internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsComparisonQuery, Result<RocketsComparisonVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
 
-    public GetRocketsComparisonHandler(DbContext db)
+    public GetRocketsComparisonHandler(IDbContext db)
     {
         _db = db;
     }

@@ -1,6 +1,6 @@
-﻿using SpaceHub.Contracts.Enums;
+﻿using SpaceHub.Application.Interfaces;
+using SpaceHub.Contracts.Enums;
 using SpaceHub.Contracts.Models;
-using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.Launches;
 
@@ -18,10 +18,10 @@ public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
 
 internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public GetLaunchesHandler(DbContext db, IDateTimeProvider dateTimeProvider)
+    public GetLaunchesHandler(IDbContext db, IDateTimeProvider dateTimeProvider)
     {
         _db = db;
         _dateTimeProvider = dateTimeProvider;

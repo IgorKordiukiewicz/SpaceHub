@@ -1,7 +1,6 @@
-﻿using SpaceHub.Contracts.Models;
-using SpaceHub.Domain;
+﻿using SpaceHub.Application.Interfaces;
+using SpaceHub.Contracts.Models;
 using SpaceHub.Domain.Models;
-using SpaceHub.Infrastructure.Data;
 
 namespace SpaceHub.Application.Features.News;
 
@@ -18,9 +17,9 @@ public class GetNewsQueryValidator : AbstractValidator<GetNewsQuery>
 
 internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
 
-    public GetNewsHandler(DbContext db)
+    public GetNewsHandler(IDbContext db)
     {
         _db = db;
     }

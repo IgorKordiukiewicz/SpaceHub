@@ -3,21 +3,22 @@
 public class ReferencesTests
 {
     [Theory]
+    [InlineData(Namespaces.Contracts, new[] {
+        Namespaces.Domain,
+        Namespaces.Application,
+        Namespaces.Infrastructure,
+        Namespaces.WebServer,
+        Namespaces.WebClient })]
     [InlineData(Namespaces.Domain, new[] { 
         Namespaces.Application, 
         Namespaces.Infrastructure, 
         Namespaces.WebServer, 
         Namespaces.WebClient })]
-    [InlineData(Namespaces.Application, new[] { 
+    [InlineData(Namespaces.Application, new[] {
+        Namespaces.Infrastructure,
         Namespaces.WebServer, 
         Namespaces.WebClient })]
     [InlineData(Namespaces.Infrastructure, new[] { 
-        Namespaces.WebServer, 
-        Namespaces.WebClient })]
-    [InlineData(Namespaces.Contracts, new[] { 
-        Namespaces.Domain, 
-        Namespaces.Application, 
-        Namespaces.Infrastructure, 
         Namespaces.WebServer, 
         Namespaces.WebClient })]
     [InlineData(Namespaces.WebServer, new[] { 
@@ -29,7 +30,7 @@ public class ReferencesTests
         Namespaces.WebServer })]
     public void Project_ShouldNot_ReferenceOtherProjects(string project, string[] otherProjects)
     {
-        var dependencies = otherProjects.Select(x => Namespaces.ProjectNamespace(x)).ToArray();
+        var dependencies = otherProjects.Select(Namespaces.ProjectNamespace).ToArray();
 
         var result = Types.InCurrentDomain()
             .That()

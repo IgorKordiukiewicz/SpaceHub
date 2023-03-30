@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Refit;
+using SpaceHub.Application.Interfaces;
 using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Api;
 using SpaceHub.Infrastructure.Data;
-using SpaceHub.Infrastructure.Data.Models;
 using SpaceHub.Infrastructure.Synchronization;
 using SpaceHub.Infrastructure.Synchronization.Interfaces;
 
@@ -27,6 +27,8 @@ public static class Infrastructure
         });
 
         services.AddSingleton<DbContext>();
+        services.AddSingleton<IDbContext>(factory => factory.GetRequiredService<DbContext>());
+
         services.AddScoped<IDataSynchronizer<Article>, ArticlesDataSynchronizer>();
         services.AddScoped<IDataSynchronizer<Agency>, AgenciesDataSynchronizer>();
         services.AddScoped<IDataSynchronizer<Launch>, LaunchesDataSynchronizer>();

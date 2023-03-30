@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SpaceHub.Application\SpaceHub.Application.csproj" />
     <ProjectReference Include="..\SpaceHub.Domain\SpaceHub.Domain.csproj" />
   </ItemGroup>
 

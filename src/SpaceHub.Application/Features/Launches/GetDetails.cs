@@ -1,6 +1,5 @@
 ﻿using SpaceHub.Application.Errors;
-using SpaceHub.Domain.Models;
-using SpaceHub.Infrastructure.Data;
+using SpaceHub.Application.Interfaces;
 
 namespace SpaceHub.Application.Features.Launches;
 
@@ -16,9 +15,9 @@ public class GetLaunchDetailsQueryValidator : AbstractValidator<GetLaunchDetails
 
 internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, Result<LaunchDetailsVM>>
 {
-    private readonly DbContext _db;
+    private readonly IDbContext _db;
 
-    public GetLaunchDetailsHandler(DbContext db)
+    public GetLaunchDetailsHandler(IDbContext db)
     {
         _db = db;
     }

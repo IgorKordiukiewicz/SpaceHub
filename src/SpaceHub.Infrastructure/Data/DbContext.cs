@@ -2,12 +2,13 @@
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
+using SpaceHub.Application.Interfaces;
 using SpaceHub.Domain.Models;
 using SpaceHub.Infrastructure.Data.Models;
 
 namespace SpaceHub.Infrastructure.Data;
 
-public class DbContext
+public class DbContext : IDbContext
 {
     private readonly MongoClient _client;
     private readonly IMongoDatabase _db;
