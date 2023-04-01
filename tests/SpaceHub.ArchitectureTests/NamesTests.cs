@@ -1,47 +1,44 @@
-﻿namespace SpaceHub.ArchitectureTests;
+﻿using MediatR;
+
+namespace SpaceHub.ArchitectureTests;
 
 public class NamesTests
 {
     [Fact]
     public void Handlers_Should_HaveHandlerSuffix()
     {
-        var handlersNames = Types.InCurrentDomain()
-            .That()
-            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
-            .GetTypes()
-            .Where(x => x.GetInterfaces().Any(xx => xx.Name.Contains("IRequestHandler")))
-            .Select(x => x.Name)
-            .ToList();
+        var result = Types.InCurrentDomain()
+            .That().ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
+            .And().ImplementInterface(typeof(IRequestHandler<,>))
+            .Should().HaveNameEndingWith("Handler")
+            .GetResult();
 
-        handlersNames.All(x => x.EndsWith("Handler")).Should().BeTrue();
+        result.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
     public void Requests_Should_HaveCommandOrQuerySuffix()
     {
-        var requestsNames = Types.InCurrentDomain()
-            .That()
-            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
-            .GetTypes()
-            .Where(x => x.GetInterfaces().Any(xx => xx.Name.Contains("IRequest") && !xx.Name.Contains("IRequestHandler")))
-            .Select(x => x.Name)
-            .ToList();
+        var result = Types.InCurrentDomain()
+            .That().ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
+            .And().ImplementInterface(typeof(IRequest<>)).Or().ImplementInterface(typeof(IRequest))
+            .Should().HaveNameEndingWith("Query").Or().HaveNameEndingWith("Command")
+            .GetResult();
 
-        requestsNames.All(x => x.EndsWith("Query") || x.EndsWith("Command")).Should().BeTrue();
+        result.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
     public void Attributes_Should_HaveAttributeSuffix()
     {
-        var attributesNames = Types.InCurrentDomain()
+        var result = Types.InCurrentDomain()
             .That()
             .ResideInNamespace(Namespaces.SolutionName)
-            .GetTypes()
-            .Where(x => x.BaseType is not null && x.BaseType == typeof(Attribute))
-            .Select(x => x.Name)
-            .ToList();
+            .And().Inherit(typeof(Attribute))
+            .Should().HaveNameEndingWith("Attribute")
+            .GetResult();
 
-        attributesNames.All(x => x.EndsWith("Attribute")).Should().BeTrue();
+        result.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]

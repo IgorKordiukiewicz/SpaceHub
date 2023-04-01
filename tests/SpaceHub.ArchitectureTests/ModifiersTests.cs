@@ -8,11 +8,9 @@ public class ModifiersTests
     public void Handlers_ShouldBeSealed()
     {
         var result = Types.InCurrentDomain()
-            .That()
-            .ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
+            .That().ResideInNamespace(Namespaces.ProjectNamespace(Namespaces.Application))
             .And().ImplementInterface(typeof(IRequestHandler<,>))
-            .Should()
-            .BeSealed()
+            .Should().BeSealed()
             .GetResult();
 
         result.IsSuccessful.Should().BeTrue();
