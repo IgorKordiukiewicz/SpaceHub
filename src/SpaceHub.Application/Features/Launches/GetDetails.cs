@@ -13,7 +13,7 @@ public class GetLaunchDetailsQueryValidator : AbstractValidator<GetLaunchDetails
     }
 }
 
-internal class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, Result<LaunchDetailsVM>>
+internal sealed class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetailsQuery, Result<LaunchDetailsVM>>
 {
     private readonly IDbContext _db;
 

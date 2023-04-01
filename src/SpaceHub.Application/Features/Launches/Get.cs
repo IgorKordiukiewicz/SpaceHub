@@ -16,7 +16,7 @@ public class GetLaunchesQueryValidator : AbstractValidator<GetLaunchesQuery>
     }
 }
 
-internal class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
+internal sealed class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Result<LaunchesVM>>
 {
     private readonly IDbContext _db;
     private readonly IDateTimeProvider _dateTimeProvider;

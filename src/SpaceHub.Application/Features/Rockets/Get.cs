@@ -14,7 +14,7 @@ public class GetRocketsQueryValidator : AbstractValidator<GetRocketsQuery>
     }
 }
 
-internal class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<RocketsVM>>
+internal sealed class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Result<RocketsVM>>
 {
     private readonly IDbContext _db;
 

@@ -15,7 +15,7 @@ public class GetRocketsComparisonQueryValidator : AbstractValidator<GetRocketsCo
     }
 }
 
-internal class GetRocketsComparisonHandler : IRequestHandler<GetRocketsComparisonQuery, Result<RocketsComparisonVM>>
+internal sealed class GetRocketsComparisonHandler : IRequestHandler<GetRocketsComparisonQuery, Result<RocketsComparisonVM>>
 {
     private readonly IDbContext _db;
 

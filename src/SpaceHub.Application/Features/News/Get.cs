@@ -15,7 +15,7 @@ public class GetNewsQueryValidator : AbstractValidator<GetNewsQuery>
     }
 }
 
-internal class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>>
+internal sealed class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<ArticlesVM>>
 {
     private readonly IDbContext _db;
 
