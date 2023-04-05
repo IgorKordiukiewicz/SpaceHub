@@ -24,21 +24,19 @@ internal sealed class GetLaunchDetailsHandler : IRequestHandler<GetLaunchDetails
 
     public async Task<Result<LaunchDetailsVM>> Handle(GetLaunchDetailsQuery request, CancellationToken cancellationToken)
     {
-        var launch = await _db.Launches.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == request.Id);
+        var launch = await _db.Launches.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == request.Id, cancellationToken);
         if (launch is null)
         {
             return Result.Fail<LaunchDetailsVM>(new RecordNotFoundError($"Launch with id {request.Id} not found."));
         }
         
-        var agency = await _db.Agencies.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == launch.AgencyApiId);
+        var agency = await _db.Agencies.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == launch.AgencyApiId, cancellationToken);
         if (agency is null)
         {
             return Result.Fail<LaunchDetailsVM>(new RecordNotFoundError($"Agency with id {launch.AgencyApiId} not found."));
         }
 
-        var rocket = await _db.Rockets.AsQueryable()
-            .Where(x => x.ApiId == launch.RocketApiId)
-            .FirstOrDefaultAsync();
+        var rocket = await _db.Rockets.AsQueryable().FirstOrDefaultAsync(x => x.ApiId == launch.RocketApiId, cancellationToken);
         if (rocket is null)
         {
             return Result.Fail<LaunchDetailsVM>(new RecordNotFoundError($"Rocket with id {launch.RocketApiId} not found."));

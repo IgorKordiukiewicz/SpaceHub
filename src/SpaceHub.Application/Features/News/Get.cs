@@ -28,7 +28,7 @@ internal sealed class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<Arti
     {
         var articles = await _db.Articles.AsQueryable()
             .OrderByDescending(x => x.PublishDate)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         var filteredArticles = new List<Article>();
         foreach (var article in articles)

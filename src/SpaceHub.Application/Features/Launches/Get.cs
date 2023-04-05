@@ -44,12 +44,12 @@ internal sealed class GetLaunchesHandler : IRequestHandler<GetLaunchesQuery, Res
                 .OrderByDescending(x => x.Date);
         }
         
-        var count = await query.CountAsync();
+        var count = await query.CountAsync(cancellationToken);
         var totalPagesCount = request.Pagination.GetPagesCount(count);
         
         var launches = (await query.Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
-            .ToListAsync())
+            .ToListAsync(cancellationToken))
             .Select(x => new LaunchVM
             {
                 Id = x.ApiId,

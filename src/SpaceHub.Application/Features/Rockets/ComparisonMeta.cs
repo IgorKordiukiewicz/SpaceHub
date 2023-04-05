@@ -25,7 +25,7 @@ internal sealed class GetRocketsComparisonMetaHandler : IRequestHandler<GetRocke
 
     public async Task<Result<RocketsComparisonMetaVM>> Handle(GetRocketsComparisonMetaQuery request, CancellationToken cancellationToken)
     {
-        var allRockets = await _db.Rockets.AsQueryable().ToListAsync();
+        var allRockets = await _db.Rockets.AsQueryable().ToListAsync(cancellationToken);
         var rockets = allRockets.Select(x => new RocketShortInfoDto(x.ApiId, x.Family, x.Name, x.Variant)).ToList();
 
         var comparisonCalculator = new RocketComparisonCalculator(allRockets);

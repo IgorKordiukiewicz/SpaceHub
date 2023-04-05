@@ -31,12 +31,12 @@ internal sealed class GetRocketsHandler : IRequestHandler<GetRocketsQuery, Resul
             .Where(x => x.Name.ToLower().Contains(request.SearchValue.ToLower()))
             .OrderBy(x => x.Name);
 
-        var count = await query.CountAsync();
+        var count = await query.CountAsync(cancellationToken);
         var totalPagesCount = request.Pagination.GetPagesCount(count);
 
         var rockets = await query.Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         if (!rockets.Any())
         {
