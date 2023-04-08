@@ -9,10 +9,4 @@ public class Article
     public required string NewsSite { get; init; }
     public required DateTime PublishDate { get; init; }
     public required string Url { get; init; }
-
-    public bool MatchesSearch(string search)
-    {
-        return Title.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || Summary.Contains(search, StringComparison.OrdinalIgnoreCase);
-    }
 }

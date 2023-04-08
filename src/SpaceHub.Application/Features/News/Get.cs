@@ -26,25 +26,16 @@ internal sealed class GetNewsHandler : IRequestHandler<GetNewsQuery, Result<Arti
 
     public async Task<Result<ArticlesVM>> Handle(GetNewsQuery request, CancellationToken cancellationToken)
     {
+        var searchValue = request.SearchValue.ToLower();
         var articles = await _db.Articles.AsQueryable()
+            .Where(r => r.Title.ToLower().Contains(searchValue) || r.Summary.ToLower().Contains(searchValue))
             .OrderByDescending(x => x.PublishDate)
             .ToListAsync(cancellationToken);
 
-        var filteredArticles = new List<Article>();
-        foreach (var article in articles)
-        {
-            if(!article.MatchesSearch(request.SearchValue))
-            {
-                continue;
-            }
-
-            filteredArticles.Add(article);
-        }
-
-        var totalArticlesCount = filteredArticles.Count;
+        var totalArticlesCount = articles.Count;
         var totalPagesCount = request.Pagination.GetPagesCount(totalArticlesCount);
 
-        var articlesViewModels = filteredArticles
+        var articlesViewModels = articles
             .Skip(request.Pagination.Offset)
             .Take(request.Pagination.ItemsPerPage)
             .Select(x => new ArticleVM
