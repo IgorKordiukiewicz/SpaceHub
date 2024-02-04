@@ -5,6 +5,7 @@
 * MongoDB
 * xUnit
 * MediatR
+* Hangfire
 ### Screenshots
 
 ![firefox_xdipB5PUi6](https://github.com/IgorKordiukiewicz/SpaceHub/assets/25117425/afd61a50-3b52-44ee-93db-0b39b88e3c52)
